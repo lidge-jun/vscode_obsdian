@@ -19,13 +19,15 @@ interface FileInfo {
 export async function handleRar(uri: Uri, handler: Handler) {
     const decompressPath = handlerCommonDecompress(uri, handler)
     handler.on('init', async () => {
-        const data = (await workspace.fs.readFile(uri)) as Buffer;
-        const extractor = await createExtractorFromData({ data });
+        const data = await workspace.fs.readFile(uri);
+        const archiveData = new ArrayBuffer(data.byteLength);
+        new Uint8Array(archiveData).set(data);
+        const extractor = await createExtractorFromData({ data: archiveData });
         const list = extractor.getFileList();
 
         const { files, folderMap, filePaths } = buildFileTree(list.fileHeaders);
 
-        handler.emit('size', prettyBytes(data.length));
+        handler.emit('size', prettyBytes(data.byteLength));
         handler.emit('extension', 'rar');
         handler.emit('data', {
             files,

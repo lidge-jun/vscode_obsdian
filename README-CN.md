@@ -1,97 +1,74 @@
-# Office Viewer Enhanced
-
-直接在 VS Code 和 Kiro 中预览 Word、Excel、PDF、Markdown 等文件。支持导出图片内嵌的独立 HTML，并内置 Mermaid v11 支持，可正确渲染新版图表语法。
-
-## Office Viewer（Fork）
-
-> Fork 自 [cweijan/vscode-office](https://github.com/cweijan/vscode-office)，由 [RJ.Wang](mailto:wangrenjun@gmail.com) 维护。
-
-这是对原项目的持续维护版本，重点改进了易用性、可移植性、离线支持以及安装包体积。
-
-## 本 Fork 的改进
-
-- **独立 HTML 导出**
-  - 导出 HTML 时会自动将本地图片转换为 Base64 并嵌入文件中
-  - 生成的 `.html` 文件可直接分享，无需额外附带本地图片资源
-- **更小的安装包**
-  - 移除了内置的 Icon Theme 和 Java 反编译器，让扩展更专注文档预览
-  - 安装包体积减少约 4.4 MB
-- **更现代的 Mermaid 支持**
-  - Mermaid 从 v8.8.0 升级到 v11.14.0
-  - 新版 Mermaid 语法可以正确渲染
-  - Mermaid 改为本地加载，不依赖 CDN，离线使用更稳定
-  - 使用轻量内置集成替换了已弃用的 `markdown-it-mermaid`
-- **更清爽的渲染效果**
-  - Markdown 预览现在会铺满编辑器可用宽度，不再过早换行
-  - Mermaid 图表和文档内容默认左对齐，不再居中
-  - 清理了无用代码并修复了多处拼写错误
-
-## 介绍
+# vscode_obsdian
 
 [English](README.md) | 简体中文
 
-本扩展支持在 VS Code 中预览以下文件类型：
+`vscode_obsdian` 是一个在 VS Code 中阅读 Office 文档和 Markdown 笔记的扩展。它基于 MIT 许可的 `vscode-office` 代码谱系，并保留原始版权和许可声明，同时向 Obsidian 风格的笔记导航体验演进。
 
-- Excel：`.xls`、`.xlsx`、`.csv`
-- Word：`.docx`
-- SVG：`.svg`
+本项目与 Obsidian、cweijan/vscode-office 或 rjwang1982/vscode-office 均无从属关系，也未获得其官方背书。
+
+## 当前范围
+
+当前导入的查看器支持以下文件类型：
+
+- Excel：`.xls`、`.xlsx`、`.csv`、`.ods`
+- Word：`.docx`、`.dotx`
 - PDF：`.pdf`
+- SVG：`.svg`
+- 图片：`.jpg`、`.png`、`.gif`、`.webp`、`.tif`、`.ico` 等
 - 字体：`.ttf`、`.otf`、`.woff`、`.woff2`
-- Markdown：`.md`
-- HTTP 请求：`.http`
+- Markdown：`.md`、`.markdown`
+- HTTP 请求文件：`.http`、`.rest`
 - Windows 注册表文件：`.reg`
-- 压缩文件：`.zip`、`.jar`、`.vsix`、`.rar`
+- 压缩包和扩展包：`.zip`、`.jar`、`.vsix`、`.rar`、`.apk`
+- HTML 预览：`.html`、`.htm`
 
-## Markdown
+Markdown 编辑器由 Vditor 提供。PDF、DOCX、HTML 导出仍沿用现有 `vscode-office` 导出路径；PDF 导出依赖 Chromium，并暂时继续使用旧的 `vscode-office.chromiumPath` 配置项。
 
-本扩展会使用 Vditor 替换默认的 Markdown 编辑器。请注意，Vditor 已不再积极维护。
+## 路线图
 
-如果你想使用原生 VS Code Markdown 编辑器，请在 `settings.json` 中加入以下配置：
+近期路线图如下：
 
-```json
-{
-    "workbench.editorAssociations": {
-        "*.md": "default",
-        "*.markdown": "default"
-    }
-}
-```
+1. 品牌重命名与 attribution 清理
+2. Obsidian 风格 wikilink，并按最接近的笔记解析
+3. Wikilink WebView/export 集成
+4. PPTX 只读文本/图片预览稳定化
+5. Markdown CJK 内联格式和删除线修复
+6. Excel 删除线和样式保留
+7. 面向复杂或旧版演示文稿的可选 LibreOffice fallback 完成与验证
 
-在编辑器中右键即可将 Markdown 导出为 PDF、DOCX 或 HTML。导出 PDF 依赖 Chromium，可通过 `vscode-office.chromiumPath` 配置其可执行文件路径。
+当前工作树已经暴露实验性的 `*.pptx` selector 和 LibreOffice fallback 配置。上面的路线图表示这些表面的稳定化和验证，并不是说当前 manifest 仍停留在纯 rebrand 阶段。
 
-导出 HTML 时，所有本地图片都会自动转换为 Base64 并嵌入文件中，因此导出的文件是完全独立的，分享时无需再附带图片资源。
+`[[Note]]` 解析会优先从当前文件上下文寻找最接近的 Markdown 笔记，再退回到工作区内最短且唯一的路径。若存在多个候选，扩展应提示用户选择，而不是静默猜测。
 
-![Markdown 编辑器截图](images/screenshot.png)
+Markdown 修复的优先级放在 CJK 文本与 Markdown 标记混合的渲染问题上，尤其是韩文、表格、`~~strike~~`、`**bold**` 同时出现的场景。Excel 删除线仍然有价值，但它排在当前 Markdown 编辑器问题之后。
 
-快捷键基于 [Vditor 快捷键](shortcut.md)，并额外提供以下命令：
+## 兼容性说明
 
-- 列表上移一行：`Ctrl+Alt+I` / `⌘ ^ I`
-- 列表下移一行：`Ctrl+Alt+J` / `⌘ ^ J`
-- 在 VS Code 中编辑：`Ctrl+Alt+E` / `⌘ ^ E`
+部分内部标识当前会暂时保留：
 
-提示：
+- 命令 ID，例如 `office.markdown.switch`
+- HTTP 辅助命令，例如 `vscode-office.request`
+- 配置项，例如 `vscode-office.editorMode`
+- 自定义编辑器 viewType，例如 `cweijan.markdownViewer`
 
-- 可通过 Ctrl/Cmd + 鼠标滚轮调整编辑器大小
-- 可通过 Ctrl/Meta + 点击或双击打开超链接
+这些标识属于运行时集成面。只有在兼容迁移方案明确之后，才会统一迁移，避免破坏现有设置、快捷键和自定义编辑器关联。
 
-## HTML
+## Attribution
 
-HTML 编辑器支持实时预览。按 `Ctrl+Shift+V` 即可打开实时视图。
+`vscode_obsdian` 包含来自以下项目的代码：
 
-## 致谢
+- [cweijan/vscode-office](https://github.com/cweijan/vscode-office)，Weijan Chen 创建的原始 `vscode-office` 项目
+- [rjwang1982/vscode-office](https://github.com/rjwang1982/vscode-office)，RJ.Wang 维护的 fork
 
-本项目的诞生离不开以下作者的工作：
+原始 MIT 版权和许可声明保留在 [LICENSE](LICENSE) 中。更多 attribution 记录在 [NOTICE.md](NOTICE.md)。
 
-- **[cweijan](https://github.com/cweijan)** — 原始项目 [vscode-office](https://github.com/cweijan/vscode-office) 的作者，本 Fork 基于其工作构建。同时维护了一个专为该扩展适配的 [Vditor 定制版本](https://github.com/vscode-ext-studio/vditor)。
-- **[Vanessa219（Liyuan Li）](https://github.com/Vanessa219)** — [Vditor](https://github.com/Vanessa219/vditor) 的作者，本扩展 Markdown 所见即所得编辑能力的核心引擎。该项目由 [B3log](https://b3log.org) 开源社区开发，采用 MIT 协议。
+## Third-Party Credits
 
-## Credits
-
-- PDF rendering: [mozilla/pdf.js/](https://github.com/mozilla/pdf.js/)
+- Markdown editor: [Vditor](https://github.com/Vanessa219/vditor)
+- PDF rendering: [mozilla/pdf.js](https://github.com/mozilla/pdf.js)
 - DOCX rendering: [VolodymyrBaydalka/docxjs](https://github.com/VolodymyrBaydalka/docxjs)
-- XLSX rendering:
-  - [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs): XLSX parsing
-  - [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet): XLSX rendering
-- HTTP: [Rest Client](https://github.com/Huachao/vscode-restclient)
-- Markdown: [Vanessa219/vditor](https://github.com/Vanessa219/vditor)
-- Mermaid diagrams: [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid)
+- XLSX parsing: [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs)
+- XLSX style preservation: [gitbrent/xlsx-js-style](https://github.com/gitbrent/xlsx-js-style)
+- Spreadsheet rendering: [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet)
+- HTTP request tooling: [Huachao/vscode-restclient](https://github.com/Huachao/vscode-restclient)
+- Diagrams: [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid)

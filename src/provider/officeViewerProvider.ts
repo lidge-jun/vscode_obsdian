@@ -8,6 +8,7 @@ import { handleImage, isImage } from './handlers/imageHandler';
 import { handleZip } from './compress/zipHandler';
 import { handleRar } from './compress/rarHandler';
 import { handleCommonEvent } from './compress/commonHandler';
+import { handlePptx } from './handlers/pptxHandler';
 
 /**
  * support view office files
@@ -34,7 +35,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         const folderPath = vscode.Uri.joinPath(uri, '..')
         webview.options = {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.file(this.extensionPath), folderPath]
+            localResourceRoots: [vscode.Uri.file(this.extensionPath), folderPath, this.context.globalStorageUri]
         }
 
         const handler = Handler.bind(webviewPanel, uri)
@@ -57,6 +58,10 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".docx":
             case ".dotx":
                 route = 'word'
+                break;
+            case ".pptx":
+                route = 'pptx';
+                handlePptx(uri, handler);
                 break;
             case ".jar":
             case ".zip":

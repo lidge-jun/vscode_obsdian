@@ -1,97 +1,74 @@
-# Office Viewer Enhanced
-
-Preview Word, Excel, PDF, Markdown, and more directly in VS Code and Kiro. Export self-contained HTML with embedded images, and render modern Mermaid diagrams with Mermaid v11 support.
-
-## Office Viewer (Fork)
-
-> Forked from [cweijan/vscode-office](https://github.com/cweijan/vscode-office), maintained by [RJ.Wang](mailto:wangrenjun@gmail.com).
-
-This extension is a maintained fork of the original project, with improvements focused on usability, portability, offline support, and package size.
-
-## What's improved in this fork
-
-- **Self-contained HTML export**
-  - Local images are automatically converted to Base64 and embedded into exported HTML files
-  - Share a single `.html` file without broken local image references
-- **Smaller package size**
-  - Removed the bundled Icon Theme and Java Decompiler to keep the extension focused on document viewing
-  - Reduced package size by about 4.4 MB
-- **Modern Mermaid support**
-  - Upgraded Mermaid from v8.8.0 to v11.14.0
-  - Newer Mermaid syntax renders correctly
-  - Mermaid is loaded locally instead of from a CDN for better offline support
-  - Replaced the deprecated `markdown-it-mermaid` dependency with a lightweight built-in integration
-- **Cleaner rendering**
-  - Markdown preview now fills the available editor width instead of wrapping too early
-  - Mermaid diagrams and document content are left-aligned instead of centered
-  - Removed dead code and fixed typos across the codebase
-
-## Introduction
+# vscode_obsdian
 
 English | [简体中文](README-CN.md)
 
-This extension supports previewing the following file types in VS Code:
+`vscode_obsdian` is a VS Code extension for reading Office documents and Markdown notes in one workspace. It starts from the MIT-licensed `vscode-office` code line and keeps the original license notices while moving toward Obsidian-style note navigation.
 
-- Excel: `.xls`, `.xlsx`, `.csv`
-- Word: `.docx`
-- SVG: `.svg`
+This project is not affiliated with or endorsed by Obsidian, cweijan/vscode-office, or rjwang1982/vscode-office.
+
+## Current Scope
+
+The imported viewer currently supports these file types:
+
+- Excel: `.xls`, `.xlsx`, `.csv`, `.ods`
+- Word: `.docx`, `.dotx`
 - PDF: `.pdf`
+- SVG: `.svg`
+- Images: `.jpg`, `.png`, `.gif`, `.webp`, `.tif`, `.ico`, and related formats
 - Fonts: `.ttf`, `.otf`, `.woff`, `.woff2`
-- Markdown: `.md`
-- HTTP requests: `.http`
+- Markdown: `.md`, `.markdown`
+- HTTP request files: `.http`, `.rest`
 - Windows Registry files: `.reg`
-- Archive files: `.zip`, `.jar`, `.vsix`, `.rar`
+- Archives and packages: `.zip`, `.jar`, `.vsix`, `.rar`, `.apk`
+- HTML preview: `.html`, `.htm`
 
-## Markdown
+Markdown editing is powered by Vditor. Export to PDF, DOCX, and HTML follows the existing `vscode-office` export path; PDF export requires Chromium and still uses the legacy `vscode-office.chromiumPath` setting.
 
-This extension replaces the default Markdown editor with Vditor. Please note that Vditor is no longer actively maintained.
+## Roadmap
 
-If you want to use the original VS Code editor, add the following to your `settings.json`:
+The near-term roadmap is:
 
-```json
-{
-    "workbench.editorAssociations": {
-        "*.md": "default",
-        "*.markdown": "default"
-    }
-}
-```
+1. Rebrand and attribution cleanup
+2. Obsidian-style wikilinks with closest-note resolution
+3. Wikilink WebView/export integration
+4. PPTX read-only text/image preview stabilization
+5. Markdown CJK inline formatting and strikethrough fixes
+6. Excel strikethrough/style preservation
+7. Optional LibreOffice fallback completion for complex or legacy presentations
 
-Right-click in the editor to export Markdown to PDF, DOCX, or HTML. PDF export requires Chromium, which can be configured via `vscode-office.chromiumPath`.
+The current working tree already exposes an experimental `*.pptx` selector and LibreOffice fallback configuration. The roadmap items above track stabilization and verification of those surfaces, not a claim that the public manifest is still rebrand-only.
 
-When exporting to HTML, local images are automatically embedded as Base64, so the exported file is fully self-contained and can be shared directly without losing any images.
+Wikilink behavior will be implemented as a workspace-safe resolver. For `[[Note]]`, the extension should prefer the closest matching Markdown note from the current file context, then fall back to the shortest unique workspace path. Ambiguous matches should be surfaced instead of guessed.
 
-![Markdown Editor Screenshot](images/screenshot.png)
+Markdown rendering fixes are prioritized around CJK text mixed with Markdown markers, especially cases like Korean text, tables, `~~strike~~`, and `**bold**` appearing together. Excel strikethrough remains useful, but it is secondary to the Markdown editor issue shown in current QA.
 
-Keyboard shortcuts are based on [Vditor shortcuts](shortcut.md), with additional commands:
+## Compatibility Note
 
-- Move list up: `Ctrl+Alt+I` / `⌘ ^ I`
-- Move list down: `Ctrl+Alt+J` / `⌘ ^ J`
-- Edit in VS Code: `Ctrl+Alt+E` / `⌘ ^ E`
+Some internal identifiers intentionally remain unchanged for now:
 
-Tips:
+- command IDs such as `office.markdown.switch`
+- HTTP helper IDs such as `vscode-office.request`
+- configuration keys such as `vscode-office.editorMode`
+- custom editor viewTypes such as `cweijan.markdownViewer`
 
-- Resize the editor with Ctrl/Cmd + mouse scroll
-- Open hyperlinks with Ctrl/Meta + click or double-click
+Those IDs are part of the runtime integration surface. They will be migrated only after a compatibility plan exists, because changing them all at once can break existing settings, keybindings, and custom editor associations.
 
-## HTML
+## Attribution
 
-The HTML editor supports live preview. Press `Ctrl+Shift+V` to open the live view.
+`vscode_obsdian` contains code derived from:
 
-## Acknowledgements
+- [cweijan/vscode-office](https://github.com/cweijan/vscode-office), the original `vscode-office` project by Weijan Chen
+- [rjwang1982/vscode-office](https://github.com/rjwang1982/vscode-office), a maintained fork by RJ.Wang
 
-This project would not exist without the work of the following authors:
+The original MIT copyright and license notices are preserved in [LICENSE](LICENSE). Additional attribution is recorded in [NOTICE.md](NOTICE.md).
 
-- **[cweijan](https://github.com/cweijan)** — Author of the original [vscode-office](https://github.com/cweijan/vscode-office) extension, which this fork is based on. Also maintains a [customized Vditor build](https://github.com/vscode-ext-studio/vditor) tailored for the extension.
-- **[Vanessa219 (Liyuan Li)](https://github.com/Vanessa219)** — Author of [Vditor](https://github.com/Vanessa219/vditor), the browser-based Markdown WYSIWYG editor at the heart of this extension's Markdown editing experience. Developed under the [B3log](https://b3log.org) open-source community, licensed under MIT.
+## Third-Party Credits
 
-## Credits
-
-- PDF rendering: [mozilla/pdf.js/](https://github.com/mozilla/pdf.js/)
+- Markdown editor: [Vditor](https://github.com/Vanessa219/vditor)
+- PDF rendering: [mozilla/pdf.js](https://github.com/mozilla/pdf.js)
 - DOCX rendering: [VolodymyrBaydalka/docxjs](https://github.com/VolodymyrBaydalka/docxjs)
-- XLSX rendering:
-  - [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs): XLSX parsing
-  - [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet): XLSX rendering
-- HTTP: [Rest Client](https://github.com/Huachao/vscode-restclient)
-- Markdown: [Vanessa219/vditor](https://github.com/Vanessa219/vditor)
-- Mermaid diagrams: [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid)
+- XLSX parsing: [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs)
+- XLSX style preservation: [gitbrent/xlsx-js-style](https://github.com/gitbrent/xlsx-js-style)
+- Spreadsheet rendering: [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet)
+- HTTP request tooling: [Huachao/vscode-restclient](https://github.com/Huachao/vscode-restclient)
+- Diagrams: [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid)

@@ -49,3 +49,14 @@ html {
     box-sizing: border-box !important;
     width: 100% !important;
 }
+
+.vscode-obsdian-wikilink {
+    color: var(--vscode-textLink-foreground, #0969da);
+    cursor: pointer;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+}
+
+.vscode-obsdian-wikilink:hover {
+    color: var(--vscode-textLink-activeForeground, #0550ae);
+}

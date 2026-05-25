@@ -1,4 +1,4 @@
-import { openLink, hotKeys, imageParser, getToolbar, autoSymbol, onToolbarClick, createContextMenu, scrollEditor } from "./util.js";
+import { openLink, hotKeys, imageParser, getToolbar, autoSymbol, onToolbarClick, createContextMenu, scrollEditor, installMarkdownPostProcessing } from "./util.js";
 
 let state;
 function loadConfigs() {
@@ -99,6 +99,7 @@ handler.on("open", async (md) => {
         editor.setValue(content);
       })
       openLink()
+      installMarkdownPostProcessing()
       onToolbarClick(editor)
     }
   })

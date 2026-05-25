@@ -153,6 +153,14 @@ export const openLink = () => {
         let ele = e.target;
         e.stopPropagation()
         const isSpecial = ['dblclick', 'auxclick'].includes(e.type)
+        const wikilinkBody = findWikilinkAtEvent(e);
+        if (wikilinkBody) {
+            const explicit = e.target?.closest?.('[data-wikilink]');
+            if (!explicit && !isCompose(e) && !isSpecial) return;
+            e.preventDefault();
+            handler.emit("openWikilink", { body: wikilinkBody });
+            return;
+        }
         if (!isCompose(e) && !isSpecial) {
             return;
         }
@@ -170,10 +178,11 @@ export const openLink = () => {
             }
         }
     }
-    const content = document.querySelector(".vditor-wysiwyg");
-    content.addEventListener('dblclick', clickCallback);
-    content.addEventListener('click', clickCallback);
-    content.addEventListener('auxclick', clickCallback);
+    document.querySelectorAll(".vditor-wysiwyg, .vditor-preview, .vditor-ir").forEach(content => {
+        content.addEventListener('dblclick', clickCallback);
+        content.addEventListener('click', clickCallback);
+        content.addEventListener('auxclick', clickCallback);
+    });
     document.querySelector(".vditor-reset").addEventListener("scroll", e => {
         // 滚动有偏差
         handler.emit("scroll", { scrollTop: e.target.scrollTop - 70 })
@@ -187,6 +196,104 @@ export const openLink = () => {
             handler.emit("openLink", ele.textContent)
         }
     });
+}
+
+export function installMarkdownPostProcessing() {
+    const run = () => { repairRenderedInlineMarkdown(); markRenderedWikilinks(); };
+    run();
+    const observer = new MutationObserver(run);
+    document.querySelectorAll('.vditor-preview, .vditor-ir')
+        .forEach(element => observer.observe(element, { childList: true, subtree: true, characterData: true }));
+}
+
+function findWikilinkAtEvent(event) {
+    const explicit = event.target?.closest?.('[data-wikilink]');
+    if (explicit) return explicit.getAttribute('data-wikilink');
+
+    const caret = getCaretFromPoint(event.clientX, event.clientY);
+    if (!caret || !caret.node || caret.node.nodeType !== Node.TEXT_NODE) return null;
+    const text = caret.node.textContent || '';
+    const pattern = /!?\[\[([^\]\r\n]+)\]\]/g;
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+        const start = match.index;
+        const end = match.index + match[0].length;
+        if (caret.offset >= start && caret.offset <= end) return match[1];
+    }
+    return null;
+}
+
+function getCaretFromPoint(x, y) {
+    if (document.caretRangeFromPoint) {
+        const range = document.caretRangeFromPoint(x, y);
+        return range ? { node: range.startContainer, offset: range.startOffset } : null;
+    }
+    if (document.caretPositionFromPoint) {
+        const position = document.caretPositionFromPoint(x, y);
+        return position ? { node: position.offsetNode, offset: position.offset } : null;
+    }
+    return null;
+}
+
+function markRenderedWikilinks() {
+    const roots = document.querySelectorAll('.vditor-preview .vditor-reset, .vditor-ir .vditor-reset');
+    roots.forEach(root => replaceTextMarkers(root, /(!)?\[\[([^\]\r\n]+)\]\]/g, (match) => {
+        const span = document.createElement('span');
+        span.className = 'vscode-obsdian-wikilink';
+        span.setAttribute('data-wikilink', match[2]);
+        span.textContent = displayWikilink(match[2]);
+        return span;
+    }));
+}
+
+function repairRenderedInlineMarkdown() {
+    const roots = document.querySelectorAll('.vditor-preview .vditor-reset, .vditor-ir .vditor-reset');
+    roots.forEach(root => {
+        for (let pass = 0, changed = 1; changed && pass < 4; pass++) changed = replaceTextMarkers(root, /(\*\*([^*\r\n][^*\r\n]*?)\*\*|~~([^~\r\n][^~\r\n]*?)~~)/g, (match) => {
+            const element = document.createElement(match[2] ? 'strong' : 'del');
+            element.textContent = match[2] || match[3];
+            return element;
+        });
+    });
+}
+
+function replaceTextMarkers(root, pattern, buildElement) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+            if (!node.textContent || !pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
+            pattern.lastIndex = 0;
+            const parent = node.parentElement;
+            if (!parent || parent.closest('a, code, pre, script, style, textarea, kbd, samp, [data-wikilink]')) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+        }
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => replaceTextNode(node, pattern, buildElement));
+    return nodes.length;
+}
+
+function replaceTextNode(node, pattern, buildElement) {
+    const text = node.textContent;
+    const fragment = document.createDocumentFragment();
+    let lastIndex = 0;
+    pattern.lastIndex = 0;
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+        if (match.index > lastIndex) fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        fragment.appendChild(buildElement(match));
+        lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+    node.parentNode.replaceChild(fragment, node);
+}
+
+function displayWikilink(body) {
+    const [targetWithHeading, alias] = body.split('|');
+    if (alias?.trim()) return alias.trim();
+    const heading = targetWithHeading.split('#')[1];
+    if (heading?.trim()) return heading.trim();
+    return targetWithHeading.split(/[\\/]/).pop().replace(/\.(md|markdown)$/i, '');
 }
 
 export function scrollEditor(top) {

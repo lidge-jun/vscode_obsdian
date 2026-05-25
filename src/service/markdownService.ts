@@ -2,7 +2,6 @@ import { adjustImgPath } from "@/common/fileUtil";
 import { Output } from "@/common/Output";
 import { spawn } from 'child_process';
 import chromeFinder from 'chrome-finder';
-import { fileTypeFromFile } from 'file-type';
 import { copyFileSync, existsSync, lstatSync, mkdirSync, renameSync } from 'fs';
 import { homedir } from 'os';
 import path, { dirname, extname, isAbsolute, join, parse } from 'path';
@@ -17,6 +16,10 @@ interface ExportOption {
     type?: ExportType;
     withoutOutline?: boolean;
 }
+
+type FileTypeModule = {
+    fileTypeFromFile: (filePath: string) => Promise<{ ext?: string } | undefined>;
+};
 
 export class MarkdownService {
 
@@ -134,6 +137,7 @@ export class MarkdownService {
 
     public static async imgExtGuide(absPath: string, relPath: string) {
         const oldExt = extname(absPath)
+        const { fileTypeFromFile } = await import('file-type') as unknown as FileTypeModule;
         const { ext = "png" } = (await fileTypeFromFile(absPath)) ?? {};
         if (oldExt != `.${ext}`) {
             relPath = relPath.replace(oldExt, `.${ext}`)

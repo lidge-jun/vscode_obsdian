@@ -1,4 +1,3 @@
-/// <reference path="index.js" />
 export interface Options {
 	/**
 	Include plus sign for positive numbers. If the difference is exactly zero a space character will be prepended instead for better alignment.

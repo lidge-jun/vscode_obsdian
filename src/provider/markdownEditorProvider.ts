@@ -8,6 +8,8 @@ import { Holder } from '../service/markdown/holder';
 import { MarkdownService } from '../service/markdownService';
 import { Global } from '@/common/global';
 import { platform } from 'os';
+import { WikilinkResolver } from '@/service/wikilink/wikilinkResolver';
+import { parseWikilinkBody } from '@/service/wikilink/wikilinkParser';
 
 /**
  * Markdown editor provider using Vditor as the editing engine.
@@ -21,7 +23,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private countStatus: vscode.StatusBarItem;
     private state: vscode.Memento;
 
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(private context: vscode.ExtensionContext, private wikilinkResolver?: WikilinkResolver) {
         this.extensionPath = context.extensionPath;
         this.countStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
         this.state = context.globalState
@@ -140,6 +142,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             } else {
                 vscode.env.openExternal(vscode.Uri.parse(uri));
             }
+        }).on("openWikilink", async ({ body }: { body: string }) => {
+            const link = parseWikilinkBody(body);
+            if (link) await this.wikilinkResolver?.open(uri, link);
         }).on("scroll", ({ scrollTop }) => {
             this.state.update(`scrollTop_${document.uri.fsPath}`, scrollTop)
         }).on("img", async (img) => {

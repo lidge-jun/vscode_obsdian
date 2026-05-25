@@ -17,11 +17,13 @@
         },
 		"resolveJsonModule": true,
         "esModuleInterop": true,
+		"skipLibCheck": true,
 		"strict": false 
 	},
 	"exclude": [
 		"src/react",
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"vite.config.ts"
 	]
 }

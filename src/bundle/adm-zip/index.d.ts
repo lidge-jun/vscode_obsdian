@@ -1,5 +1,3 @@
-/// <reference path="index.js" />
-
 import * as FS from "fs";
 import { Constants } from "./util";
 

@@ -121,6 +121,7 @@ function convertMarkdownToHtml(filename, type, text, config) {
     }
 
     md.use(markdownItCheckbox)
+      .use(markdownItWikilink)
       .use(markdownItAnchor)
       .use(markdownItToc)
       .use(markdownItKatex)
@@ -132,6 +133,58 @@ function convertMarkdownToHtml(filename, type, text, config) {
   } catch (error) {
     showErrorMessage("convertMarkdownToHtml()", error)
   }
+}
+
+function markdownItWikilink(md) {
+  md.inline.ruler.before('emphasis', 'vscode_obsdian_wikilink', (state, silent) => {
+    const start = state.pos;
+    if (state.src.charCodeAt(start) !== 0x5B || state.src.charCodeAt(start + 1) !== 0x5B) {
+      return false;
+    }
+    const end = state.src.indexOf(']]', start + 2);
+    if (end === -1) return false;
+    if (!silent) {
+      const body = state.src.slice(start + 2, end);
+      const parsed = parseWikilinkExportBody(body);
+      if (!parsed) return false;
+      const tokenOpen = state.push('link_open', 'a', 1);
+      tokenOpen.attrs = [['href', parsed.href], ['class', 'vscode-obsdian-wikilink']];
+      const tokenText = state.push('text', '', 0);
+      tokenText.content = parsed.label;
+      state.push('link_close', 'a', -1);
+    }
+    state.pos = end + 2;
+    return true;
+  });
+}
+
+function parseWikilinkExportBody(body) {
+  const trimmed = body.trim();
+  if (!trimmed) return undefined;
+  const [targetWithHeading, alias] = splitOnce(trimmed, '|');
+  const [target, heading] = splitOnce(targetWithHeading.trim(), '#');
+  const cleanTarget = target.trim().replace(/\\/g, '/');
+  if (!cleanTarget) return undefined;
+  if (isUnsafeWikilinkTarget(target.trim())) return undefined;
+  const hrefTarget = cleanTarget.match(/\.(md|markdown)$/i) ? cleanTarget : `${cleanTarget}.md`;
+  const label = alias?.trim() || heading?.trim() || path.basename(cleanTarget);
+  const href = heading ? `${hrefTarget}#${encodeURIComponent(heading.trim())}` : hrefTarget;
+  return { href, label };
+}
+
+function isUnsafeWikilinkTarget(target) {
+  return target.startsWith('/')
+    || target.startsWith('\\')
+    || path.win32.isAbsolute(target)
+    || path.posix.isAbsolute(target)
+    || /^[a-z][a-z0-9+.-]*:/i.test(target)
+    || target.includes('\0');
+}
+
+function splitOnce(value, separator) {
+  const index = value.indexOf(separator);
+  if (index === -1) return [value, undefined];
+  return [value.slice(0, index), value.slice(index + 1)];
 }
 
 

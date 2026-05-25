@@ -3,7 +3,6 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { handler } from '../../util/vscode';
 import './Image.less';
-import { FloatButton } from 'antd';
 import VSCodeLogo from "../vscode";
 
 export default function Image() {
