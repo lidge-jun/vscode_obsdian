@@ -11,6 +11,8 @@ template/**
 .eslintrc.js
 .eslintrc_react.cjs
 .github/**
+devlog/**
+structure/**
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json

@@ -44,7 +44,7 @@ images/logo-new.png
 
 - public package metadata, README, NOTICE부터 바꿈
 - 내부 command ID, config key, custom editor viewType은 호환성 계획 전까지 유지
-- 새 repo URL이 확정되지 않았으므로 upstream repository/bugs/homepage metadata는 제거하고 placeholder URL을 넣지 않음
+- 새 repo URL 확정 후 `repository`, `homepage`, `bugs` metadata는 `https://github.com/lidge-jun/vscode_obsdian`로 연결
 
 현재 release 결정:
 
@@ -58,7 +58,7 @@ images/logo-new.png
 - README가 새 제품 이름과 방향을 설명
 - GitHub fork branding은 제거
 - `cweijan/vscode-office`와 `rjwang1982/vscode-office` 계보는 명시
-- package metadata가 더 이상 upstream repo를 homepage/bugs/repository로 가리키지 않음
+- package metadata가 더 이상 upstream repo를 homepage/bugs/repository로 가리키지 않고 새 repo를 가리킴
 - NOTICE가 추가됨
 - `package.json` parse 검증 통과
 - runtime source 변경 phase에서 dependency 설치 후 build 검증

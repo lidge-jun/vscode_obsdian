@@ -5,6 +5,14 @@
 	"version": "3.7.4",
 	"publisher": "lidge-jun",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lidge-jun/vscode_obsdian.git"
+	},
+	"homepage": "https://github.com/lidge-jun/vscode_obsdian#readme",
+	"bugs": {
+		"url": "https://github.com/lidge-jun/vscode_obsdian/issues"
+	},
 	"icon": "images/logo-new.png",
 	"engines": {
 		"vscode": "^1.64.0"

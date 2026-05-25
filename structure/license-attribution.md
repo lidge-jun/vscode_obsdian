@@ -89,9 +89,9 @@ Current release metadata has been updated:
 - `displayName`
 - `description`
 - `publisher`
-- `bugs` removed until a real new repository URL exists
-- `homepage` removed until a real new repository URL exists
-- `repository` removed until a real new repository URL exists
+- `repository` points to `https://github.com/lidge-jun/vscode_obsdian.git`
+- `homepage` points to `https://github.com/lidge-jun/vscode_obsdian#readme`
+- `bugs` points to `https://github.com/lidge-jun/vscode_obsdian/issues`
 - `keywords`
 - configuration title
 
@@ -101,7 +101,7 @@ Future compatibility migration should separately decide:
 - configuration prefix
 - custom viewType IDs
 
-Do not use placeholder repository URLs. If the new upstream repo URL is unknown, leave repository metadata unset until the real URL exists.
+Do not use placeholder repository URLs. The current metadata uses the real new repository URL and must not point back to either upstream source.
 
 ## Current Release Decisions
 

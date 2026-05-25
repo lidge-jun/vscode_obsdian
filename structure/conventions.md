@@ -88,16 +88,15 @@ Current import state:
 - local path: `/Users/jun/Developer/new/700_projects/vscode_obsdian`
 - cloned source: `https://github.com/rjwang1982/vscode-office`
 - original upstream lineage: `https://github.com/cweijan/vscode-office`
-- current remote: `origin` still points at the source repository
-- no commit/push was made
-- package metadata no longer points homepage/bugs/repository at upstream
+- current `origin`: `https://github.com/lidge-jun/vscode_obsdian.git`
+- current `upstream`: `https://github.com/rjwang1982/vscode-office`
+- package metadata points homepage/bugs/repository at the new repo, not upstream
 
 Future new-repo step:
 
-1. Choose the final GitHub repository name.
-2. Decide whether to remove or rename `origin`.
-3. Add new remote only after user approval.
-4. Preserve MIT license and original copyright notice.
+1. Preserve MIT license and original copyright notice.
+2. Keep upstream lineage visible in README and NOTICE.
+3. Treat runtime ID migration as a separate compatibility task.
 
 ## Verification Convention
 
