@@ -66,7 +66,7 @@ Original copyright and license notices are preserved.
 5. Markdown CJK inline formatting / strikethrough 렌더링 개선
 6. Excel strikethrough style 보존
 7. LibreOffice fallback / .ppt legacy support (optional, deferred)
-8. HWP/HWPX native support via @rhwp/editor
+8. HWP/HWPX native support via @rhwp/editor, viewer-first until secure lifecycle is complete
 ```
 
 이 순서가 맞는 이유는 identity와 license 문서가 먼저 정리되어야 README, package metadata, marketplace 문구가 흔들리지 않기 때문입니다. 그 다음 핵심 차별점인 위키링크를 extension host와 WebView/export 양쪽에 붙이고, Office viewer 확장성인 PPTX를 붙입니다.
@@ -117,6 +117,30 @@ PPTX는 “편집기”가 아니라 “읽기 전용 preview”로 시작한다
 `.pptx`와 `.ppt`는 분리한다. `.pptx`는 OOXML zip package라 JS renderer와 맞고, `.ppt`는 legacy binary format이라 LibreOffice fallback 성격입니다. 원본 `vscode-office`에는 LibreOffice 의존성이 없었고, 현재 코드(`libreOfficeConverter.ts`, `previewLegacyPresentation` 커맨드)는 우리가 추가한 것이다. 제거하지 않고 비활성 상태로 유지하며 향후 opt-in 옵션으로 활성화할 수 있도록 남겨둔다.
 
 > 출처: [mutyai/pptviewer LibreOffice converter](https://github.com/mutyai/pptviewer/blob/main/src/libreoffice-converter.ts)
+
+## HWP/HWPX 방향
+
+HWP/HWPX는 Phase 8 구현으로 렌더링 가능성이 확인되었지만, editable
+support로 바로 배포하지 않는다. 2026-05-29 감사 기준으로 현재 구조는
+외부 rhwp iframe, permissive `postMessage`, readonly custom editor lifecycle,
+저장 버튼, CSP 부재가 한 흐름에 묶여 있어 보안과 데이터 손실 리스크가
+크다.
+
+따라서 제품 방향은 아래로 고정한다.
+
+```text
+1. HWP/HWPX는 먼저 안전한 viewer-only mode로 안정화한다.
+2. live remote rhwp iframe은 default runtime으로 쓰지 않는다.
+3. rhwp runtime은 extension-local bundle로 가져온다.
+4. 편집/저장은 VS Code CustomEditorProvider lifecycle이 구현된 뒤 별도 phase에서 켠다.
+5. HWPX 원본은 절대 HWP bytes로 덮어쓰지 않는다.
+```
+
+이 결정은 Phase 8.2 계획에 기록한다.
+
+> 로컬 근거: `devlog/_plan/260524_vscode_obsdian_baseline/08.2_phase_08_hwp_security_lifecycle_recovery.md`
+> 출처: [VS Code Custom Editor API](https://code.visualstudio.com/api/extension-guides/custom-editors)
+> 출처: [VS Code Webview API](https://code.visualstudio.com/api/extension-guides/webview)
 
 ## 취소선과 인라인 서식 방향
 

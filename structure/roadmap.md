@@ -265,16 +265,30 @@ package.json configuration
 
 `@rhwp/editor` (Rust → WebAssembly 기반 오픈소스 HWP/HWPX 뷰어/에디터)를 WebView에 iframe 임베드하여 `.hwp`/`.hwpx` 네이티브 지원을 추가합니다. 한컴오피스나 LibreOffice 없이 순수 WASM으로 원본 레이아웃 수준 렌더링이 가능합니다.
 
+2026-05-29 READ-ONLY audit result: Phase 8 is **blocked for editable release**.
+The first implementation can render a document, but it must not be shipped as
+editable HWP support until Phase 8.2 closes the external iframe trust boundary,
+VS Code save lifecycle, stale `loadFile` timeout, CSP, overwrite, and dependency
+audit issues. See
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2_phase_08_hwp_security_lifecycle_recovery.md`.
+Exact diff-level implementation addendum:
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2a_phase_08_hwp_security_exact_diffs.md`.
+Backend revalidation fix addendum:
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2b_phase_08_hwp_security_revalidation_fixes.md`.
+Frontend revalidation fix addendum:
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2c_phase_08_hwp_frontend_revalidation_fixes.md`.
+
 수정/추가 후보:
 
 ```text
 NEW  src/provider/handlers/hwpHandler.ts
 NEW  src/react/view/hwp/Hwp.tsx
-NEW  src/react/view/hwp/rhwp-host.html
+NEW  src/react/view/hwp/rhwpBridge/*
 MOD  src/provider/officeViewerProvider.ts
-MOD  src/react/App.tsx (route 추가)
+MOD  src/react/main.tsx (route 추가)
 MOD  package.json (dependency + filenamePattern)
-MOD  vite 설정 (WASM 복사)
+MOD  build.ts (local rhwp-studio asset copy)
+MOD  src/common/reactApp.ts (CSP + local asset config)
 ```
 
 완료 기준:
@@ -283,10 +297,44 @@ MOD  vite 설정 (WASM 복사)
 - 테이블, 이미지, 한글 텍스트가 정상 렌더링됨
 - 기존 파일 타입 (PPTX, DOCX, Excel, PDF) regression 없음
 - VSIX 패키징 성공
+- Phase 8.2 security/lifecycle recovery plan is implemented before editable support is advertised
 
 > 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
 > 출처: [golbin/hop](https://github.com/golbin/hop)
 > 출처: [@rhwp/editor npm](https://www.npmjs.com/package/@rhwp/editor)
+
+## Phase 8.2. HWP/HWPX Security And Lifecycle Recovery
+
+Phase 8.2 is a corrective phase created after the Insiders runtime audit showed
+that a small HWPX file renders while the wrapper still reports
+`Failed to load: Request timeout: loadFile`.
+
+수정 후보:
+
+```text
+MOD  src/react/view/hwp/Hwp.tsx
+MOD  src/provider/handlers/hwpHandler.ts
+MOD  src/provider/officeViewerProvider.ts or split provider for editable mode
+MOD  src/common/reactApp.ts
+NEW  src/react/view/hwp/rhwpBridge/*
+MOD  package/build assets for local rhwp-studio bundle
+MOD  package.json activation/configuration if needed
+```
+
+완료 기준:
+
+- default path does not load live `https://edwardkim.github.io/rhwp/`
+- WebView CSP is explicit and reviewed
+- HWP bridge validates source/origin/type/payload
+- viewer-only mode exposes no save/edit promise
+- editable mode, if chosen, uses real VS Code dirty/save/backup/revert lifecycle
+- `.hwpx -> .hwp` conversion never silently overwrites an existing sibling
+- the known HWPX fixture opens without a stale timeout banner
+- Backend and Frontend employee audits both PASS before implementation is treated as ready
+- `08.2a_phase_08_hwp_security_exact_diffs.md` is synchronized with this roadmap
+- `08.2b_phase_08_hwp_security_revalidation_fixes.md` closes revalidation findings
+- `08.2c_phase_08_hwp_frontend_revalidation_fixes.md` closes frontend revalidation findings
+- `98_dependency_audit_snapshot.md` is refreshed before release
 
 ## 전역 검증 묶음
 

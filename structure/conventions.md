@@ -74,8 +74,14 @@ devlog/
       06_phase_06_excel_strikethrough_preservation.md
       07_phase_07_libreoffice_fallback.md
       08_phase_08_hwp_hwpx_native_support.md
+      08.1_phase_08_hwp_hardened_diffs.md
+      08.2_phase_08_hwp_security_lifecycle_recovery.md
+      08.2a_phase_08_hwp_security_exact_diffs.md
+      08.2b_phase_08_hwp_security_revalidation_fixes.md
+      08.2c_phase_08_hwp_frontend_revalidation_fixes.md
       90_research_grok_expert.md
       97_baseline_import_snapshot.md
+      98_dependency_audit_snapshot.md
   _fin/
   str_func/
 ```
@@ -111,6 +117,9 @@ Docs-only verification:
 Future code verification:
 
 - `npm install` if dependencies are absent
+- `npx tsc --noEmit -p tsconfig.json`
+- `npx tsc --noEmit -p src/react/tsconfig.json` for React/WebView changes
 - `npm run build`
+- `npm audit --omit=dev` before release packaging
 - targeted manual VS Code extension host smoke test
 - WebView smoke for Markdown and binary previews

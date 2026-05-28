@@ -71,6 +71,12 @@ devlog/
       05_phase_05_markdown_cjk_inline_formatting.md
       06_phase_06_excel_strikethrough_preservation.md
       07_phase_07_libreoffice_fallback.md
+      08_phase_08_hwp_hwpx_native_support.md
+      08.1_phase_08_hwp_hardened_diffs.md
+      08.2_phase_08_hwp_security_lifecycle_recovery.md
+      08.2a_phase_08_hwp_security_exact_diffs.md
+      08.2b_phase_08_hwp_security_revalidation_fixes.md
+      08.2c_phase_08_hwp_frontend_revalidation_fixes.md
       90_research_grok_expert.md
       91_research_comparable_repos.md
       92_research_wikilink_deep_dive.md
@@ -79,6 +85,7 @@ devlog/
       95_research_rebrand_distribution.md
       96_appendix_direction_and_roadmap_lock.md
       97_baseline_import_snapshot.md
+      98_dependency_audit_snapshot.md
   _fin/
     .gitkeep
   str_func/
@@ -109,6 +116,10 @@ structure/research_notes/
 6. Phase 6: Excel strikethrough/style preservation
 7. Phase 7: LibreOffice fallback completion and verification (optional, deferred)
 8. Phase 8: HWP/HWPX native support via @rhwp/editor
+9. Phase 8.2: HWP/HWPX security and lifecycle recovery before shipping editable support
+10. Phase 8.2a: exact diff addendum for local rhwp bundle, CSP, lifecycle, and save safety
+11. Phase 8.2b: Backend revalidation fixes for studio URL wiring, viewer safety, message bridge, and dependency audit target
+12. Phase 8.2c: Frontend revalidation fixes for Hwp.tsx state, load status, viewer copy, and bridge serialization
 
 ## Research Inputs
 
