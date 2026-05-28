@@ -16,6 +16,14 @@ const dependencies = ['vscode-html-to-docx', 'highlight.js', 'pdf-lib', 'cheerio
 
 const sharedPlugins = [
     copy({
+        resolveFrom: 'cwd',
+        assets: {
+            from: ['./vendor/rhwp-studio-dist/**/*'],
+            to: ['./resource/rhwp-studio/'],
+            keepStructure: true
+        },
+    }),
+    copy({
         resolveFrom: 'out',
         assets: {
             from: ['./template/**/*'],

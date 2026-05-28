@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import * as vscode from 'vscode';
 import { WebviewPanel } from "vscode";
 import { Output } from "./Output";
+import { HWP_EVENTS, isHwpEvent, validateHwpPayload } from "./hwpMessageSchema";
 
 export class Handler {
 
@@ -51,6 +52,15 @@ export class Handler {
 
         // bind from webview
         panel.webview.onDidReceiveMessage((message) => {
+            const inboundHwpEvents = new Set<string>([HWP_EVENTS.init, HWP_EVENTS.requestSave]);
+            if (isHwpEvent(message?.type)
+                && (!inboundHwpEvents.has(message.type) || !validateHwpPayload(message.type, message.content))) {
+                panel.webview.postMessage({
+                    type: HWP_EVENTS.error,
+                    content: { error: 'Invalid HWP message payload' },
+                })
+                return
+            }
             eventEmitter.emit(message.type, message.content)
         })
         return new Handler(panel, eventEmitter);

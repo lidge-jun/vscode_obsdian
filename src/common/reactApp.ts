@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 
 interface ViewOption {
     route: string;
+    rhwpStudioUrl?: string;
+    hwpExperimentalSave?: boolean;
 }
 
 export class ReactApp {
@@ -17,7 +19,7 @@ export class ReactApp {
 
     public static async view(webview: vscode.Webview, option: ViewOption) {
         const html = await this.readContent()
-        webview.html = this.buildPath(html, webview)
+        webview.html = this.injectCsp(this.buildPath(html, webview), webview)
             .replace(`{{configs}}`, JSON.stringify({
                 ...option,
                 language: vscode.env.language,
@@ -44,6 +46,31 @@ export class ReactApp {
     private static buildPath(data: string, webview: vscode.Webview): string {
         const baseUrl = ReactApp.getBaseUrl(webview);
         return data.replace('<base href="/">', `<base href="${baseUrl}/">`);
+    }
+
+    private static injectCsp(data: string, webview: vscode.Webview): string {
+        const csp = this.IS_DEV
+            ? [
+                "default-src 'none'",
+                `img-src http://127.0.0.1:5739 ${webview.cspSource} data: blob:`,
+                `font-src http://127.0.0.1:5739 ${webview.cspSource} data:`,
+                `style-src http://127.0.0.1:5739 ${webview.cspSource} 'unsafe-inline'`,
+                `script-src http://127.0.0.1:5739 ${webview.cspSource} 'unsafe-eval'`,
+                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource}`,
+                `frame-src http://127.0.0.1:5739 ${webview.cspSource}`,
+                `worker-src http://127.0.0.1:5739 ${webview.cspSource} blob:`,
+            ].join('; ')
+            : [
+                "default-src 'none'",
+                `img-src ${webview.cspSource} data: blob:`,
+                `font-src ${webview.cspSource} data:`,
+                `style-src ${webview.cspSource} 'unsafe-inline'`,
+                `script-src ${webview.cspSource} 'wasm-unsafe-eval'`,
+                `connect-src ${webview.cspSource}`,
+                `frame-src ${webview.cspSource}`,
+                `worker-src ${webview.cspSource} blob:`,
+            ].join('; ');
+        return data.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${csp}">`);
     }
 
     private static getBaseUrl(webview: vscode.Webview) {

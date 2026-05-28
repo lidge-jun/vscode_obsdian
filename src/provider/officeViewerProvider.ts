@@ -34,9 +34,15 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         const uri = document.uri;
         const webview = webviewPanel.webview;
         const folderPath = vscode.Uri.joinPath(uri, '..')
+        const rhwpStudioRoot = vscode.Uri.file(`${this.extensionPath}/resource/rhwp-studio`)
         webview.options = {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.file(this.extensionPath), folderPath, this.context.globalStorageUri]
+            localResourceRoots: [
+                vscode.Uri.file(this.extensionPath),
+                rhwpStudioRoot,
+                folderPath,
+                this.context.globalStorageUri
+            ]
         }
 
         const handler = Handler.bind(webviewPanel, uri)
@@ -100,6 +106,15 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             default:
                 if (route) break;
                 vscode.commands.executeCommand('vscode.openWith', uri, "default");
+        }
+        if (route === 'hwp') {
+            const rhwpStudioUrl = webview.asWebviewUri(
+                vscode.Uri.file(`${this.extensionPath}/resource/rhwp-studio/index.html`)
+            ).toString();
+            const hwpExperimentalSave = vscode.workspace
+                .getConfiguration('vscode-obsdian')
+                .get<boolean>('hwp.experimentalSave', false);
+            return ReactApp.view(webview, { route, rhwpStudioUrl, hwpExperimentalSave })
         }
         if (route) return ReactApp.view(webview, { route })
     }

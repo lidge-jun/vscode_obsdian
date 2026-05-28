@@ -30,7 +30,12 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onStartupFinished"
+		"onStartupFinished",
+		"onCustomEditor:cweijan.officeViewer",
+		"onCustomEditor:cweijan.imageViewer",
+		"onCustomEditor:cweijan.markdownViewer",
+		"onCustomEditor:cweijan.markdownViewer.optional",
+		"onCustomEditor:cweijan.htmlViewer"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -505,6 +510,11 @@
 					"default": 30000,
 					"minimum": 1000,
 					"description": "LibreOffice legacy .ppt conversion timeout in milliseconds."
+				},
+				"vscode-obsdian.hwp.experimentalSave": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable experimental HWP export/save. Disabled by default because HWP editing lifecycle is not yet integrated with VS Code save semantics."
 				},
 				"vscode-office.pasterImgPath": {
 					"type": "string",

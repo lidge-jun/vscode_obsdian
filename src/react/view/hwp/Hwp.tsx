@@ -1,40 +1,41 @@
 import { Spin, Alert, Button } from 'antd';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { createEditor } from '@rhwp/editor';
-import type { RhwpEditor } from '@rhwp/editor';
+import {
+    HWP_EVENTS,
+    type HwpErrorPayload,
+    type HwpFileDataPayload,
+    type HwpSaveResultPayload,
+} from '../../../common/hwpMessageSchema';
 import { handler } from '../../util/vscode.ts';
+import { getConfigs } from '../../util/vscodeConfig.ts';
+import { createSecureRhwpEditor } from './rhwpBridge/createSecureRhwpEditor';
+import { DEFAULT_RHWP_REQUEST_TIMEOUT_MS, type SecureRhwpEditor } from './rhwpBridge/types';
 import './Hwp.less';
 
-interface HwpPayload {
-    fileName: string;
-    buffer: number[];
-    fileSize: number;
-    isHwpx: boolean;
-    error?: string;
-}
-
-interface SaveResult {
-    success: boolean;
-    savedPath?: string;
-    convertedFromHwpx?: boolean;
-    error?: string;
-}
-
 export default function Hwp() {
-    const editorRef = useRef<RhwpEditor | null>(null);
+    const configs = getConfigs();
+    const rhwpStudioUrl = configs?.rhwpStudioUrl;
+    const experimentalSave = Boolean(configs?.hwpExperimentalSave);
+    const editorRef = useRef<SecureRhwpEditor | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [warning, setWarning] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState<string | null>(null);
     const [isHwpx, setIsHwpx] = useState(false);
     const [fileName, setFileName] = useState('');
 
     useEffect(() => {
+        if (!rhwpStudioUrl) {
+            setLoading(false);
+            return;
+        }
+
         let destroyed = false;
 
         handler
-            .on('hwpData', async (data: HwpPayload) => {
+            .on(HWP_EVENTS.fileData, async (data: HwpFileDataPayload) => {
                 if (data.error) {
                     setError(data.error);
                     setLoading(false);
@@ -46,9 +47,25 @@ export default function Hwp() {
 
                 try {
                     if (!containerRef.current) return;
-                    const editor = await createEditor(containerRef.current, {
+                    containerRef.current.replaceChildren();
+                    const editor = await createSecureRhwpEditor(containerRef.current, {
+                        studioUrl: rhwpStudioUrl,
                         width: '100%',
                         height: '100%',
+                        requestTimeoutMs: DEFAULT_RHWP_REQUEST_TIMEOUT_MS,
+                        onLoadStatus: (status) => {
+                            if (destroyed) return;
+                            if (status.status === 'loaded') {
+                                setWarning(null);
+                                setLoading(false);
+                            } else if (status.status === 'warning') {
+                                setWarning(status.message);
+                                setLoading(false);
+                            } else if (status.status === 'failed') {
+                                setError(status.message);
+                                setLoading(false);
+                            }
+                        },
                     });
                     if (destroyed) { editor.destroy(); return; }
                     editorRef.current = editor;
@@ -61,7 +78,7 @@ export default function Hwp() {
                     setLoading(false);
                 }
             })
-            .on('hwpSaved', (result: SaveResult) => {
+            .on(HWP_EVENTS.saveResult, (result: HwpSaveResultPayload) => {
                 setSaving(false);
                 if (result.success) {
                     const msg = result.convertedFromHwpx
@@ -73,45 +90,72 @@ export default function Hwp() {
                     setError(`Save failed: ${result.error}`);
                 }
             })
-            .emit('init');
+            .on(HWP_EVENTS.error, (payload: HwpErrorPayload) => {
+                setError(payload.error);
+                setLoading(false);
+            })
+            .emit(HWP_EVENTS.init);
 
         return () => {
             destroyed = true;
             editorRef.current?.destroy();
         };
-    }, []);
+    }, [rhwpStudioUrl]);
 
     const handleSave = useCallback(async () => {
-        if (!editorRef.current || saving) return;
+        if (!editorRef.current || saving || !experimentalSave) return;
         setSaving(true);
         try {
             const hwpBytes = await editorRef.current.exportHwp();
-            const array = [...new Uint8Array(hwpBytes)];
-            handler.emit('saveHwp', array);
+            const array = toNumberArray(hwpBytes);
+            handler.emit(HWP_EVENTS.requestSave, { bytes: array, sourceFileName: fileName, isHwpx });
         } catch (e) {
             setError(`Export failed: ${e instanceof Error ? e.message : String(e)}`);
             setSaving(false);
         }
-    }, [saving]);
+    }, [experimentalSave, fileName, isHwpx, saving]);
+
+    if (!rhwpStudioUrl) {
+        return (
+            <div className="hwp-container">
+                <Alert
+                    type="error"
+                    message="HWP viewer is not configured"
+                    description="Missing local rhwp-studio URL."
+                    showIcon
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="hwp-container">
             {error && <Alert type="error" message={error} closable onClose={() => setError(null)} />}
+            {warning && <Alert type="warning" message={warning} closable onClose={() => setWarning(null)} />}
             {saveMsg && <Alert type="success" message={saveMsg} banner />}
             <div className="hwp-toolbar">
                 <span className="hwp-filename">{fileName}</span>
-                {isHwpx && <span className="hwp-badge">HWPX → saves as HWP</span>}
-                <Button
-                    type="primary"
-                    size="small"
-                    onClick={handleSave}
-                    loading={saving}
-                >
-                    Save HWP
-                </Button>
+                {!experimentalSave && <span className="hwp-badge">HWP/HWPX editing disabled</span>}
+                {experimentalSave && isHwpx && <span className="hwp-badge">HWPX -&gt; saves as HWP</span>}
+                {experimentalSave && (
+                    <Button
+                        type="primary"
+                        size="small"
+                        onClick={handleSave}
+                        loading={saving}
+                    >
+                        Save HWP
+                    </Button>
+                )}
             </div>
             {loading && <Spin spinning fullscreen />}
             <div ref={containerRef} className="hwp-editor" />
         </div>
     );
+}
+
+function toNumberArray(value: ArrayBuffer | Uint8Array | number[]): number[] {
+    if (Array.isArray(value)) return value;
+    if (value instanceof Uint8Array) return Array.from(value);
+    return Array.from(new Uint8Array(value));
 }

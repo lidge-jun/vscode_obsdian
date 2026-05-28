@@ -1,3 +1,5 @@
+import { isHwpEvent, validateHwpPayload } from '../../common/hwpMessageSchema';
+
 const vscode = window['acquireVsCodeApi']?.();
 const postMessage = (message) => { if (vscode) { vscode.postMessage(message) } }
 
@@ -6,6 +8,7 @@ function receive({ data }) {
     if (!data)
         return;
     if (events[data.type]) {
+        if (isHwpEvent(data.type) && !validateHwpPayload(data.type, data.content)) return;
         events[data.type](data.content);
     }
 }
