@@ -78,6 +78,7 @@ devlog/
       08.2b_phase_08_hwp_security_revalidation_fixes.md
       08.2c_phase_08_hwp_frontend_revalidation_fixes.md
       08.2d_phase_08_hwp_security_implementation_plan.md
+      08.2e_phase_08_hwp_security_frontend_verification_plan.md
       90_research_grok_expert.md
       91_research_comparable_repos.md
       92_research_wikilink_deep_dive.md
@@ -122,6 +123,7 @@ structure/research_notes/
 11. Phase 8.2b: Backend revalidation fixes for studio URL wiring, viewer safety, message bridge, and dependency audit target
 12. Phase 8.2c: Frontend revalidation fixes for Hwp.tsx state, load status, viewer copy, and bridge serialization
 13. Phase 8.2d: PABCD implementation plan for the full HWP/HWPX security recovery build
+14. Phase 8.2e: Frontend and verification appendix for the HWP/HWPX security recovery build
 
 ## Research Inputs
 
