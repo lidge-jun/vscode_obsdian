@@ -11,6 +11,7 @@ const Image = lazy(() => import('./view/image/Image.tsx'))
 const Word = lazy(() => import('./view/word/Word.tsx'))
 const FontViewer = lazy(() => import('./view/fontViewer/FontViewer.tsx'))
 const Pptx = lazy(() => import('./view/pptx/Pptx.tsx'))
+const Hwp = lazy(() => import('./view/hwp/Hwp.tsx'))
 
 document.getElementById('_defaultStyles')?.parentNode?.removeChild(document.getElementById('_defaultStyles'))
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -33,6 +34,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             return <Word />
           case 'font':
             return <FontViewer />
+          case 'hwp':
+            return <Hwp />
           case 'pptx':
             return <Pptx />
           default:

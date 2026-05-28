@@ -268,6 +268,12 @@
 					},
 					{
 						"filenamePattern": "*.svg"
+					},
+					{
+						"filenamePattern": "*.hwp"
+					},
+					{
+						"filenamePattern": "*.hwpx"
 					}
 				]
 			},
@@ -539,6 +545,7 @@
 	},
 	"dependencies": {
 		"@ant-design/icons": "^5.3.5",
+		"@rhwp/editor": "^0.7.13",
 		"adm-zip": "^0.5.10",
 		"antd": "^5.15.4",
 		"cheerio": "^1.0.0",
