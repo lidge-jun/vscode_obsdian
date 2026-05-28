@@ -49,7 +49,7 @@ images/logo-new.png
 현재 release 결정:
 
 - 최종 이름: display name은 `vscode_obsdian`, package name은 `vscode-obsdian`
-- Marketplace publisher: `lidge-jun`
+- Marketplace publisher: `jun6161`
 - `README-CN.md`는 유지
 - old `vscode-office.*` config와 `cweijan.*` viewType은 별도 migration plan 전까지 legacy compatibility surface로 유지
 

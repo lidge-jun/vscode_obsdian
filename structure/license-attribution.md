@@ -106,6 +106,6 @@ Do not use placeholder repository URLs. The current metadata uses the real new r
 ## Current Release Decisions
 
 1. Public package name is `vscode-obsdian`; display name remains `vscode_obsdian`.
-2. Publisher ID is `lidge-jun` in `package.json`.
+2. Publisher ID is `jun6161` in `package.json`.
 3. Runtime `vscode-office.*` settings and `cweijan.*` viewTypes are intentionally retained as legacy compatibility surfaces until a separate migration/alias decision exists.
 4. `README-CN.md` is retained and rewritten for now.

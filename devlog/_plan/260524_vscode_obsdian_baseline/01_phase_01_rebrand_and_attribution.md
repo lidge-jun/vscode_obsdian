@@ -71,7 +71,7 @@ MIT-derived code can be copied into a new repository, but the copyright notice, 
 
 1. Public package name: `vscode-obsdian`.
 2. Extension display name: `vscode_obsdian`.
-3. Publisher ID: `lidge-jun`.
+3. Publisher ID: `jun6161`.
 4. `README-CN.md` is retained.
 5. Old `vscode-office.*` settings and `cweijan.*` viewTypes are intentionally kept as legacy compatibility keys until a separate migration plan exists.
 

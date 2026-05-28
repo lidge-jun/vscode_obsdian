@@ -151,7 +151,7 @@ Excel 취소선은 그 다음 개선 대상입니다. 현재 reader가 SheetJS w
 
 ## 이름과 브랜딩
 
-현재 구현의 공개 package name은 `package.json` 기준 `vscode-obsdian`으로 고정합니다. Display name은 사용자 요청의 로컬 프로젝트명에 맞춰 `vscode_obsdian`을 유지하고, publisher는 `lidge-jun`입니다. 향후 `obsdian`/`obsidian` 철자를 바꾸는 일은 별도 rename 작업으로 다룹니다.
+현재 구현의 공개 package name은 `package.json` 기준 `vscode-obsdian`으로 고정합니다. Display name은 사용자 요청의 로컬 프로젝트명에 맞춰 `vscode_obsdian`을 유지하고, Marketplace publisher는 기존 publisher 계정에 맞춰 `jun6161`입니다. GitHub repository는 `lidge-jun/vscode_obsdian`을 유지합니다. 향후 `obsdian`/`obsidian` 철자를 바꾸는 일은 별도 rename 작업으로 다룹니다.
 
 > 로컬 근거: `/Users/jun/Developer/new/700_projects/vscode_obsdian`
 

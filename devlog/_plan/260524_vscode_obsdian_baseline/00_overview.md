@@ -136,7 +136,7 @@ structure/research_notes/
 Current implementation decisions:
 
 1. Public package name is `vscode-obsdian`; display name remains `vscode_obsdian`.
-2. Publisher identity is `lidge-jun`.
+2. Publisher identity is `jun6161`.
 3. `README-CN.md` stays.
 4. `.pptx` is handled by the custom editor; legacy `.ppt` is command-only LibreOffice fallback.
 5. Nonexistent `[[Wiki Link]]` targets warn instead of creating files in this phase.

@@ -66,7 +66,7 @@ Observed activation and registration responsibilities:
 
 - package name: `vscode-obsdian`
 - display name: `vscode_obsdian`
-- publisher: `lidge-jun`
+- publisher: `jun6161`
 - configuration prefix: `vscode-office.*`
 - command mix: `office.*` and `vscode-office.*`
 - custom view types: `cweijan.officeViewer`, `cweijan.imageViewer`, `cweijan.markdownViewer`, `cweijan.htmlViewer`

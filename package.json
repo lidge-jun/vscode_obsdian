@@ -3,7 +3,7 @@
 	"displayName": "vscode_obsdian",
 	"description": "Office and Markdown viewer for VS Code, based on MIT-licensed vscode-office with attribution preserved.",
 	"version": "3.7.5",
-	"publisher": "lidge-jun",
+	"publisher": "jun6161",
 	"license": "MIT",
 	"repository": {
 		"type": "git",

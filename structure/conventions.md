@@ -32,7 +32,7 @@ Current public identity:
 
 - package name: `vscode-obsdian`
 - display name: `vscode_obsdian`
-- publisher: `lidge-jun`
+- publisher: `jun6161`
 
 Legacy runtime identity still present:
 
