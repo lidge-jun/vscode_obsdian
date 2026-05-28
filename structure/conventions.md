@@ -73,6 +73,7 @@ devlog/
       05_phase_05_markdown_cjk_inline_formatting.md
       06_phase_06_excel_strikethrough_preservation.md
       07_phase_07_libreoffice_fallback.md
+      08_phase_08_hwp_hwpx_native_support.md
       90_research_grok_expert.md
       97_baseline_import_snapshot.md
   _fin/

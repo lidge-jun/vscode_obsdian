@@ -107,7 +107,8 @@ structure/research_notes/
 4. Phase 4: PPTX read-only text/media preview stabilization
 5. Phase 5: Markdown CJK inline formatting and strikethrough improvements
 6. Phase 6: Excel strikethrough/style preservation
-7. Phase 7: LibreOffice fallback completion and verification
+7. Phase 7: LibreOffice fallback completion and verification (optional, deferred)
+8. Phase 8: HWP/HWPX native support via @rhwp/editor
 
 ## Research Inputs
 

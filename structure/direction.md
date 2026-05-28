@@ -65,7 +65,8 @@ Original copyright and license notices are preserved.
 4. .pptx preview
 5. Markdown CJK inline formatting / strikethrough 렌더링 개선
 6. Excel strikethrough style 보존
-7. LibreOffice fallback / .ppt legacy support
+7. LibreOffice fallback / .ppt legacy support (optional, deferred)
+8. HWP/HWPX native support via @rhwp/editor
 ```
 
 이 순서가 맞는 이유는 identity와 license 문서가 먼저 정리되어야 README, package metadata, marketplace 문구가 흔들리지 않기 때문입니다. 그 다음 핵심 차별점인 위키링크를 extension host와 WebView/export 양쪽에 붙이고, Office viewer 확장성인 PPTX를 붙입니다.
@@ -113,7 +114,7 @@ PPTX는 “편집기”가 아니라 “읽기 전용 preview”로 시작한다
 > 출처: [javier-mora/pptx-to-html](https://github.com/javier-mora/pptx-to-html)
 > 출처: [g21589/PPTX2HTML](https://github.com/g21589/PPTX2HTML)
 
-`.pptx`와 `.ppt`는 분리한다. `.pptx`는 OOXML zip package라 JS renderer와 맞고, `.ppt`는 legacy binary format이라 LibreOffice fallback 성격입니다.
+`.pptx`와 `.ppt`는 분리한다. `.pptx`는 OOXML zip package라 JS renderer와 맞고, `.ppt`는 legacy binary format이라 LibreOffice fallback 성격입니다. 원본 `vscode-office`에는 LibreOffice 의존성이 없었고, 현재 코드(`libreOfficeConverter.ts`, `previewLegacyPresentation` 커맨드)는 우리가 추가한 것이다. 제거하지 않고 비활성 상태로 유지하며 향후 opt-in 옵션으로 활성화할 수 있도록 남겨둔다.
 
 > 출처: [mutyai/pptviewer LibreOffice converter](https://github.com/mutyai/pptviewer/blob/main/src/libreoffice-converter.ts)
 

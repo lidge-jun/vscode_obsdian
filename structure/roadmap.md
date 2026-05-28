@@ -238,7 +238,9 @@ src/react/view/excel/x-spreadsheet/canvas/draw.js
 > 로컬 근거: `src/react/view/excel/x-spreadsheet/core/data_proxy.js`
 > 로컬 근거: `src/react/view/excel/x-spreadsheet/canvas/draw.js`
 
-## Phase 7. LibreOffice Fallback
+## Phase 7. LibreOffice Fallback (optional, deferred)
+
+원본 `vscode-office`(cweijan/rjwang)는 LibreOffice 의존성이 없었습니다. 현재 코드베이스의 `src/service/pptx/libreOfficeConverter.ts`와 `extension.ts`의 `previewLegacyPresentation` 커맨드는 우리가 추가한 것입니다. 코드를 제거하지 않고 비활성 상태로 유지하며, 향후 사용자 설정으로 opt-in 활성화할 수 있는 optional fallback으로 남겨둡니다.
 
 PPTX pure JS renderer로 보기 어려운 복잡한 파일이나 legacy `.ppt`를 위한 optional fallback입니다. 기본 기능으로 넣지 않습니다.
 
@@ -259,6 +261,33 @@ package.json configuration
 
 > 출처: [mutyai/pptviewer LibreOffice converter](https://github.com/mutyai/pptviewer/blob/main/src/libreoffice-converter.ts)
 
+## Phase 8. HWP/HWPX Native Support
+
+`@rhwp/editor` (Rust → WebAssembly 기반 오픈소스 HWP/HWPX 뷰어/에디터)를 WebView에 iframe 임베드하여 `.hwp`/`.hwpx` 네이티브 지원을 추가합니다. 한컴오피스나 LibreOffice 없이 순수 WASM으로 원본 레이아웃 수준 렌더링이 가능합니다.
+
+수정/추가 후보:
+
+```text
+NEW  src/provider/handlers/hwpHandler.ts
+NEW  src/react/view/hwp/Hwp.tsx
+NEW  src/react/view/hwp/rhwp-host.html
+MOD  src/provider/officeViewerProvider.ts
+MOD  src/react/App.tsx (route 추가)
+MOD  package.json (dependency + filenamePattern)
+MOD  vite 설정 (WASM 복사)
+```
+
+완료 기준:
+
+- `.hwp`, `.hwpx` 파일을 VS Code에서 열면 rhwp 에디터가 WebView에 표시됨
+- 테이블, 이미지, 한글 텍스트가 정상 렌더링됨
+- 기존 파일 타입 (PPTX, DOCX, Excel, PDF) regression 없음
+- VSIX 패키징 성공
+
+> 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
+> 출처: [golbin/hop](https://github.com/golbin/hop)
+> 출처: [@rhwp/editor npm](https://www.npmjs.com/package/@rhwp/editor)
+
 ## 전역 검증 묶음
 
 코드 수정 phase부터는 아래 검증을 기본으로 둡니다.
@@ -272,6 +301,7 @@ VS Code Extension Development Host manual QA:
   .md wikilink navigation
   Vditor preview wikilink click
   .pptx preview open
+  .hwp/.hwpx preview open (Phase 8+)
   Markdown CJK strike/bold/table fixture
   styled .xlsx strike render
 ```
