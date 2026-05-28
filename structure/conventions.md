@@ -79,6 +79,7 @@ devlog/
       08.2a_phase_08_hwp_security_exact_diffs.md
       08.2b_phase_08_hwp_security_revalidation_fixes.md
       08.2c_phase_08_hwp_frontend_revalidation_fixes.md
+      08.2d_phase_08_hwp_security_implementation_plan.md
       90_research_grok_expert.md
       97_baseline_import_snapshot.md
       98_dependency_audit_snapshot.md
