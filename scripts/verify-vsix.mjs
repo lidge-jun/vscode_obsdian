@@ -1,0 +1,111 @@
+import { execFileSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = join(fileURLToPath(new URL('.', import.meta.url)), '..');
+const checks = [];
+const requireVsix = process.argv.includes('--vsix');
+
+function check(name, condition, detail = '') {
+    checks.push({ name, ok: Boolean(condition), detail });
+}
+
+function readText(relativePath) {
+    return readFileSync(join(root, relativePath), 'utf8');
+}
+
+function listFiles(relativePath) {
+    const absolute = join(root, relativePath);
+    return existsSync(absolute) ? readdirSync(absolute) : [];
+}
+
+function findLatestVsix() {
+    const files = readdirSync(root)
+        .filter((file) => file.endsWith('.vsix'))
+        .map((file) => {
+            const absolute = join(root, file);
+            return { file, mtimeMs: statSync(absolute).mtimeMs };
+        })
+        .sort((a, b) => b.mtimeMs - a.mtimeMs);
+    return files[0]?.file;
+}
+
+function readVsixListing(vsixFile) {
+    try {
+        return execFileSync('unzip', ['-l', join(root, vsixFile)], {
+            cwd: root,
+            encoding: 'utf8',
+            maxBuffer: 16 * 1024 * 1024,
+        });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return `UNZIP_FAILED ${message}`;
+    }
+}
+
+const packageJson = JSON.parse(readText('package.json'));
+const readme = readText('README.md');
+const notice = readText('NOTICE.md');
+const docsIndex = readText('docs/index.html');
+const vscodeignore = readText('.vscodeignore');
+
+check('Package homepage points to GitHub Pages', packageJson.homepage === 'https://lidge-jun.github.io/vscode_obsdian/');
+check('Package description highlights HWP/HWPX', packageJson.description.includes('HWP/HWPX'));
+for (const keyword of ['hwp', 'hwpx', 'korean', 'rhwp', 'document']) {
+    check(`Package keyword includes ${keyword}`, packageJson.keywords.includes(keyword));
+}
+for (const script of ['typecheck', 'verify:hwp', 'verify:vsix', 'verify:release', 'release:local']) {
+    check(`Package script exists: ${script}`, typeof packageJson.scripts[script] === 'string');
+}
+
+check('README documents HWP/HWPX editing', readme.includes('HWP/HWPX Editing'));
+check('README documents release checks', readme.includes('npm run release:local'));
+check('NOTICE includes rhwp attribution', notice.includes('edwardkim/rhwp'));
+check('NOTICE includes bundled font notice', notice.includes('Bundled Fonts'));
+check('GitHub Pages index exists', docsIndex.includes('vscode_obsdian') && docsIndex.includes('HWP/HWPX'));
+check('VSIX excludes docs directory', vscodeignore.includes('docs/**'));
+check('VSIX excludes development scripts', vscodeignore.includes('scripts/**'));
+check('VSIX excludes upstream development log', vscodeignore.includes('DEVELOPMENT_LOG.md'));
+
+const rhwpRootExists = existsSync(join(root, 'resource/rhwp-studio/index.html'));
+const rhwpAssets = listFiles('resource/rhwp-studio/assets');
+check('Built local rhwp-studio index exists', rhwpRootExists);
+check('Built local rhwp-studio contains WASM assets', rhwpAssets.filter((file) => file.endsWith('.wasm')).length >= 2);
+check('Built local rhwp-studio contains JS asset', rhwpAssets.some((file) => file.endsWith('.js')));
+
+const latestVsix = findLatestVsix();
+if (requireVsix) {
+    check('VSIX artifact exists', Boolean(latestVsix));
+    if (latestVsix) {
+        const listing = readVsixListing(latestVsix);
+        const expectedName = `vscode-obsdian-${packageJson.version}.vsix`;
+        const sizeBytes = statSync(join(root, latestVsix)).size;
+        check('VSIX name matches package version', basename(latestVsix) === expectedName, latestVsix);
+        check('VSIX listing readable', !listing.startsWith('UNZIP_FAILED'));
+        check('VSIX includes rhwp-studio index', listing.includes('extension/resource/rhwp-studio/index.html'));
+        check('VSIX includes rhwp WASM assets', /extension\/resource\/rhwp-studio\/assets\/[^ ]+\.wasm/.test(listing));
+        check('VSIX includes NOTICE', listing.includes('extension/NOTICE.md'));
+        check('VSIX includes LICENSE', listing.includes('extension/LICENSE.txt') || listing.includes('extension/LICENSE'));
+        check('VSIX excludes rhwp sample files', !listing.includes('extension/resource/rhwp-studio/samples/'));
+        check('VSIX excludes vendor sources', !listing.includes('extension/vendor/'));
+        check('VSIX excludes docs site', !listing.includes('extension/docs/'));
+        if (sizeBytes > 45 * 1024 * 1024) {
+            console.warn(`WARN VSIX is large because it bundles rhwp-studio assets: ${(sizeBytes / 1024 / 1024).toFixed(1)} MB`);
+        }
+    }
+}
+
+if (!requireVsix) {
+    console.log('INFO Skipping VSIX artifact inspection; run npm run package:verify for package checks.');
+}
+
+const failed = checks.filter((item) => !item.ok);
+for (const item of checks) {
+    const suffix = item.detail ? ` - ${item.detail}` : '';
+    console.log(`${item.ok ? 'PASS' : 'FAIL'} ${item.name}${suffix}`);
+}
+
+if (failed.length > 0) {
+    process.exitCode = 1;
+}

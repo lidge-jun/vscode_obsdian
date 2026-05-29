@@ -11,6 +11,7 @@ template/**
 .eslintrc.js
 .eslintrc_react.cjs
 .github/**
+docs/**
 devlog/**
 structure/**
 vsc-extension-quickstart.md
@@ -30,6 +31,8 @@ build.ts
 public/
 vendor/**
 resource/rhwp-studio/samples/**
+scripts/**
+DEVELOPMENT_LOG.md
 lib.js
 backlog.md
 index.html
@@ -37,3 +40,4 @@ yarn.lock
 vite.config.ts
 shortcut.md
 README-CN.md
+README-KO.md

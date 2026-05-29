@@ -1,5 +1,19 @@
 # Change log
 
+# 3.7.5 2026-5-29 (Maintained by jun6161)
+- Add dedicated HWP/HWPX custom editor support powered by a bundled local
+  `rhwp-studio` runtime and rhwp WASM engine.
+- Support opening, editing, and saving common `.hwp` and `.hwpx` documents
+  without Hancom Office, LibreOffice, or a remote default runtime.
+- Add format-aware HWP/HWPX saves: HWP writes HWP bytes and HWPX writes HWPX
+  bytes, with mismatch guards before file writes.
+- Integrate HWP/HWPX with VS Code editable custom editor lifecycle:
+  dirty state, native save, Save As, revert, backup, and hot-exit support.
+- Harden WebView and bridge handling for local rhwp-studio packaging, CSP,
+  WASM resource rewriting, and HWP message schema validation.
+- Add HWP release smoke checks and VSIX packaging verification for the bundled
+  rhwp runtime.
+
 # 3.7.4 2026-5-9 (Maintained by RJ.Wang <wangrenjun@gmail.com>)
 - Upgrade docx-preview from 0.3.0 to 0.3.7, improving Word table rendering (borders, merged cells, background colors).
 

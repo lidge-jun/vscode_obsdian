@@ -122,28 +122,29 @@ PPTX는 “편집기”가 아니라 “읽기 전용 preview”로 시작한다
 
 HWP/HWPX는 Phase 8 구현과 2026-05-29 Insiders 검증으로 full rhwp editing
 경로가 실제 동작함을 확인했다. 한 차례 security-first 방향으로
-viewer-only default를 적용했지만, 사용자가 이를 명확히 거부했다. 이
-프로젝트에서 HWP/HWPX 지원의 제품 가치는 rhwp의 전체 편집 기능을 쓰는
-것이므로, default는 full editing으로 되돌린다.
+viewer-only default를 적용했지만, 사용자가 이를 명확히 거부했다. 이후
+local rhwp-studio bundle, VS Code CustomEditorProvider lifecycle, format-aware
+save, dirty bridge, VSIX smoke gate까지 hardening했다.
 
 따라서 제품 방향은 아래로 갱신한다.
 
 ```text
 1. HWP/HWPX는 full rhwp editing을 default로 제공한다.
-2. live remote rhwp studio는 현재 default runtime이다.
-3. 저장은 default enabled이며, 사용자가 설정으로 끌 수 있다.
+2. bundled local `resource/rhwp-studio`는 default runtime이다.
+3. live remote rhwp studio는 `vscode-obsdian.hwp.studioUrl` opt-in으로만 둔다.
 4. HWP는 HWP로, HWPX는 HWPX로 저장한다.
 5. HWPX 원본은 절대 HWP bytes로 조용히 덮어쓰지 않는다.
-6. extension-local bundle은 full editing/export가 검증된 뒤 default 후보로 다시 평가한다.
-7. VS Code CustomEditorProvider dirty/save/backup lifecycle은 후속 hardening debt로 둔다.
+6. 저장은 VS Code native custom editor save lifecycle을 따른다.
+7. release 전 `npm run release:local`과 VSIX content verification을 통과한다.
 ```
 
-이 결정은 Phase 8.2f 회복 감사에 기록한다. 이전 Phase 8.2의 viewer-only
-방향은 보안상 안전했지만 사용 요구사항과 맞지 않았으므로 superseded
-상태로 본다.
+이 결정은 Phase 8.2f/8.2g 회복 감사와 2026-05-29 follow-up save lifecycle
+fix에 기록한다. 이전 Phase 8.2의 viewer-only 방향은 보안상 안전했지만 사용
+요구사항과 맞지 않았으므로 superseded 상태로 본다.
 
 > 로컬 근거: `devlog/_plan/260524_vscode_obsdian_baseline/08.2_phase_08_hwp_security_lifecycle_recovery.md`
 > 로컬 근거: `devlog/_plan/260524_vscode_obsdian_baseline/08.2f_phase_08_hwp_full_editing_recovery_audit.md`
+> 로컬 근거: `devlog/_plan/260524_vscode_obsdian_baseline/08.2g_phase_08_hwp_lifecycle_hardening_completion.md`
 > 출처: [VS Code Custom Editor API](https://code.visualstudio.com/api/extension-guides/custom-editors)
 > 출처: [VS Code Webview API](https://code.visualstudio.com/api/extension-guides/webview)
 

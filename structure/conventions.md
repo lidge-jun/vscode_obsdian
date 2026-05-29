@@ -121,9 +121,21 @@ Docs-only verification:
 Future code verification:
 
 - `npm install` if dependencies are absent
-- `npx tsc --noEmit -p tsconfig.json`
-- `npx tsc --noEmit -p src/react/tsconfig.json` for React/WebView changes
+- `npm run typecheck`
 - `npm run build`
+- `npm run verify:hwp`
+- `node scripts/verify-vsix.mjs`
+- `npm run package:verify` for VSIX content inspection
+- `npm run release:local` before GitHub Release or Marketplace publish
 - `npm audit --omit=dev` before release packaging
 - targeted manual VS Code extension host smoke test
 - WebView smoke for Markdown and binary previews
+
+Release artifacts:
+
+- Commit source/docs/scripts only.
+- Do not commit `*.vsix`.
+- Do not commit generated `resource/rhwp-studio/`.
+- Do not commit dirty runtime sample files unless the sample change is the
+  explicit task.
+- GitHub Pages source lives under `docs/` and is excluded from VSIX packaging.

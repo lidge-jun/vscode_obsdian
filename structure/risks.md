@@ -107,3 +107,40 @@ Mitigation:
 - Phase 1은 public metadata/README/NOTICE만 변경
 - command/config/viewType prefix migration은 별도 phase로 분리
 - backwards compatibility 필요 여부를 명확히 결정한 뒤 migration 또는 alias 전략 선택
+
+## R9. Release Artifact Drift
+
+Risk: `vendor/rhwp-studio-dist`는 tracked source이고 `resource/rhwp-studio`는
+build-generated ignored output입니다. 빌드를 돌리지 않거나 VSIX 내용을 검사하지
+않으면 Marketplace/GitHub Release artifact가 README와 다른 runtime을 포함할 수
+있습니다.
+
+Mitigation:
+
+- `npm run build`로 `resource/rhwp-studio`를 매번 재생성
+- `npm run verify:hwp`로 source/build hardening checks 실행
+- `npm run package:verify`로 VSIX에 rhwp WASM이 포함되고 samples/vendor/docs/scripts가
+  제외되었는지 확인
+- `npm run release:local`을 GitHub Release와 Marketplace publish의 기본 gate로 사용
+- `structure/release.md`를 release runbook으로 유지
+
+## R10. Legacy Dependency Audit Debt
+
+Risk: inherited viewer dependencies still trigger `npm audit --omit=dev`
+findings, including `x-data-spreadsheet` transitive dependencies and `xlsx`.
+Some advisories report no direct fix through `npm audit fix`.
+
+Impact:
+
+- Marketplace publish should not be described as security-clean until the
+  residual risk is explicitly accepted or the dependency path is replaced.
+- Naive `npm audit fix --force` may introduce breaking changes in document
+  parsing/rendering paths.
+
+Mitigation:
+
+- Keep `npm audit --omit=dev` in the Marketplace pre-publish checklist.
+- Treat current findings as accepted residual risk only for GitHub README/Pages
+  and VSIX smoke push, not as a final security hardening pass.
+- Plan a separate dependency replacement phase for `xlsx` and legacy
+  spreadsheet transitive packages.

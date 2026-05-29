@@ -1,11 +1,18 @@
 # vscode_obsdian Structure Index
 
-이 디렉터리는 코드 수정 전에 현재 상태를 고정해 두는 기준 문서입니다. 지금 단계의 목적은 `rjwang1982/vscode-office`를 MIT 라이선스 기반의 새 로컬 프로젝트 `vscode_obsdian`으로 가져온 뒤, 구현에 들어가기 전에 구조와 리스크를 분리해서 기록하는 것입니다. 단, `rjwang1982/vscode-office`는 `cweijan/vscode-office`의 fork이므로 attribution에는 두 upstream 계열을 모두 남깁니다.
+이 디렉터리는 현재 `vscode_obsdian`의 제품 방향, 구조, release gate, 라이선스
+고지 전략을 고정하는 기준 문서입니다. 프로젝트는 `rjwang1982/vscode-office`를
+MIT 라이선스 기반의 새 로컬 프로젝트로 가져온 뒤, HWP/HWPX 편집과 Markdown
+workflow를 얹는 방향으로 진행되었습니다. 단, `rjwang1982/vscode-office`는
+`cweijan/vscode-office`의 fork이므로 attribution에는 두 upstream 계열을 모두
+남깁니다.
 
 > 출처: [rjwang1982/vscode-office](https://github.com/rjwang1982/vscode-office)
 > 출처: [cweijan/vscode-office](https://github.com/cweijan/vscode-office)
 
-현 시점에는 코드, 패키지 메타데이터, README 원문을 수정하지 않았습니다. 이 문서 세트는 다음 구현 단계에서 “무엇을 바꿀지”를 판단하기 위한 기준선입니다.
+현 시점에는 package metadata, README, NOTICE, HWP/HWPX runtime, release scripts가
+이미 변경되었습니다. 이 문서 세트는 다음 구현 단계에서 “현재 무엇이 shipped
+surface인지”와 “어떤 release gate를 통과해야 하는지”를 판단하기 위한 기준선입니다.
 
 ## Documents
 
@@ -18,16 +25,17 @@
 - [research_notes/00_index.md](research_notes/00_index.md) — 위키링크, PPTX, 취소선, rebrand를 주제별로 쪼갠 상세 조사 노트
 - [risks.md](risks.md) — 위키링크, PPTX, 취소선, WebView 보안, 라이선스 리스크
 - [license-attribution.md](license-attribution.md) — MIT 파생 코드의 라이선스/고지 전략
+- [release.md](release.md) — VSIX packaging, GitHub Releases, GitHub Pages, Marketplace publish runbook
 
 ## Current Scope
 
-이번 스캐폴딩은 문서만 추가합니다.
+현재 public/release surface:
 
-- 코드 수정 없음
-- README 수정 없음
-- `package.json` 수정 없음
-- git commit/push 없음
-- 원본 MIT 라이선스 보존
+- `README.md`, `README-CN.md`, `README-KO.md`, `NOTICE.md`가 public docs 역할을 함
+- `docs/`는 GitHub Pages용 독립 landing page
+- HWP/HWPX는 bundled local `rhwp-studio` 기반 editable custom editor
+- `scripts/verify-hwp-hardening.mjs`와 `scripts/verify-vsix.mjs`가 release smoke gate
+- 원본 MIT 라이선스와 upstream attribution은 보존
 
 ## Next Source Of Truth
 

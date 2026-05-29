@@ -309,6 +309,7 @@ MOD  src/common/reactApp.ts (CSP + local asset config)
 - 기존 파일 타입 (PPTX, DOCX, Excel, PDF) regression 없음
 - VSIX 패키징 성공
 - CustomEditorProvider dirty/save/save-as/revert/backup lifecycle is implemented
+- `npm run release:local` passes before GitHub Release or Marketplace publish
 
 > 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
 > 출처: [golbin/hop](https://github.com/golbin/hop)
@@ -363,13 +364,25 @@ granular edit events. Current implementation uses conservative content-change
 dirty signals.
 ```
 
+2026-05-29 release polish update:
+
+```text
+README/NOTICE/GitHub Pages now describe HWP/HWPX as a shipped editable feature.
+structure/release.md is the canonical release runbook.
+scripts/verify-vsix.mjs checks packaged rhwp runtime inclusion and source exclusions.
+```
+
 ## 전역 검증 묶음
 
 코드 수정 phase부터는 아래 검증을 기본으로 둡니다.
 
 ```text
 npm install
+npm run typecheck
 npm run build
+npm run verify:hwp
+npm run package:verify
+npm run release:local
 VS Code Extension Development Host manual QA:
   README/metadata 확인
   .md wikilink completion
@@ -381,4 +394,6 @@ VS Code Extension Development Host manual QA:
   styled .xlsx strike render
 ```
 
-문서만 수정하는 단계에서는 build를 돌리지 않습니다. 코드와 package metadata를 수정한 phase부터 build를 검증합니다.
+문서만 수정하는 단계에서는 build를 생략할 수 있습니다. 코드, package metadata,
+release script, VSIX packaging surface를 수정한 phase부터는 `npm run
+release:local`을 검증합니다.

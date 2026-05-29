@@ -1,7 +1,7 @@
 {
 	"name": "vscode-obsdian",
 	"displayName": "vscode_obsdian",
-	"description": "Office and Markdown viewer for VS Code, based on MIT-licensed vscode-office with attribution preserved.",
+	"description": "Office, Markdown, and HWP/HWPX editing for VS Code with a bundled local rhwp runtime.",
 	"version": "3.7.5",
 	"publisher": "jun6161",
 	"license": "MIT",
@@ -9,7 +9,7 @@
 		"type": "git",
 		"url": "https://github.com/lidge-jun/vscode_obsdian.git"
 	},
-	"homepage": "https://github.com/lidge-jun/vscode_obsdian#readme",
+	"homepage": "https://lidge-jun.github.io/vscode_obsdian/",
 	"bugs": {
 		"url": "https://github.com/lidge-jun/vscode_obsdian/issues"
 	},
@@ -18,17 +18,28 @@
 		"vscode": "^1.64.0"
 	},
 	"keywords": [
+		"hwp",
+		"hwpx",
+		"hangul",
+		"korean",
+		"office",
 		"pdf",
 		"word",
 		"markdown",
 		"notes",
 		"xlsx",
-		"excel"
+		"excel",
+		"rhwp",
+		"document"
 	],
 	"categories": [
 		"Visualization",
 		"Other"
 	],
+	"galleryBanner": {
+		"color": "#111318",
+		"theme": "dark"
+	},
 	"activationEvents": [
 		"onStartupFinished",
 		"onCustomEditor:cweijan.officeViewer",
@@ -540,11 +551,18 @@
 	"scripts": {
 		"dev": "vite --mode=development",
 		"lint:fix": "eslint src/**/*.ts --fix",
+		"typecheck": "tsc --noEmit && tsc --noEmit -p src/react/tsconfig.json",
 		"build": "rm -rf out && vite build --mode=production",
 		"test:hwp-hardening": "node scripts/verify-hwp-hardening.mjs",
+		"verify:hwp": "node scripts/verify-hwp-hardening.mjs",
+		"verify:vsix": "node scripts/verify-vsix.mjs --vsix",
+		"verify:release": "npm run typecheck && npm run build && npm run verify:hwp && node scripts/verify-vsix.mjs",
+		"smoke": "npm run verify:release",
 		"package": "vsce package --no-dependencies",
-		"publish": "vsce publish --no-dependencies",
-		"vscode:prepublish": "npm run build"
+		"package:verify": "npm run package && npm run verify:vsix",
+		"release:local": "npm run verify:release && npm run package:verify",
+		"publish": "npm run verify:release && vsce publish --no-dependencies",
+		"vscode:prepublish": "npm run build && npm run verify:hwp"
 	},
 	"devDependencies": {
 		"@types/adm-zip": "^0.5.0",

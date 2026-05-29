@@ -185,13 +185,36 @@ Observed build stack:
 
 - TypeScript extension entry bundled by `esbuild` through `build.ts`
 - React WebView bundled by Vite into `out/webview`
+- rhwp-studio runtime copied from `vendor/rhwp-studio-dist` into
+  `resource/rhwp-studio`, then patched for VS Code WebView asset paths and WASM
+  fetches
 - package scripts:
   - `npm run dev`
+  - `npm run typecheck`
   - `npm run build`
+  - `npm run verify:hwp`
+  - `npm run verify:release`
   - `npm run package`
+  - `npm run package:verify`
+  - `npm run release:local`
   - `npm run publish`
 - root `tsconfig.json` uses CommonJS output for extension code
 - `src/react/tsconfig.json` uses ESM-oriented Vite/React settings
+
+Release build flow:
+
+```text
+vendor/rhwp-studio-dist
+  -> build.ts copy plugin
+  -> resource/rhwp-studio
+  -> bridge/path rewrite
+  -> scripts/verify-hwp-hardening.mjs
+  -> vsce package
+  -> scripts/verify-vsix.mjs
+```
+
+`resource/rhwp-studio` is generated and gitignored. Release checks must run
+`npm run build` before smoke or package verification.
 
 Important constraint: the current repo mixes CommonJS build output and ESM React code. Any future migration toward stricter ESM needs a dedicated phase; it should not be hidden inside feature work.
 
@@ -201,7 +224,9 @@ Important constraint: the current repo mixes CommonJS build output and ESM React
 - `viewType` IDs are still `cweijan.*`.
 - config prefix is still `vscode-office`.
 - Markdown WebView currently lacks explicit Obsidian wiki-link parsing.
-- PPTX is not registered in `customEditors`.
+- PPTX is registered in `customEditors`, but the preview remains stabilization
+  work rather than a full-fidelity PowerPoint renderer.
 - `vditor/` submodule is empty after clone until submodules are initialized.
 - Several bundled upstream files exceed the local 500-line preference; treat these as vendor/bundled legacy unless touched.
-- README/README-CN now use new product wording and preserve attribution through NOTICE.
+- README/README-CN/README-KO now use product wording and preserve attribution
+  through NOTICE.

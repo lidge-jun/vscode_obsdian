@@ -57,7 +57,39 @@ Additional bundled third-party components include:
 - x-spreadsheet
 - Mermaid
 - Rest Client-derived HTTP tooling
+- rhwp / rhwp-studio
+- bundled Korean web fonts used by rhwp-studio
 ```
+
+## HWP Runtime Attribution
+
+HWP/HWPX editing uses a local build of `edwardkim/rhwp`.
+
+Release notice facts:
+
+```text
+Upstream: https://github.com/edwardkim/rhwp
+Pinned tag: v0.7.13
+Pinned commit: b3e16ef212af81ef37d973ddb86d6816d3804642
+Runtime source in repo: vendor/rhwp-studio-dist
+Runtime package path: resource/rhwp-studio
+```
+
+The extension must not imply affiliation with Hancom or rhwp upstream. Use
+"powered by a bundled local rhwp-studio runtime" rather than "official HWP
+editor" or "Hancom replacement".
+
+## Font Attribution
+
+The rhwp-studio runtime includes Korean web fonts documented in
+`vendor/rhwp-studio-dist/fonts/FONTS.md`. Public notices should mention that:
+
+- proprietary Hancom and Microsoft fonts are not bundled;
+- open/free-distribution fallback fonts are bundled for layout compatibility;
+- release artifacts must preserve bundled font license files.
+
+Known bundled font families include Noto Sans KR, Noto Serif KR, Nanum,
+Pretendard, Gowun, D2 Coding, Spoqa Han Sans, Cafe24 fonts, and Happiness Sans.
 
 ## README Language
 
@@ -90,7 +122,7 @@ Current release metadata has been updated:
 - `description`
 - `publisher`
 - `repository` points to `https://github.com/lidge-jun/vscode_obsdian.git`
-- `homepage` points to `https://github.com/lidge-jun/vscode_obsdian#readme`
+- `homepage` points to `https://lidge-jun.github.io/vscode_obsdian/`
 - `bugs` points to `https://github.com/lidge-jun/vscode_obsdian/issues`
 - `keywords`
 - configuration title
