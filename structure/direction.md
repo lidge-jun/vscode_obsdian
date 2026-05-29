@@ -66,7 +66,7 @@ Original copyright and license notices are preserved.
 5. Markdown CJK inline formatting / strikethrough 렌더링 개선
 6. Excel strikethrough style 보존
 7. LibreOffice fallback / .ppt legacy support (optional, deferred)
-8. HWP/HWPX native support via @rhwp/editor, viewer-first until secure lifecycle is complete
+8. HWP/HWPX native support via local rhwp-studio WASM bundle, viewer-first until secure lifecycle is complete
 ```
 
 이 순서가 맞는 이유는 identity와 license 문서가 먼저 정리되어야 README, package metadata, marketplace 문구가 흔들리지 않기 때문입니다. 그 다음 핵심 차별점인 위키링크를 extension host와 WebView/export 양쪽에 붙이고, Office viewer 확장성인 PPTX를 붙입니다.

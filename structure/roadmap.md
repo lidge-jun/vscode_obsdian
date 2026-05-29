@@ -263,7 +263,7 @@ package.json configuration
 
 ## Phase 8. HWP/HWPX Native Support
 
-`@rhwp/editor` (Rust → WebAssembly 기반 오픈소스 HWP/HWPX 뷰어/에디터)를 WebView에 iframe 임베드하여 `.hwp`/`.hwpx` 네이티브 지원을 추가합니다. 한컴오피스나 LibreOffice 없이 순수 WASM으로 원본 레이아웃 수준 렌더링이 가능합니다.
+로컬 `rhwp-studio` WASM bundle을 WebView에 `srcdoc` iframe으로 임베드하여 `.hwp`/`.hwpx` 네이티브 지원을 추가합니다. 한컴오피스나 LibreOffice 없이 순수 WASM으로 원본 레이아웃 수준 렌더링이 가능합니다. 초기 `@rhwp/editor` wrapper 경로는 Insiders runtime 감사 후 제거했고, 외부 iframe 대신 extension에 포함된 bundle을 사용합니다.
 
 2026-05-29 READ-ONLY audit result: Phase 8 is **blocked for editable release**.
 The first implementation can render a document, but it must not be shipped as
@@ -286,7 +286,7 @@ NEW  src/react/view/hwp/Hwp.tsx
 NEW  src/react/view/hwp/rhwpBridge/*
 MOD  src/provider/officeViewerProvider.ts
 MOD  src/react/main.tsx (route 추가)
-MOD  package.json (dependency + filenamePattern)
+MOD  package.json (filenamePattern; @rhwp/editor runtime dependency removed)
 MOD  build.ts (local rhwp-studio asset copy)
 MOD  src/common/reactApp.ts (CSP + local asset config)
 ```
@@ -301,7 +301,7 @@ MOD  src/common/reactApp.ts (CSP + local asset config)
 
 > 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
 > 출처: [golbin/hop](https://github.com/golbin/hop)
-> 출처: [@rhwp/editor npm](https://www.npmjs.com/package/@rhwp/editor)
+> 참고: [@rhwp/editor npm](https://www.npmjs.com/package/@rhwp/editor) — discarded wrapper path after security/lifecycle audit
 
 ## Phase 8.2. HWP/HWPX Security And Lifecycle Recovery
 

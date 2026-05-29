@@ -117,7 +117,7 @@ structure/research_notes/
 5. Phase 5: Markdown CJK inline formatting and strikethrough improvements
 6. Phase 6: Excel strikethrough/style preservation
 7. Phase 7: LibreOffice fallback completion and verification (optional, deferred)
-8. Phase 8: HWP/HWPX native support via @rhwp/editor
+8. Phase 8: HWP/HWPX native support via local rhwp-studio WASM bundle
 9. Phase 8.2: HWP/HWPX security and lifecycle recovery before shipping editable support
 10. Phase 8.2a: exact diff addendum for local rhwp bundle, CSP, lifecycle, and save safety
 11. Phase 8.2b: Backend revalidation fixes for studio URL wiring, viewer safety, message bridge, and dependency audit target

@@ -14,7 +14,9 @@ import './Hwp.less';
 
 export default function Hwp() {
     const configs = getConfigs();
-    const rhwpStudioUrl = configs?.rhwpStudioUrl;
+    const configuredRhwpStudioHtml = configs?.rhwpStudioHtml;
+    const configuredRhwpStudioBaseUrl = configs?.rhwpStudioBaseUrl;
+    const configuredRhwpStudioUrl = resolveRhwpStudioUrl(configs?.rhwpStudioUrl);
     const experimentalSave = Boolean(configs?.hwpExperimentalSave);
     const editorRef = useRef<SecureRhwpEditor | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -27,11 +29,6 @@ export default function Hwp() {
     const [fileName, setFileName] = useState('');
 
     useEffect(() => {
-        if (!rhwpStudioUrl) {
-            setLoading(false);
-            return;
-        }
-
         let destroyed = false;
 
         handler
@@ -44,18 +41,39 @@ export default function Hwp() {
 
                 setFileName(data.fileName);
                 setIsHwpx(data.isHwpx);
+                setError(null);
+                setWarning(null);
+                setSaveMsg(null);
+                setLoading(true);
 
                 try {
-                    if (!containerRef.current) return;
+                    if (!containerRef.current) {
+                        setLoading(false);
+                        return;
+                    }
+                    const studioHtml = data.studioHtml ?? configuredRhwpStudioHtml;
+                    const studioBaseUrl = data.studioBaseUrl ?? configuredRhwpStudioBaseUrl;
+                    const studioUrl = studioHtml ? undefined : configuredRhwpStudioUrl;
+                    if (!studioHtml && !studioUrl) {
+                        setError('HWP viewer is not configured: missing local rhwp-studio bundle.');
+                        setLoading(false);
+                        return;
+                    }
+
+                    editorRef.current?.destroy();
+                    editorRef.current = null;
                     containerRef.current.replaceChildren();
                     const editor = await createSecureRhwpEditor(containerRef.current, {
-                        studioUrl: rhwpStudioUrl,
+                        studioUrl,
+                        studioHtml,
+                        studioBaseUrl,
                         width: '100%',
                         height: '100%',
                         requestTimeoutMs: DEFAULT_RHWP_REQUEST_TIMEOUT_MS,
                         onLoadStatus: (status) => {
                             if (destroyed) return;
                             if (status.status === 'loaded') {
+                                setError(null);
                                 setWarning(null);
                                 setLoading(false);
                             } else if (status.status === 'warning') {
@@ -70,9 +88,12 @@ export default function Hwp() {
                     if (destroyed) { editor.destroy(); return; }
                     editorRef.current = editor;
 
-                    const binary = new Uint8Array(data.buffer);
-                    await editor.loadFile(binary, data.fileName);
                     setLoading(false);
+                    const binary = new Uint8Array(data.buffer);
+                    void editor.loadFile(binary, data.fileName).catch((loadError) => {
+                        if (destroyed) return;
+                        setError(`Failed to load: ${loadError instanceof Error ? loadError.message : String(loadError)}`);
+                    });
                 } catch (e) {
                     setError(`Failed to load: ${e instanceof Error ? e.message : String(e)}`);
                     setLoading(false);
@@ -100,7 +121,7 @@ export default function Hwp() {
             destroyed = true;
             editorRef.current?.destroy();
         };
-    }, [rhwpStudioUrl]);
+    }, [configuredRhwpStudioBaseUrl, configuredRhwpStudioHtml, configuredRhwpStudioUrl]);
 
     const handleSave = useCallback(async () => {
         if (!editorRef.current || saving || !experimentalSave) return;
@@ -115,19 +136,6 @@ export default function Hwp() {
         }
     }, [experimentalSave, fileName, isHwpx, saving]);
 
-    if (!rhwpStudioUrl) {
-        return (
-            <div className="hwp-container">
-                <Alert
-                    type="error"
-                    message="HWP viewer is not configured"
-                    description="Missing local rhwp-studio URL."
-                    showIcon
-                />
-            </div>
-        );
-    }
-
     return (
         <div className="hwp-container">
             {error && <Alert type="error" message={error} closable onClose={() => setError(null)} />}
@@ -137,6 +145,12 @@ export default function Hwp() {
                 <span className="hwp-filename">{fileName}</span>
                 {!experimentalSave && <span className="hwp-badge">HWP/HWPX editing disabled</span>}
                 {experimentalSave && isHwpx && <span className="hwp-badge">HWPX -&gt; saves as HWP</span>}
+                {loading && (
+                    <span className="hwp-status" role="status" aria-live="polite">
+                        <Spin size="small" />
+                        Loading HWP
+                    </span>
+                )}
                 {experimentalSave && (
                     <Button
                         type="primary"
@@ -148,7 +162,6 @@ export default function Hwp() {
                     </Button>
                 )}
             </div>
-            {loading && <Spin spinning fullscreen />}
             <div ref={containerRef} className="hwp-editor" />
         </div>
     );
@@ -158,4 +171,22 @@ function toNumberArray(value: ArrayBuffer | Uint8Array | number[]): number[] {
     if (Array.isArray(value)) return value;
     if (value instanceof Uint8Array) return Array.from(value);
     return Array.from(new Uint8Array(value));
+}
+
+function resolveRhwpStudioUrl(configuredUrl?: string): string | undefined {
+    if (configuredUrl) return configuredUrl;
+
+    const baseHref = document.querySelector('base')?.href;
+    if (!baseHref) return undefined;
+
+    try {
+        const baseUrl = new URL(baseHref);
+        const isVsCodeResource = baseUrl.protocol.startsWith('vscode-webview')
+            || baseUrl.hostname.endsWith('vscode-cdn.net');
+        if (!isVsCodeResource) return undefined;
+
+        return new URL('../../resource/rhwp-studio/index.html', baseUrl).toString();
+    } catch {
+        return undefined;
+    }
 }

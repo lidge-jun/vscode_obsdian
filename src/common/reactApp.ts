@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 interface ViewOption {
     route: string;
     rhwpStudioUrl?: string;
+    rhwpStudioHtml?: string;
+    rhwpStudioBaseUrl?: string;
     hwpExperimentalSave?: boolean;
 }
 
@@ -19,12 +21,13 @@ export class ReactApp {
 
     public static async view(webview: vscode.Webview, option: ViewOption) {
         const html = await this.readContent()
+        const configs = JSON.stringify({
+            ...option,
+            language: vscode.env.language,
+            config: vscode.workspace.getConfiguration('vscode-office')
+        })
         webview.html = this.injectCsp(this.buildPath(html, webview), webview)
-            .replace(`{{configs}}`, JSON.stringify({
-                ...option,
-                language: vscode.env.language,
-                config: vscode.workspace.getConfiguration('vscode-office')
-            }))
+            .replace(`{{configs}}`, escapeHtmlAttribute(configs))
     }
 
     private static async readContent(): Promise<string> {
@@ -52,22 +55,22 @@ export class ReactApp {
         const csp = this.IS_DEV
             ? [
                 "default-src 'none'",
-                `img-src http://127.0.0.1:5739 ${webview.cspSource} data: blob:`,
-                `font-src http://127.0.0.1:5739 ${webview.cspSource} data:`,
-                `style-src http://127.0.0.1:5739 ${webview.cspSource} 'unsafe-inline'`,
-                `script-src http://127.0.0.1:5739 ${webview.cspSource} 'unsafe-eval'`,
-                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource}`,
-                `frame-src http://127.0.0.1:5739 ${webview.cspSource}`,
+                `img-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net data: blob:`,
+                `font-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net data:`,
+                `style-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
+                `script-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-eval'`,
+                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net`,
+                `frame-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net vscode-webview: about: blob: data:`,
                 `worker-src http://127.0.0.1:5739 ${webview.cspSource} blob:`,
             ].join('; ')
             : [
                 "default-src 'none'",
-                `img-src ${webview.cspSource} data: blob:`,
-                `font-src ${webview.cspSource} data:`,
-                `style-src ${webview.cspSource} 'unsafe-inline'`,
-                `script-src ${webview.cspSource} 'wasm-unsafe-eval'`,
-                `connect-src ${webview.cspSource}`,
-                `frame-src ${webview.cspSource}`,
+                `img-src ${webview.cspSource} https://*.vscode-cdn.net data: blob:`,
+                `font-src ${webview.cspSource} https://*.vscode-cdn.net data:`,
+                `style-src ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
+                `script-src ${webview.cspSource} https://*.vscode-cdn.net 'wasm-unsafe-eval'`,
+                `connect-src ${webview.cspSource} https://*.vscode-cdn.net`,
+                `frame-src ${webview.cspSource} https://*.vscode-cdn.net vscode-webview: about: blob: data:`,
                 `worker-src ${webview.cspSource} blob:`,
             ].join('; ');
         return data.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${csp}">`);
@@ -80,4 +83,13 @@ export class ReactApp {
         return webview.asWebviewUri(vscode.Uri.file(this.webviewPath)).toString();
     }
 
+}
+
+function escapeHtmlAttribute(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }

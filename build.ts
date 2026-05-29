@@ -8,7 +8,7 @@
  */
 const esbuild = require("esbuild")
 const { resolve } = require("path")
-const { existsSync } = require("fs")
+const { existsSync, readFileSync, readdirSync, writeFileSync } = require("fs")
 const { copy } = require("esbuild-plugin-copy")
 const isProd = process.argv.indexOf('--mode=production') >= 0;
 
@@ -23,6 +23,14 @@ const sharedPlugins = [
             keepStructure: true
         },
     }),
+    {
+        name: 'rhwp-studio-webview-rewrite',
+        setup(build) {
+            build.onEnd(() => {
+                rewriteRhwpStudioForWebview();
+            })
+        }
+    },
     copy({
         resolveFrom: 'out',
         assets: {
@@ -47,6 +55,84 @@ const sharedPlugins = [
         }
     },
 ]
+
+function rewriteRhwpStudioForWebview() {
+    const root = resolve('./resource/rhwp-studio');
+    const assetsPath = resolve(root, 'assets');
+    const indexPath = resolve(root, 'index.html');
+
+    if (!existsSync(indexPath)) {
+        throw new Error(`Missing rhwp-studio index.html at ${indexPath}`);
+    }
+    if (!existsSync(assetsPath)) {
+        throw new Error(`Missing rhwp-studio assets at ${assetsPath}`);
+    }
+
+    const indexHtml = readFileSync(indexPath, 'utf8')
+        .replaceAll('href="/favicon.ico"', 'href="./favicon.ico"')
+        .replaceAll('href="/icons/', 'href="./icons/')
+        .replaceAll('src="/assets/', 'src="./assets/')
+        .replaceAll('href="/assets/', 'href="./assets/')
+        .replace(/<link rel="manifest" href="\/manifest\.webmanifest"><script id="vite-plugin-pwa:register-sw" src="\/registerSW\.js"><\/script>/, '');
+    writeFileSync(indexPath, indexHtml);
+
+    for (const fileName of readdirSync(assetsPath)) {
+        if (!fileName.endsWith('.css')) continue;
+        const cssPath = resolve(assetsPath, fileName);
+        const css = readFileSync(cssPath, 'utf8')
+            .replaceAll('url(/images/', 'url(../images/');
+        writeFileSync(cssPath, css);
+    }
+
+    const bridgeScript = buildRhwpDirectBridgeScript();
+    const bridgeNeedle = 'var xu=eu();window.addEventListener';
+    const bridgeReplacement = `var xu=eu();${bridgeScript};window.addEventListener`;
+    let bridgeInjected = false;
+
+    for (const fileName of readdirSync(assetsPath)) {
+        if (!fileName.endsWith('.js')) continue;
+        const jsPath = resolve(assetsPath, fileName);
+        const source = readFileSync(jsPath, 'utf8');
+        const shouldInjectBridge = source.includes(bridgeNeedle);
+        const js = source
+            .replace(/function\((\w)\)\{return`\/`\+\1\}/g, 'function($1){return $1}')
+            .replace(/\{targetOrigin:`\*`\}/g, '`*`')
+            .replaceAll('e.source?.postMessage(', 'window.parent.postMessage(')
+            .replace(
+                'let{id:n,method:r,params:i}=t,a=(t,r)=>{window.parent.postMessage({type:`rhwp-response`,id:n,result:t,error:r},`*`)};',
+                'let{id:n,method:r,params:i}=t,a=(e,i)=>{window.parent.postMessage({type:`rhwp-response`,id:n,token:t.token,result:e,error:i},`*`)};'
+            )
+            .replace(
+                'case`loadFile`:if(await xu,!await gu(!!i?.skipUnsavedGuard)){a(void 0,`문서 열기가 취소되었습니다.`);break}await cu(new Uint8Array(i.data),i.fileName||`document.hwp`,null),a({pageCount:X.pageCount});break;',
+                'case`loadFile`:if(await xu,!await gu(!!i?.skipUnsavedGuard)){a(void 0,`문서 열기가 취소되었습니다.`);break}let o=cu(new Uint8Array(i.data),i.fileName||`document.hwp`,null);o.catch(bu),await Promise.race([o.then(()=>!0),new Promise(e=>setTimeout(()=>e(!1),1500))]),a({pageCount:X.pageCount});break;'
+            )
+            .replace(bridgeNeedle, bridgeReplacement);
+        if (shouldInjectBridge && js.includes('window.__rhwpBridge=')) bridgeInjected = true;
+        if (shouldInjectBridge && !js.includes('let o=cu(new Uint8Array(i.data)')) {
+            throw new Error('Failed to patch rhwp postMessage loadFile response path');
+        }
+        if (shouldInjectBridge && !js.includes('token:t.token')) {
+            throw new Error('Failed to patch rhwp postMessage response token');
+        }
+        writeFileSync(jsPath, js);
+    }
+    if (!bridgeInjected) {
+        throw new Error('Failed to inject rhwp direct bridge into rhwp-studio main asset');
+    }
+}
+
+function buildRhwpDirectBridgeScript() {
+    const methods = [
+        'ready:async()=>{await xu;return!0}',
+        'loadFile:async e=>{if(await xu,!await gu(!!e?.skipUnsavedGuard))throw Error(`문서 열기가 취소되었습니다.`);let t=e.fileName||`document.hwp`,n=cu(new Uint8Array(e.data),t,null);return n.catch(bu),await Promise.race([n.then(()=>!0),new Promise(e=>setTimeout(()=>e(!1),1500))]),{pageCount:X.pageCount}}',
+        'pageCount:async()=>{await xu;return X.pageCount}',
+        'getPageSvg:async e=>{await xu;return X.renderPageSvg(e?.page??0)}',
+        'exportHwp:async()=>{await xu;return Array.from(X.exportHwp())}',
+        'exportHwpx:async()=>{await xu;return Array.from(X.exportHwpx())}',
+        'exportHwpVerify:async()=>{await xu;return JSON.parse(X.exportHwpVerify())}',
+    ];
+    return `window.__rhwpBridge={${methods.join(',')}}`;
+}
 
 const mainOptions = {
     entryPoints: ['./src/extension.ts'],

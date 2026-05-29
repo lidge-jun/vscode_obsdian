@@ -9,7 +9,12 @@ const ZIP_MAGIC = [0x50, 0x4b, 0x03, 0x04];
 const OVERWRITE = 'Overwrite';
 const CHOOSE_ANOTHER = 'Choose Another File';
 
-export function handleHwp(uri: { fsPath: string }, handler: Handler): void {
+interface HwpHandlerOptions {
+    studioHtml?: string;
+    studioBaseUrl?: string;
+}
+
+export function handleHwp(uri: { fsPath: string }, handler: Handler, options: HwpHandlerOptions = {}): void {
     const fsPath = uri.fsPath;
     const fileUri = Uri.file(fsPath);
     const ext = extname(fsPath).toLowerCase();
@@ -23,6 +28,8 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler): void {
                 buffer: Array.from(buffer),
                 fileSize: buffer.byteLength,
                 isHwpx: ext === '.hwpx',
+                studioHtml: options.studioHtml,
+                studioBaseUrl: options.studioBaseUrl,
             });
         } catch (e) {
             handler.emit(HWP_EVENTS.fileData, {

@@ -13,6 +13,8 @@ export interface HwpFileDataPayload {
     buffer: number[];
     fileSize: number;
     isHwpx: boolean;
+    studioHtml?: string;
+    studioBaseUrl?: string;
     error?: string;
 }
 
@@ -77,6 +79,8 @@ function isHwpFileDataPayload(value: unknown): value is HwpFileDataPayload {
         && typeof value.fileSize === 'number'
         && value.fileSize >= 0
         && typeof value.isHwpx === 'boolean'
+        && (value.studioHtml === undefined || typeof value.studioHtml === 'string')
+        && (value.studioBaseUrl === undefined || typeof value.studioBaseUrl === 'string')
         && (value.error === undefined || typeof value.error === 'string');
 }
 

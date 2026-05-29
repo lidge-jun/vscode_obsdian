@@ -1,6 +1,8 @@
 export interface OfficeWebviewConfigs {
     route: string;
     rhwpStudioUrl?: string;
+    rhwpStudioHtml?: string;
+    rhwpStudioBaseUrl?: string;
     hwpExperimentalSave?: boolean;
     language?: string;
     config?: unknown;

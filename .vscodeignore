@@ -29,6 +29,7 @@ build.js
 build.ts
 public/
 vendor/**
+resource/rhwp-studio/samples/**
 lib.js
 backlog.md
 index.html
