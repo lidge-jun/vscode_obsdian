@@ -86,6 +86,9 @@ The first Actions deploy uses `actions/configure-pages` with Pages enablement so
 the repository can create the Pages site before uploading the static `docs/`
 artifact.
 
+If GitHub blocks Pages creation from the workflow token, create the Pages site
+once with an owner token and `build_type=workflow`, then rerun the workflow.
+
 Runtime note: GitHub Pages is a marketing/documentation site only. The extension
 does not use GitHub Pages at runtime by default. HWP/HWPX editing uses the
 bundled local `resource/rhwp-studio` runtime unless the user explicitly sets
