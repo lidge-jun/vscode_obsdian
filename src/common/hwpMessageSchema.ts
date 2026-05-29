@@ -3,6 +3,10 @@ export const HWP_EVENTS = {
     fileData: 'hwp:fileData',
     requestSave: 'hwp:requestSave',
     saveResult: 'hwp:saveResult',
+    dirtyChanged: 'hwp:dirtyChanged',
+    vscodeSave: 'hwp:vscodeSave',
+    vscodeSavePayload: 'hwp:vscodeSavePayload',
+    reloadFile: 'hwp:reloadFile',
     error: 'hwp:error',
 } as const;
 
@@ -33,6 +37,25 @@ export interface HwpSaveResultPayload {
     error?: string;
 }
 
+export interface HwpDirtyChangedPayload {
+    isDirty: boolean;
+}
+
+export interface HwpVscodeSaveRequestPayload {
+    requestId: string;
+    format: 'hwp' | 'hwpx';
+}
+
+export interface HwpVscodeSaveResponsePayload {
+    requestId: string;
+    success: boolean;
+    bytes?: number[];
+    sourceFileName?: string;
+    isHwpx?: boolean;
+    format?: 'hwp' | 'hwpx';
+    error?: string;
+}
+
 export interface HwpErrorPayload {
     error: string;
 }
@@ -53,6 +76,14 @@ export function validateHwpPayload(type: HwpEventName, payload: unknown): boolea
             return isHwpSavePayload(payload);
         case HWP_EVENTS.saveResult:
             return isHwpSaveResultPayload(payload);
+        case HWP_EVENTS.dirtyChanged:
+            return isHwpDirtyChangedPayload(payload);
+        case HWP_EVENTS.vscodeSave:
+            return isHwpVscodeSaveRequestPayload(payload);
+        case HWP_EVENTS.vscodeSavePayload:
+            return isHwpVscodeSaveResponsePayload(payload);
+        case HWP_EVENTS.reloadFile:
+            return isHwpFileDataPayload(payload);
         case HWP_EVENTS.error:
             return isHwpErrorPayload(payload);
         default:
@@ -102,6 +133,29 @@ function isHwpSaveResultPayload(value: unknown): value is HwpSaveResultPayload {
         && (value.convertedFromHwpx === undefined || typeof value.convertedFromHwpx === 'boolean')
         && (value.format === undefined || value.format === 'hwp' || value.format === 'hwpx')
         && (value.error === undefined || typeof value.error === 'string');
+}
+
+function isHwpDirtyChangedPayload(value: unknown): value is HwpDirtyChangedPayload {
+    return isRecord(value) && typeof value.isDirty === 'boolean';
+}
+
+function isHwpVscodeSaveRequestPayload(value: unknown): value is HwpVscodeSaveRequestPayload {
+    if (!isRecord(value)) return false;
+    return typeof value.requestId === 'string'
+        && (value.format === 'hwp' || value.format === 'hwpx');
+}
+
+function isHwpVscodeSaveResponsePayload(value: unknown): value is HwpVscodeSaveResponsePayload {
+    if (!isRecord(value)) return false;
+    if (typeof value.requestId !== 'string' || typeof value.success !== 'boolean') return false;
+    if (value.success) {
+        return isByteArray(value.bytes)
+            && value.bytes.length > 0
+            && typeof value.sourceFileName === 'string'
+            && typeof value.isHwpx === 'boolean'
+            && (value.format === 'hwp' || value.format === 'hwpx');
+    }
+    return value.error === undefined || typeof value.error === 'string';
 }
 
 function isHwpErrorPayload(value: unknown): value is HwpErrorPayload {

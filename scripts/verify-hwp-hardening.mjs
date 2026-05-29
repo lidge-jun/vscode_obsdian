@@ -1,0 +1,116 @@
+import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = join(fileURLToPath(new URL('.', import.meta.url)), '..');
+
+const checks = [];
+
+function check(name, condition, detail = '') {
+    checks.push({ name, ok: Boolean(condition), detail });
+}
+
+async function readText(relativePath) {
+    return await readFile(join(root, relativePath), 'utf8');
+}
+
+async function readBytes(relativePath) {
+    return await readFile(join(root, relativePath));
+}
+
+function hasMagic(bytes, magic) {
+    return magic.every((value, index) => bytes[index] === value);
+}
+
+const packageJson = JSON.parse(await readText('package.json'));
+const customEditors = packageJson.contributes.customEditors;
+const officeViewer = customEditors.find((editor) => editor.viewType === 'cweijan.officeViewer');
+const hwpEditor = customEditors.find((editor) => editor.viewType === 'cweijan.hwpEditor');
+const officePatterns = new Set(officeViewer.selector.map((item) => item.filenamePattern));
+const hwpPatterns = new Set(hwpEditor?.selector.map((item) => item.filenamePattern) ?? []);
+
+check('HWP editor activation exists', packageJson.activationEvents.includes('onCustomEditor:cweijan.hwpEditor'));
+check('HWP has dedicated CustomEditorProvider contribution', Boolean(hwpEditor));
+check('HWP editor is the default HWP/HWPX opener', hwpEditor?.priority === 'default');
+check('Office viewer no longer owns HWP files', !officePatterns.has('*.hwp') && !officePatterns.has('*.hwpx'));
+check('Dedicated HWP editor owns HWP/HWPX files', hwpPatterns.has('*.hwp') && hwpPatterns.has('*.hwpx'));
+check(
+    'Bundled local rhwp-studio is the default',
+    packageJson.contributes.configuration.properties['vscode-obsdian.hwp.studioUrl'].default === '',
+);
+
+const providerSource = await readText('src/provider/hwp/HwpEditorProvider.ts');
+const extensionSource = await readText('src/extension.ts');
+const officeProviderSource = await readText('src/provider/officeViewerProvider.ts');
+for (const method of [
+    'saveCustomDocument',
+    'saveCustomDocumentAs',
+    'revertCustomDocument',
+    'backupCustomDocument',
+    'onDidChangeCustomDocument',
+]) {
+    check(`HWP provider implements ${method}`, providerSource.includes(method));
+}
+check('Save As exports by destination extension', providerSource.includes('getExplicitHwpFormat(destination)'));
+check('Save write rejects extension/format mismatch', providerSource.includes('Refusing to write'));
+check('Extension migrates stale HWP editor associations', extensionSource.includes('ensureHwpEditorAssociation'));
+check('Migration repairs legacy officeViewer association', extensionSource.includes("current === 'cweijan.officeViewer'"));
+check('Migration covers both HWP and HWPX patterns', extensionSource.includes("'*.hwp'") && extensionSource.includes("'*.hwpx'"));
+check('Legacy officeViewer HWP tabs redirect to hwpEditor', officeProviderSource.includes('redirectLegacyHwpPanel'));
+check('Legacy HWP redirect targets cweijan.hwpEditor', officeProviderSource.includes("'cweijan.hwpEditor'"));
+
+const schemaSource = await readText('src/common/hwpMessageSchema.ts');
+for (const event of ['dirtyChanged', 'vscodeSave', 'vscodeSavePayload', 'reloadFile']) {
+    check(`HWP message schema includes ${event}`, schemaSource.includes(event));
+}
+
+const reactAppSource = await readText('src/common/reactApp.ts');
+check('React CSP supports dynamic frame sources', reactAppSource.includes('webviewFrameSources'));
+check('React CSP supports dynamic connect sources', reactAppSource.includes('webviewConnectSources'));
+check('React CSP allows VS Code webview scheme scripts', reactAppSource.includes("script-src 'self'") && reactAppSource.includes('vscode-webview:'));
+check('React app rewrites Vite asset URLs to webview URIs', reactAppSource.includes('replace(/(src|href)="\\.\\/assets\\//g'));
+check('React production CSP disables base URI', reactAppSource.includes("base-uri 'none'"));
+check('React CSP skips local webview URLs in dynamic sources', reactAppSource.includes("url.protocol === 'vscode-webview:'"));
+check('React CSP escapes meta attribute content', reactAppSource.includes('escapeHtmlAttribute(csp)'));
+const hwpViewSource = await readText('src/react/view/hwp/Hwp.tsx');
+check('VS Code save request controls export format', hwpViewSource.includes('exportCurrentDocument(payload.format)'));
+check('Provider reads bundled rhwp-studio index HTML by default', providerSource.includes("readFileSync(indexUri.fsPath, 'utf8')"));
+check('Provider passes bundled rhwp-studio resource base URL', providerSource.includes('rhwpStudioBaseUrl'));
+check('Provider keeps remote rhwp studio opt-in via URL', providerSource.includes('rhwpStudioUrl = new URL(configured).toString()'));
+const rhwpBridgeSource = await readText('src/react/view/hwp/rhwpBridge/createSecureRhwpEditor.ts');
+check('Local rhwp studio mounts inside the host webview document', rhwpBridgeSource.includes('createLocalRhwpEditor') && rhwpBridgeSource.includes('mountLocalStudio'));
+check('Local rhwp studio loads assets through rewritten webview URIs', rhwpBridgeSource.includes('resolveStudioResourceUrl') && rhwpBridgeSource.includes('appendScript'));
+check('Local rhwp studio talks through direct __rhwpBridge calls', rhwpBridgeSource.includes('window.__rhwpBridge') && rhwpBridgeSource.includes('callLocalBridge'));
+check('Local rhwp studio rewrites absolute WASM asset fetches', rhwpBridgeSource.includes('installLocalStudioFetchRewrite') && rhwpBridgeSource.includes('/\\/assets\\/([^/]+\\.wasm)$/'));
+check('Remote rhwp studio still uses checked iframe postMessage', rhwpBridgeSource.includes('event.source !== iframe.contentWindow'));
+check('Remote rhwp studio rejects mismatched echoed tokens', rhwpBridgeSource.includes('message.token !== undefined && message.token !== bridgeToken'));
+
+const rhwpIndexPath = 'resource/rhwp-studio/index.html';
+check('Local rhwp-studio index exists', existsSync(join(root, rhwpIndexPath)));
+const rhwpIndex = await readText(rhwpIndexPath);
+const assetMatch = rhwpIndex.match(/src="\.\/assets\/([^"]+\.js)"/);
+check('Local rhwp-studio main asset is referenced', Boolean(assetMatch));
+if (assetMatch) {
+    const assetSource = await readText(`resource/rhwp-studio/assets/${assetMatch[1]}`);
+    check('Local rhwp bridge is injected', assetSource.includes('window.__rhwpBridge='));
+    check('Local rhwp bridge exports HWP', assetSource.includes('exportHwp'));
+    check('Local rhwp bridge exports HWPX', assetSource.includes('exportHwpx'));
+    check('Local rhwp bridge echoes request token', assetSource.includes('token:t.token'));
+    check('Local rhwp bridge skips upstream unsaved guard for host loads', assetSource.includes('skipUnsavedGuard'));
+}
+
+const hwpSample = await readBytes('resource/rhwp-studio/samples/biz_plan.hwp');
+const hwpxSample = await readBytes('resource/rhwp-studio/samples/form-002.hwpx');
+check('Bundled HWP fixture has OLE magic', hasMagic(hwpSample, [0xd0, 0xcf, 0x11, 0xe0]));
+check('Bundled HWPX fixture has ZIP magic', hasMagic(hwpxSample, [0x50, 0x4b, 0x03, 0x04]));
+
+const failed = checks.filter((item) => !item.ok);
+for (const item of checks) {
+    const suffix = item.detail ? ` - ${item.detail}` : '';
+    console.log(`${item.ok ? 'PASS' : 'FAIL'} ${item.name}${suffix}`);
+}
+
+if (failed.length > 0) {
+    process.exitCode = 1;
+}

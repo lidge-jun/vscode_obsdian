@@ -4,6 +4,8 @@ export interface OfficeWebviewConfigs {
     rhwpStudioHtml?: string;
     rhwpStudioBaseUrl?: string;
     hwpExperimentalSave?: boolean;
+    webviewFrameSources?: string[];
+    webviewConnectSources?: string[];
     language?: string;
     config?: unknown;
 }

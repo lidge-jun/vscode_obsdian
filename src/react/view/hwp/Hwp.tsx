@@ -5,11 +5,12 @@ import {
     type HwpErrorPayload,
     type HwpFileDataPayload,
     type HwpSaveResultPayload,
+    type HwpVscodeSaveRequestPayload,
 } from '../../../common/hwpMessageSchema';
 import { handler } from '../../util/vscode.ts';
 import { getConfigs } from '../../util/vscodeConfig.ts';
 import { createSecureRhwpEditor } from './rhwpBridge/createSecureRhwpEditor';
-import { DEFAULT_RHWP_REQUEST_TIMEOUT_MS, type SecureRhwpEditor } from './rhwpBridge/types';
+import { DEFAULT_RHWP_REQUEST_TIMEOUT_MS, type HwpLoadStatusPayload, type SecureRhwpEditor } from './rhwpBridge/types';
 import './Hwp.less';
 
 export default function Hwp() {
@@ -20,89 +21,118 @@ export default function Hwp() {
     const hwpSaveEnabled = configs?.hwpExperimentalSave !== false;
     const editorRef = useRef<SecureRhwpEditor | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const dirtyRef = useRef(false);
+    const fileNameRef = useRef('');
+    const isHwpxRef = useRef(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [warning, setWarning] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState<string | null>(null);
+    const [dirty, setDirty] = useState(false);
     const [isHwpx, setIsHwpx] = useState(false);
     const [fileName, setFileName] = useState('');
+
+    const setDirtyState = useCallback((value: boolean) => {
+        if (dirtyRef.current === value) return;
+        dirtyRef.current = value;
+        setDirty(value);
+        handler.emit(HWP_EVENTS.dirtyChanged, { isDirty: value });
+    }, []);
+
+    const exportCurrentDocument = useCallback(async (requestedFormat?: 'hwp' | 'hwpx') => {
+        if (!editorRef.current) throw new Error('HWP editor is not ready.');
+        const format = requestedFormat ?? (isHwpxRef.current ? 'hwpx' : 'hwp');
+        const documentBytes = format === 'hwpx'
+            ? await editorRef.current.exportHwpx()
+            : await editorRef.current.exportHwp();
+        return {
+            bytes: toNumberArray(documentBytes),
+            sourceFileName: fileNameRef.current,
+            isHwpx: format === 'hwpx',
+            format,
+        };
+    }, []);
 
     useEffect(() => {
         let destroyed = false;
 
-        handler
-            .on(HWP_EVENTS.fileData, async (data: HwpFileDataPayload) => {
-                if (data.error) {
-                    setError(data.error);
+        async function loadHwpData(data: HwpFileDataPayload): Promise<void> {
+            if (data.error) {
+                setError(data.error);
+                setLoading(false);
+                return;
+            }
+
+            fileNameRef.current = data.fileName;
+            isHwpxRef.current = data.isHwpx;
+            setFileName(data.fileName);
+            setIsHwpx(data.isHwpx);
+            setDirtyState(false);
+            setError(null);
+            setWarning(null);
+            setSaveMsg(null);
+            setLoading(true);
+
+            try {
+                if (!containerRef.current) {
+                    setLoading(false);
+                    return;
+                }
+                const studioHtml = data.studioHtml ?? configuredRhwpStudioHtml;
+                const studioBaseUrl = data.studioBaseUrl ?? configuredRhwpStudioBaseUrl;
+                const studioUrl = studioHtml ? undefined : configuredRhwpStudioUrl;
+                if (!studioHtml && !studioUrl) {
+                    setError('HWP editor is not configured: missing local rhwp-studio bundle.');
                     setLoading(false);
                     return;
                 }
 
-                setFileName(data.fileName);
-                setIsHwpx(data.isHwpx);
-                setError(null);
-                setWarning(null);
-                setSaveMsg(null);
-                setLoading(true);
+                const editor = editorRef.current ?? await createSecureRhwpEditor(containerRef.current, {
+                    studioUrl,
+                    studioHtml,
+                    studioBaseUrl,
+                    width: '100%',
+                    height: '100%',
+                    requestTimeoutMs: DEFAULT_RHWP_REQUEST_TIMEOUT_MS,
+                    onLoadStatus: handleLoadStatus,
+                });
+                if (destroyed) { editor.destroy(); return; }
+                editorRef.current = editor;
 
-                try {
-                    if (!containerRef.current) {
-                        setLoading(false);
-                        return;
-                    }
-                    const studioHtml = data.studioHtml ?? configuredRhwpStudioHtml;
-                    const studioBaseUrl = data.studioBaseUrl ?? configuredRhwpStudioBaseUrl;
-                    const studioUrl = studioHtml ? undefined : configuredRhwpStudioUrl;
-                    if (!studioHtml && !studioUrl) {
-                        setError('HWP viewer is not configured: missing local rhwp-studio bundle.');
-                        setLoading(false);
-                        return;
-                    }
+                const binary = new Uint8Array(data.buffer);
+                await editor.loadFile(binary, data.fileName);
+            } catch (e) {
+                setError(`Failed to load: ${e instanceof Error ? e.message : String(e)}`);
+                setLoading(false);
+            }
+        }
 
-                    editorRef.current?.destroy();
-                    editorRef.current = null;
-                    containerRef.current.replaceChildren();
-                    const editor = await createSecureRhwpEditor(containerRef.current, {
-                        studioUrl,
-                        studioHtml,
-                        studioBaseUrl,
-                        width: '100%',
-                        height: '100%',
-                        requestTimeoutMs: DEFAULT_RHWP_REQUEST_TIMEOUT_MS,
-                        onLoadStatus: (status) => {
-                            if (destroyed) return;
-                            if (status.status === 'loading') {
-                                setLoading(true);
-                            } else if (status.status === 'loaded') {
-                                setError(null);
-                                setWarning(null);
-                                setLoading(false);
-                            } else if (status.status === 'warning') {
-                                setWarning(status.message);
-                                setLoading(false);
-                            } else if (status.status === 'failed') {
-                                setError(status.message);
-                                setLoading(false);
-                            }
-                        },
-                    });
-                    if (destroyed) { editor.destroy(); return; }
-                    editorRef.current = editor;
+        async function handleVscodeSave(payload: HwpVscodeSaveRequestPayload): Promise<void> {
+            try {
+                const exported = await exportCurrentDocument(payload.format);
+                handler.emit(HWP_EVENTS.vscodeSavePayload, {
+                    requestId: payload.requestId,
+                    success: true,
+                    ...exported,
+                });
+            } catch (e) {
+                handler.emit(HWP_EVENTS.vscodeSavePayload, {
+                    requestId: payload.requestId,
+                    success: false,
+                    error: e instanceof Error ? e.message : String(e),
+                });
+            }
+        }
 
-                    const binary = new Uint8Array(data.buffer);
-                    void editor.loadFile(binary, data.fileName).catch((loadError) => {
-                        if (destroyed) return;
-                        setError(`Failed to load: ${loadError instanceof Error ? loadError.message : String(loadError)}`);
-                    });
-                } catch (e) {
-                    setError(`Failed to load: ${e instanceof Error ? e.message : String(e)}`);
-                    setLoading(false);
-                }
-            })
+        handler
+            .on(HWP_EVENTS.fileData, loadHwpData)
+            .on(HWP_EVENTS.reloadFile, loadHwpData)
+            .on(HWP_EVENTS.vscodeSave, handleVscodeSave)
             .on(HWP_EVENTS.saveResult, (result: HwpSaveResultPayload) => {
                 setSaving(false);
                 if (result.success) {
+                    setDirtyState(false);
                     const msg = result.convertedFromHwpx
                         ? `Saved as HWP: ${result.savedPath}`
                         : `Saved ${result.format?.toUpperCase() ?? 'document'} successfully`;
@@ -122,23 +152,47 @@ export default function Hwp() {
             destroyed = true;
             editorRef.current?.destroy();
         };
-    }, [configuredRhwpStudioBaseUrl, configuredRhwpStudioHtml, configuredRhwpStudioUrl]);
+
+        function handleLoadStatus(status: HwpLoadStatusPayload): void {
+            if (destroyed) return;
+            if (status.status === 'loading') {
+                setLoading(true);
+            } else if (status.status === 'loaded') {
+                setError(null);
+                setWarning(null);
+                setLoading(false);
+            } else if (status.status === 'warning') {
+                setWarning(status.message);
+                setLoading(false);
+            } else if (status.status === 'failed') {
+                setError(status.message);
+                setLoading(false);
+            }
+        }
+    }, [
+        configuredRhwpStudioBaseUrl,
+        configuredRhwpStudioHtml,
+        configuredRhwpStudioUrl,
+        exportCurrentDocument,
+        setDirtyState,
+    ]);
 
     const handleSave = useCallback(async () => {
         if (!editorRef.current || saving || !hwpSaveEnabled) return;
         setSaving(true);
         try {
-            const format = isHwpx ? 'hwpx' : 'hwp';
-            const documentBytes = isHwpx
-                ? await editorRef.current.exportHwpx()
-                : await editorRef.current.exportHwp();
-            const array = toNumberArray(documentBytes);
-            handler.emit(HWP_EVENTS.requestSave, { bytes: array, sourceFileName: fileName, isHwpx, format });
+            const exported = await exportCurrentDocument();
+            handler.emit(HWP_EVENTS.requestSave, exported);
         } catch (e) {
             setError(`Export failed: ${e instanceof Error ? e.message : String(e)}`);
             setSaving(false);
         }
-    }, [fileName, hwpSaveEnabled, isHwpx, saving]);
+    }, [exportCurrentDocument, hwpSaveEnabled, saving]);
+
+    const markPossiblyDirty = useCallback(() => {
+        if (!editorRef.current) return;
+        setDirtyState(true);
+    }, [setDirtyState]);
 
     return (
         <div className="hwp-container">
@@ -148,6 +202,7 @@ export default function Hwp() {
             <div className="hwp-toolbar">
                 <span className="hwp-filename">{fileName}</span>
                 {!hwpSaveEnabled && <span className="hwp-badge">Save disabled by setting</span>}
+                {dirty && <span className="hwp-badge hwp-badge-dirty">Unsaved changes</span>}
                 {loading && (
                     <span className="hwp-status" role="status" aria-live="polite">
                         <Spin size="small" />
@@ -165,7 +220,13 @@ export default function Hwp() {
                     </Button>
                 )}
             </div>
-            <div ref={containerRef} className="hwp-editor" />
+            <div
+                ref={containerRef}
+                className="hwp-editor"
+                onPointerDownCapture={markPossiblyDirty}
+                onKeyDownCapture={markPossiblyDirty}
+                onFocusCapture={markPossiblyDirty}
+            />
         </div>
     );
 }

@@ -58,7 +58,12 @@ export class Handler {
 
         // bind from webview
         panel.webview.onDidReceiveMessage((message) => {
-            const inboundHwpEvents = new Set<string>([HWP_EVENTS.init, HWP_EVENTS.requestSave]);
+            const inboundHwpEvents = new Set<string>([
+                HWP_EVENTS.init,
+                HWP_EVENTS.requestSave,
+                HWP_EVENTS.dirtyChanged,
+                HWP_EVENTS.vscodeSavePayload,
+            ]);
             if (isHwpEvent(message?.type)
                 && (!inboundHwpEvents.has(message.type) || !validateHwpPayload(message.type, message.content))) {
                 panel.webview.postMessage({

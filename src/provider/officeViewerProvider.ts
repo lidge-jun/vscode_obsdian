@@ -9,9 +9,6 @@ import { handleZip } from './compress/zipHandler';
 import { handleRar } from './compress/rarHandler';
 import { handleCommonEvent } from './compress/commonHandler';
 import { handlePptx } from './handlers/pptxHandler';
-import { handleHwp } from './handlers/hwpHandler';
-
-const DEFAULT_RHWP_STUDIO_URL = 'https://edwardkim.github.io/rhwp/';
 
 /**
  * support view office files
@@ -36,12 +33,10 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         const uri = document.uri;
         const webview = webviewPanel.webview;
         const folderPath = vscode.Uri.joinPath(uri, '..')
-        const rhwpStudioRoot = vscode.Uri.file(`${this.extensionPath}/resource/rhwp-studio`)
         webview.options = {
             enableScripts: true,
             localResourceRoots: [
                 vscode.Uri.file(this.extensionPath),
-                rhwpStudioRoot,
                 folderPath,
                 this.context.globalStorageUri
             ]
@@ -51,8 +46,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         handleCommonEvent(uri, handler)
 
         let route: string;
-        let hwpExperimentalSave: boolean | undefined;
-        let rhwpStudioUrl: string | undefined;
         const ext = extname(uri.fsPath).toLowerCase()
         if (isImage(ext)) {
             handleImage(handler, uri, webview)
@@ -70,20 +63,13 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".dotx":
                 route = 'word'
                 break;
-            case ".hwp":
-            case ".hwpx":
-                route = 'hwp';
-                hwpExperimentalSave = vscode.workspace
-                    .getConfiguration('vscode-obsdian')
-                    .get<boolean>('hwp.experimentalSave', true);
-                rhwpStudioUrl = vscode.workspace
-                    .getConfiguration('vscode-obsdian')
-                    .get<string>('hwp.studioUrl', DEFAULT_RHWP_STUDIO_URL);
-                handleHwp(uri, handler);
-                break;
             case ".pptx":
                 route = 'pptx';
                 handlePptx(uri, handler);
+                break;
+            case ".hwp":
+            case ".hwpx":
+                this.redirectLegacyHwpPanel(webviewPanel, uri);
                 break;
             case ".jar":
             case ".zip":
@@ -117,53 +103,23 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
                 if (route) break;
                 vscode.commands.executeCommand('vscode.openWith', uri, "default");
         }
-        if (route === 'hwp') {
-            return ReactApp.view(webview, {
-                route,
-                rhwpStudioUrl,
-                hwpExperimentalSave,
-            })
-        }
         if (route) return ReactApp.view(webview, { route })
     }
 
-    private buildRhwpStudioHtml(rootPath: string): string {
-        const indexHtml = readFileSync(`${rootPath}/index.html`, 'utf8')
-            .replace(
-                /<link rel="manifest" href="\.?\/manifest\.webmanifest"><script id="vite-plugin-pwa:register-sw" src="\.?\/registerSW\.js"><\/script>/,
-                ''
-            )
-            .replace(/<link rel="(?:icon|apple-touch-icon)"[^>]*>\s*/g, '');
-        const cssPath = matchRequired(indexHtml, /<link rel="stylesheet"[^>]+href="\.\/([^"]+\.css)"[^>]*>/);
-        const scriptPath = matchRequired(indexHtml, /<script type="module"[^>]+src="\.\/([^"]+\.js)"[^>]*><\/script>/);
-        const css = this.inlineRhwpCss(rootPath, cssPath);
-        const script = this.inlineRhwpScript(rootPath, scriptPath);
-
-        return indexHtml
-            .replace(/<link rel="stylesheet"[^>]+href="\.\/[^"]+\.css"[^>]*>/, `<style>${escapeStyleContent(css)}</style>`)
-            .replace(/<script type="module"[^>]+src="\.\/[^"]+\.js"[^>]*><\/script>/, `<script type="module">${escapeScriptContent(script)}</script>`);
-    }
-
-    private inlineRhwpCss(rootPath: string, cssPath: string): string {
-        const cssRoot = cssPath.split('/').slice(0, -1).join('/');
-        return readFileSync(`${rootPath}/${cssPath}`, 'utf8')
-            .replace(/url\((['"]?)\.\.\/images\/([^)'"]+)\1\)/g, (_match, _quote: string, imageName: string) => {
-                const imagePath = `${rootPath}/${cssRoot}/../images/${imageName}`;
-                const image = readFileSync(imagePath, 'utf8');
-                return `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(image)}")`;
-            });
-    }
-
-    private inlineRhwpScript(rootPath: string, scriptPath: string): string {
-        let script = readFileSync(`${rootPath}/${scriptPath}`, 'utf8');
-        script = script.replace(
-            /new URL\(`\/assets\/([^`]+\.wasm)`,``\+import\.meta\.url\)/g,
-            (_match, wasmFileName: string) => JSON.stringify(toWasmDataUri(`${rootPath}/assets/${wasmFileName}`)),
-        );
-        if (script.includes('`/assets/')) {
-            throw new Error('Failed to rewrite absolute rhwp-studio asset URL');
+    private redirectLegacyHwpPanel(webviewPanel: vscode.WebviewPanel, uri: vscode.Uri): void {
+        try {
+            webviewPanel.webview.html = '<!doctype html><meta charset="utf-8"><body>Opening HWP editor...</body>';
+            void vscode.commands.executeCommand('vscode.openWith', uri, 'cweijan.hwpEditor').then(
+                () => webviewPanel.dispose(),
+                (error) => {
+                    const message = error instanceof Error ? error.message : String(error);
+                    vscode.window.showErrorMessage(`Failed to open HWP editor: ${message}`);
+                },
+            );
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to open HWP editor: ${message}`);
         }
-        return script;
     }
 
     private getBaseUrl(webview: vscode.Webview, path: string) {
@@ -172,23 +128,4 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         return baseUrl;
     }
 
-}
-
-function matchRequired(value: string, pattern: RegExp): string {
-    const match = value.match(pattern);
-    if (!match?.[1]) throw new Error(`Missing rhwp-studio asset matching ${pattern.source}`);
-    return match[1];
-}
-
-function toWasmDataUri(filePath: string): string {
-    const wasm = readFileSync(filePath);
-    return `data:application/wasm;base64,${wasm.toString('base64')}`;
-}
-
-function escapeStyleContent(value: string): string {
-    return value.replace(/<\/style/gi, '<\\/style');
-}
-
-function escapeScriptContent(value: string): string {
-    return value.replace(/<\/script/gi, '<\\/script');
 }

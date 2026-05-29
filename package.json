@@ -32,6 +32,7 @@
 	"activationEvents": [
 		"onStartupFinished",
 		"onCustomEditor:cweijan.officeViewer",
+		"onCustomEditor:cweijan.hwpEditor",
 		"onCustomEditor:cweijan.imageViewer",
 		"onCustomEditor:cweijan.markdownViewer",
 		"onCustomEditor:cweijan.markdownViewer.optional",
@@ -273,7 +274,14 @@
 					},
 					{
 						"filenamePattern": "*.svg"
-					},
+					}
+				]
+			},
+				{
+					"viewType": "cweijan.hwpEditor",
+					"displayName": "HWP/HWPX Editor (vscode_obsdian)",
+					"priority": "default",
+					"selector": [
 					{
 						"filenamePattern": "*.hwp"
 					},
@@ -514,12 +522,12 @@
 				"vscode-obsdian.hwp.experimentalSave": {
 					"type": "boolean",
 					"default": true,
-					"description": "Enable rhwp-backed HWP/HWPX export/save from the embedded editor. Disable this only if you want read-only preview behavior."
+					"description": "Show the HWP/HWPX toolbar save button. VS Code native save remains available for dirty custom editor documents."
 				},
 				"vscode-obsdian.hwp.studioUrl": {
 					"type": "string",
-					"default": "https://edwardkim.github.io/rhwp/",
-					"description": "rhwp studio URL used for full HWP/HWPX editing. The default uses the upstream rhwp web app so all editor features remain available."
+					"default": "",
+					"description": "Optional trusted remote rhwp studio URL. Leave empty to use the bundled local rhwp-studio with full HWP/HWPX editing."
 				},
 				"vscode-office.pasterImgPath": {
 					"type": "string",
@@ -533,6 +541,7 @@
 		"dev": "vite --mode=development",
 		"lint:fix": "eslint src/**/*.ts --fix",
 		"build": "rm -rf out && vite build --mode=production",
+		"test:hwp-hardening": "node scripts/verify-hwp-hardening.mjs",
 		"package": "vsce package --no-dependencies",
 		"publish": "vsce publish --no-dependencies",
 		"vscode:prepublish": "npm run build"

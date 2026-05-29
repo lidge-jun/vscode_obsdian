@@ -8,6 +8,8 @@ interface ViewOption {
     rhwpStudioHtml?: string;
     rhwpStudioBaseUrl?: string;
     hwpExperimentalSave?: boolean;
+    webviewFrameSources?: string[];
+    webviewConnectSources?: string[];
 }
 
 export class ReactApp {
@@ -26,7 +28,7 @@ export class ReactApp {
             language: vscode.env.language,
             config: vscode.workspace.getConfiguration('vscode-office')
         })
-        webview.html = this.injectCsp(this.buildPath(html, webview), webview)
+        webview.html = this.injectCsp(this.buildPath(html, webview), webview, option)
             .replace(`{{configs}}`, escapeHtmlAttribute(configs))
     }
 
@@ -48,32 +50,46 @@ export class ReactApp {
 
     private static buildPath(data: string, webview: vscode.Webview): string {
         const baseUrl = ReactApp.getBaseUrl(webview);
-        return data.replace('<base href="/">', `<base href="${baseUrl}/">`);
+        if (this.IS_DEV) {
+            return data.replace('<base href="/">', `<base href="${baseUrl}/">`);
+        }
+        return data
+            .replace('<base href="/">', '')
+            .replace(/(src|href)="\.\/assets\//g, `$1="${baseUrl}/assets/`);
     }
 
-    private static injectCsp(data: string, webview: vscode.Webview): string {
+    private static injectCsp(data: string, webview: vscode.Webview, option: ViewOption): string {
+        const frameSources = sanitizeCspSources(option.webviewFrameSources);
+        const connectSources = sanitizeCspSources(option.webviewConnectSources);
+        const frameSourceText = frameSources.length > 0 ? ` ${frameSources.join(' ')}` : '';
+        const connectSourceText = connectSources.length > 0 ? ` ${connectSources.join(' ')}` : '';
         const csp = this.IS_DEV
             ? [
                 "default-src 'none'",
-                `img-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net data: blob:`,
-                `font-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net data:`,
-                `style-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
-                `script-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-eval'`,
-                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io https://cdn.jsdelivr.net`,
-                `frame-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io vscode-webview: about: blob: data:`,
-                `worker-src http://127.0.0.1:5739 ${webview.cspSource} blob:`,
+                "base-uri 'self' http://127.0.0.1:5739",
+                `img-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net data: blob:`,
+                `font-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net data:`,
+                `style-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net 'unsafe-inline'`,
+                `script-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net 'unsafe-eval'`,
+                `connect-src 'self' http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net${connectSourceText}`,
+                `frame-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net about: blob: data:${frameSourceText}`,
+                `worker-src 'self' http://127.0.0.1:5739 ${webview.cspSource} vscode-webview: blob:`,
             ].join('; ')
             : [
                 "default-src 'none'",
-                `img-src ${webview.cspSource} https://*.vscode-cdn.net data: blob:`,
-                `font-src ${webview.cspSource} https://*.vscode-cdn.net data:`,
-                `style-src ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
-                `script-src ${webview.cspSource} https://*.vscode-cdn.net 'wasm-unsafe-eval'`,
-                `connect-src ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io https://cdn.jsdelivr.net`,
-                `frame-src ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io vscode-webview: about: blob: data:`,
-                `worker-src ${webview.cspSource} blob:`,
+                "base-uri 'none'",
+                `img-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net data: blob:`,
+                `font-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net data:`,
+                `style-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net 'unsafe-inline'`,
+                `script-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net 'wasm-unsafe-eval'`,
+                `connect-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net${connectSourceText}`,
+                `frame-src 'self' ${webview.cspSource} vscode-webview: https://*.vscode-cdn.net about: blob: data:${frameSourceText}`,
+                `worker-src 'self' ${webview.cspSource} vscode-webview: blob:`,
             ].join('; ');
-        return data.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${csp}">`);
+        return data.replace(
+            '<head>',
+            `<head><meta http-equiv="Content-Security-Policy" content="${escapeHtmlAttribute(csp)}">`,
+        );
     }
 
     private static getBaseUrl(webview: vscode.Webview) {
@@ -85,11 +101,35 @@ export class ReactApp {
 
 }
 
+function sanitizeCspSources(sources?: string[]): string[] {
+    const sanitized = new Set<string>();
+    for (const source of sources ?? []) {
+        const origin = toCspOrigin(source);
+        if (origin) sanitized.add(origin);
+    }
+    return Array.from(sanitized);
+}
+
+function toCspOrigin(source: string): string | undefined {
+    try {
+        const url = new URL(source);
+        if (url.protocol === 'vscode-webview:' || url.protocol === 'vscode-resource:') {
+            return undefined;
+        }
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+            return undefined;
+        }
+        return `${url.protocol}//${url.host}`;
+    } catch {
+        return undefined;
+    }
+}
+
 function escapeHtmlAttribute(value: string): string {
     return value
         .replace(/&/g, '&amp;')
-        .replace(/'/g, '&#39;')
         .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 }

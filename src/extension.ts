@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { basename, extname } from 'path';
 import { MarkdownEditorProvider } from './provider/markdownEditorProvider';
 import { OfficeViewerProvider } from './provider/officeViewerProvider';
+import { HwpEditorProvider } from './provider/hwp/HwpEditorProvider';
 import { HtmlService } from './service/htmlService';
 import { MarkdownService } from './service/markdownService';
 import { Output } from './common/Output';
@@ -19,6 +20,7 @@ const httpExt = require('./bundle/extension');
 
 export function activate(context: vscode.ExtensionContext) {
 	keepOriginDiff();
+	void ensureHwpEditorAssociation();
 	activeHTTP(context)
 	const viewOption = { webviewOptions: { retainContextWhenHidden: true, enableFindWidget: true } };
 	FileUtil.init(context)
@@ -44,6 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.languages.registerCompletionItemProvider({ language: 'markdown', scheme: 'file' }, new WikilinkCompletionProvider(wikilinkResolver), '[', '#', '|'),
 		vscode.window.registerCustomEditorProvider("cweijan.markdownViewer", markdownEditorProvider, viewOption),
 		vscode.window.registerCustomEditorProvider("cweijan.markdownViewer.optional", markdownEditorProvider, viewOption),
+		HwpEditorProvider.register(context, viewOption),
 		...viewerInstance.bindCustomEditors(viewOption)
 	);
 }
@@ -131,7 +134,7 @@ function keepOriginDiff() {
 	try {
 		const config = vscode.workspace.getConfiguration("workbench");
 		const configKey = 'editorAssociations'
-		const editorAssociations = config.get(configKey)
+		const editorAssociations = config.get<Record<string, string | undefined>>(configKey) ?? {};
 		const key = '{git,gitlens,git-graph}:/**/*.{md,csv,svg}'
 		if (editorAssociations[key]) {
 			editorAssociations[key] = undefined
@@ -139,5 +142,27 @@ function keepOriginDiff() {
 		}
 	} catch (error) {
 		Output.debug('keepOriginDiff failed: ' + error)
+	}
+}
+
+async function ensureHwpEditorAssociation(): Promise<void> {
+	try {
+		const config = vscode.workspace.getConfiguration("workbench");
+		const configKey = 'editorAssociations';
+		const editorAssociations = { ...(config.get<Record<string, string | undefined>>(configKey) ?? {}) };
+		const hwpEditorViewType = 'cweijan.hwpEditor';
+		let changed = false;
+
+		for (const pattern of ['*.hwp', '*.hwpx']) {
+			const current = editorAssociations[pattern];
+			if (!current || current === 'cweijan.officeViewer') {
+				editorAssociations[pattern] = hwpEditorViewType;
+				changed = true;
+			}
+		}
+
+		if (changed) await config.update(configKey, editorAssociations, true);
+	} catch (error) {
+		Output.debug('ensureHwpEditorAssociation failed: ' + error);
 	}
 }
