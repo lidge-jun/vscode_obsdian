@@ -263,13 +263,18 @@ package.json configuration
 
 ## Phase 8. HWP/HWPX Native Support
 
-로컬 `rhwp-studio` WASM bundle을 WebView에 `srcdoc` iframe으로 임베드하여 `.hwp`/`.hwpx` 네이티브 지원을 추가합니다. 한컴오피스나 LibreOffice 없이 순수 WASM으로 원본 레이아웃 수준 렌더링이 가능합니다. 초기 `@rhwp/editor` wrapper 경로는 Insiders runtime 감사 후 제거했고, 외부 iframe 대신 extension에 포함된 bundle을 사용합니다.
+`.hwp`/`.hwpx` 네이티브 지원을 rhwp 기반 WebView editor로 추가합니다.
+한컴오피스나 LibreOffice 없이 순수 Web/WASM runtime으로 원본 레이아웃 수준
+렌더링과 편집 UI를 제공합니다.
 
-2026-05-29 READ-ONLY audit result: Phase 8 is **blocked for editable release**.
-The first implementation can render a document, but it must not be shipped as
-editable HWP support until Phase 8.2 closes the external iframe trust boundary,
-VS Code save lifecycle, stale `loadFile` timeout, CSP, overwrite, and dependency
-audit issues. See
+2026-05-29 correction: viewer-only HWP/HWPX support is not acceptable for this
+project. Phase 8.2 security-first work temporarily moved toward local bundle and
+viewer-only defaults, but that direction was rejected because it disabled the
+actual rhwp editing value. Current default is full upstream rhwp studio editing
+with save enabled. See
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2f_phase_08_hwp_full_editing_recovery_audit.md`.
+The older security/lifecycle recovery plan remains useful as a hardening
+reference:
 `devlog/_plan/260524_vscode_obsdian_baseline/08.2_phase_08_hwp_security_lifecycle_recovery.md`.
 Exact diff-level implementation addendum:
 `devlog/_plan/260524_vscode_obsdian_baseline/08.2a_phase_08_hwp_security_exact_diffs.md`.
@@ -294,10 +299,13 @@ MOD  src/common/reactApp.ts (CSP + local asset config)
 완료 기준:
 
 - `.hwp`, `.hwpx` 파일을 VS Code에서 열면 rhwp 에디터가 WebView에 표시됨
+- default path loads full rhwp editor features
+- HWP/HWPX save is enabled by default and can be disabled by setting
+- HWP saves as HWP, HWPX saves as HWPX
 - 테이블, 이미지, 한글 텍스트가 정상 렌더링됨
 - 기존 파일 타입 (PPTX, DOCX, Excel, PDF) regression 없음
 - VSIX 패키징 성공
-- Phase 8.2 security/lifecycle recovery plan is implemented before editable support is advertised
+- security/lifecycle debt remains documented before production-hardening claims
 
 > 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
 > 출처: [golbin/hop](https://github.com/golbin/hop)
@@ -305,9 +313,11 @@ MOD  src/common/reactApp.ts (CSP + local asset config)
 
 ## Phase 8.2. HWP/HWPX Security And Lifecycle Recovery
 
-Phase 8.2 is a corrective phase created after the Insiders runtime audit showed
-that a small HWPX file renders while the wrapper still reports
-`Failed to load: Request timeout: loadFile`.
+Phase 8.2 started as a corrective phase after the Insiders runtime audit showed
+that a small HWPX file rendered while the wrapper still reported
+`Failed to load: Request timeout: loadFile`. The first safe direction attempted
+local bundle plus viewer-only defaults. That was superseded by Phase 8.2f after
+the user clarified that full rhwp editing is the product requirement.
 
 수정 후보:
 
@@ -321,19 +331,21 @@ MOD  package/build assets for local rhwp-studio bundle
 MOD  package.json activation/configuration if needed
 ```
 
-완료 기준:
+현재 완료/미완료 기준:
 
-- default path does not load live `https://edwardkim.github.io/rhwp/`
-- WebView CSP is explicit and reviewed
+- default path loads live `https://edwardkim.github.io/rhwp/` to preserve full editor features
+- WebView CSP is explicit and allows the current default rhwp host
 - HWP bridge validates source/origin/type/payload
-- viewer-only mode exposes no save/edit promise
-- editable mode, if chosen, uses real VS Code dirty/save/backup/revert lifecycle
+- viewer-only mode is opt-out only, not the default
+- full editing and toolbar save are default
+- real VS Code dirty/save/backup/revert lifecycle remains follow-up debt
 - `.hwpx -> .hwp` conversion never silently overwrites an existing sibling
 - the known HWPX fixture opens without a stale timeout banner
 - Backend and Frontend employee audits both PASS before implementation is treated as ready
 - `08.2a_phase_08_hwp_security_exact_diffs.md` is synchronized with this roadmap
 - `08.2b_phase_08_hwp_security_revalidation_fixes.md` closes revalidation findings
 - `08.2c_phase_08_hwp_frontend_revalidation_fixes.md` closes frontend revalidation findings
+- `08.2f_phase_08_hwp_full_editing_recovery_audit.md` records the final full-editing correction
 - `98_dependency_audit_snapshot.md` is refreshed before release
 
 ## 전역 검증 묶음
