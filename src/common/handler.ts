@@ -27,7 +27,13 @@ export class Handler {
     }
 
     emit(event: string, content?: any) {
-        this.panel.webview.postMessage({ type: event, content })
+        try {
+            void this.panel.webview.postMessage({ type: event, content }).then(undefined, error => {
+                Output.debug(error);
+            });
+        } catch (error) {
+            Output.debug(error);
+        }
         return this;
     }
 

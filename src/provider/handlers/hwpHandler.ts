@@ -44,13 +44,13 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler, options: Hw
 
     const experimentalSave = workspace
         .getConfiguration('vscode-obsdian')
-        .get<boolean>('hwp.experimentalSave', false);
+        .get<boolean>('hwp.experimentalSave', true);
     if (experimentalSave) {
         handler.on(HWP_EVENTS.requestSave, async (content: HwpSavePayload) => {
             try {
                 const bytes = new Uint8Array(content.bytes);
-                validateExportedHwp(bytes);
-                const targetUri = await resolveHwpSaveTarget(fileUri, fsPath, ext);
+                validateExportedDocument(bytes, content.format);
+                const targetUri = await resolveHwpSaveTarget(fileUri, fsPath, ext, content.format);
                 if (!targetUri) {
                     handler.emit(HWP_EVENTS.saveResult, {
                         success: false,
@@ -63,7 +63,8 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler, options: Hw
                 handler.emit(HWP_EVENTS.saveResult, {
                     success: true,
                     savedPath: targetUri.fsPath,
-                    convertedFromHwpx: ext === '.hwpx',
+                    convertedFromHwpx: ext === '.hwpx' && content.format === 'hwp',
+                    format: content.format,
                 });
             } catch (e) {
                 handler.emit(HWP_EVENTS.saveResult, {
@@ -85,12 +86,13 @@ function validateHwpFile(buffer: Uint8Array, ext: string): void {
     }
 }
 
-function validateExportedHwp(bytes: Uint8Array): void {
+function validateExportedDocument(bytes: Uint8Array, format: HwpSavePayload['format']): void {
     if (bytes.byteLength === 0) {
-        throw new Error('Exported HWP is empty');
+        throw new Error(`Exported ${format.toUpperCase()} is empty`);
     }
-    if (!hasMagic(bytes, OLE_MAGIC)) {
-        throw new Error('Exported bytes are not a valid HWP file');
+    const expectedMagic = format === 'hwpx' ? ZIP_MAGIC : OLE_MAGIC;
+    if (!hasMagic(bytes, expectedMagic)) {
+        throw new Error(`Exported bytes are not a valid ${format.toUpperCase()} file`);
     }
 }
 
@@ -99,30 +101,43 @@ function hasMagic(bytes: Uint8Array, magic: number[]): boolean {
     return magic.every((value, index) => bytes[index] === value);
 }
 
-async function resolveHwpSaveTarget(fileUri: Uri, fsPath: string, ext: string): Promise<Uri | undefined> {
-    if (ext === '.hwpx') {
+async function resolveHwpSaveTarget(
+    fileUri: Uri,
+    fsPath: string,
+    ext: string,
+    format: HwpSavePayload['format'],
+): Promise<Uri | undefined> {
+    if (ext === '.hwpx' && format === 'hwp') {
         const hwpName = basename(fsPath, ext) + '.converted.hwp';
         const targetUri = Uri.file(join(dirname(fsPath), hwpName));
-        return await resolveCollision(targetUri, 'Converted HWP already exists.');
+        return await resolveCollision(targetUri, 'Converted HWP already exists.', format);
     }
 
+    const currentFormat = ext === '.hwpx' ? 'hwpx' : 'hwp';
+    const defaultUri = currentFormat === format
+        ? fileUri
+        : Uri.file(join(dirname(fsPath), `${basename(fsPath, ext)}.${format}`));
     const choice = await window.showWarningMessage(
-        'Overwrite the current HWP file with experimental export output?',
+        `Overwrite the current ${currentFormat.toUpperCase()} file with rhwp editor output?`,
         { modal: true },
         OVERWRITE,
         CHOOSE_ANOTHER,
     );
-    if (choice === OVERWRITE) return fileUri;
+    if (choice === OVERWRITE) return defaultUri;
     if (choice === CHOOSE_ANOTHER) {
         return await window.showSaveDialog({
-            defaultUri: fileUri,
-            filters: { 'HWP documents': ['hwp'] },
+            defaultUri,
+            filters: getFormatFilters(format),
         });
     }
     return undefined;
 }
 
-async function resolveCollision(targetUri: Uri, message: string): Promise<Uri | undefined> {
+async function resolveCollision(
+    targetUri: Uri,
+    message: string,
+    format: HwpSavePayload['format'],
+): Promise<Uri | undefined> {
     if (!await pathExists(targetUri)) return targetUri;
 
     const choice = await window.showWarningMessage(
@@ -135,10 +150,16 @@ async function resolveCollision(targetUri: Uri, message: string): Promise<Uri | 
     if (choice === CHOOSE_ANOTHER) {
         return await window.showSaveDialog({
             defaultUri: targetUri,
-            filters: { 'HWP documents': ['hwp'] },
+            filters: getFormatFilters(format),
         });
     }
     return undefined;
+}
+
+function getFormatFilters(format: HwpSavePayload['format']): Record<string, string[]> {
+    return format === 'hwpx'
+        ? { 'HWPX documents': ['hwpx'] }
+        : { 'HWP documents': ['hwp'] };
 }
 
 async function pathExists(uri: Uri): Promise<boolean> {

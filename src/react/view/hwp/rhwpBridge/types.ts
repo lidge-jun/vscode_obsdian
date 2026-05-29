@@ -1,4 +1,4 @@
-export const DEFAULT_RHWP_REQUEST_TIMEOUT_MS = 30000;
+export const DEFAULT_RHWP_REQUEST_TIMEOUT_MS = 120000;
 export const DEFAULT_RHWP_READY_TIMEOUT_MS = 90000;
 
 export type HwpLoadStatusPayload =
@@ -24,6 +24,7 @@ export interface SecureRhwpEditorOptions {
 export interface SecureRhwpEditor {
     loadFile(data: Uint8Array, fileName: string): Promise<unknown | undefined>;
     exportHwp(): Promise<ArrayBuffer | Uint8Array | number[]>;
+    exportHwpx(): Promise<ArrayBuffer | Uint8Array | number[]>;
     destroy(): void;
 }
 

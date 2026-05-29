@@ -11,6 +11,8 @@ import { handleCommonEvent } from './compress/commonHandler';
 import { handlePptx } from './handlers/pptxHandler';
 import { handleHwp } from './handlers/hwpHandler';
 
+const DEFAULT_RHWP_STUDIO_URL = 'https://edwardkim.github.io/rhwp/';
+
 /**
  * support view office files
  */
@@ -50,6 +52,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
 
         let route: string;
         let hwpExperimentalSave: boolean | undefined;
+        let rhwpStudioUrl: string | undefined;
         const ext = extname(uri.fsPath).toLowerCase()
         if (isImage(ext)) {
             handleImage(handler, uri, webview)
@@ -72,11 +75,11 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
                 route = 'hwp';
                 hwpExperimentalSave = vscode.workspace
                     .getConfiguration('vscode-obsdian')
-                    .get<boolean>('hwp.experimentalSave', false);
-                handleHwp(uri, handler, {
-                    studioHtml: this.buildRhwpStudioHtml(`${this.extensionPath}/resource/rhwp-studio`),
-                    studioBaseUrl: webview.asWebviewUri(rhwpStudioRoot).toString(),
-                });
+                    .get<boolean>('hwp.experimentalSave', true);
+                rhwpStudioUrl = vscode.workspace
+                    .getConfiguration('vscode-obsdian')
+                    .get<string>('hwp.studioUrl', DEFAULT_RHWP_STUDIO_URL);
+                handleHwp(uri, handler);
                 break;
             case ".pptx":
                 route = 'pptx';
@@ -117,6 +120,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         if (route === 'hwp') {
             return ReactApp.view(webview, {
                 route,
+                rhwpStudioUrl,
                 hwpExperimentalSave,
             })
         }

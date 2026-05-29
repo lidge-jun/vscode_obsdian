@@ -17,7 +17,7 @@ export default function Hwp() {
     const configuredRhwpStudioHtml = configs?.rhwpStudioHtml;
     const configuredRhwpStudioBaseUrl = configs?.rhwpStudioBaseUrl;
     const configuredRhwpStudioUrl = resolveRhwpStudioUrl(configs?.rhwpStudioUrl);
-    const experimentalSave = Boolean(configs?.hwpExperimentalSave);
+    const hwpSaveEnabled = configs?.hwpExperimentalSave !== false;
     const editorRef = useRef<SecureRhwpEditor | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(true);
@@ -72,7 +72,9 @@ export default function Hwp() {
                         requestTimeoutMs: DEFAULT_RHWP_REQUEST_TIMEOUT_MS,
                         onLoadStatus: (status) => {
                             if (destroyed) return;
-                            if (status.status === 'loaded') {
+                            if (status.status === 'loading') {
+                                setLoading(true);
+                            } else if (status.status === 'loaded') {
                                 setError(null);
                                 setWarning(null);
                                 setLoading(false);
@@ -88,7 +90,6 @@ export default function Hwp() {
                     if (destroyed) { editor.destroy(); return; }
                     editorRef.current = editor;
 
-                    setLoading(false);
                     const binary = new Uint8Array(data.buffer);
                     void editor.loadFile(binary, data.fileName).catch((loadError) => {
                         if (destroyed) return;
@@ -104,7 +105,7 @@ export default function Hwp() {
                 if (result.success) {
                     const msg = result.convertedFromHwpx
                         ? `Saved as HWP: ${result.savedPath}`
-                        : 'Saved successfully';
+                        : `Saved ${result.format?.toUpperCase() ?? 'document'} successfully`;
                     setSaveMsg(msg);
                     setTimeout(() => setSaveMsg(null), 3000);
                 } else {
@@ -124,17 +125,20 @@ export default function Hwp() {
     }, [configuredRhwpStudioBaseUrl, configuredRhwpStudioHtml, configuredRhwpStudioUrl]);
 
     const handleSave = useCallback(async () => {
-        if (!editorRef.current || saving || !experimentalSave) return;
+        if (!editorRef.current || saving || !hwpSaveEnabled) return;
         setSaving(true);
         try {
-            const hwpBytes = await editorRef.current.exportHwp();
-            const array = toNumberArray(hwpBytes);
-            handler.emit(HWP_EVENTS.requestSave, { bytes: array, sourceFileName: fileName, isHwpx });
+            const format = isHwpx ? 'hwpx' : 'hwp';
+            const documentBytes = isHwpx
+                ? await editorRef.current.exportHwpx()
+                : await editorRef.current.exportHwp();
+            const array = toNumberArray(documentBytes);
+            handler.emit(HWP_EVENTS.requestSave, { bytes: array, sourceFileName: fileName, isHwpx, format });
         } catch (e) {
             setError(`Export failed: ${e instanceof Error ? e.message : String(e)}`);
             setSaving(false);
         }
-    }, [experimentalSave, fileName, isHwpx, saving]);
+    }, [fileName, hwpSaveEnabled, isHwpx, saving]);
 
     return (
         <div className="hwp-container">
@@ -143,22 +147,21 @@ export default function Hwp() {
             {saveMsg && <Alert type="success" message={saveMsg} banner />}
             <div className="hwp-toolbar">
                 <span className="hwp-filename">{fileName}</span>
-                {!experimentalSave && <span className="hwp-badge">HWP/HWPX editing disabled</span>}
-                {experimentalSave && isHwpx && <span className="hwp-badge">HWPX -&gt; saves as HWP</span>}
+                {!hwpSaveEnabled && <span className="hwp-badge">Save disabled by setting</span>}
                 {loading && (
                     <span className="hwp-status" role="status" aria-live="polite">
                         <Spin size="small" />
                         Loading HWP
                     </span>
                 )}
-                {experimentalSave && (
+                {hwpSaveEnabled && (
                     <Button
                         type="primary"
                         size="small"
                         onClick={handleSave}
                         loading={saving}
                     >
-                        Save HWP
+                        {isHwpx ? 'Save HWPX' : 'Save HWP'}
                     </Button>
                 )}
             </div>

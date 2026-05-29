@@ -513,8 +513,13 @@
 				},
 				"vscode-obsdian.hwp.experimentalSave": {
 					"type": "boolean",
-					"default": false,
-					"description": "Enable experimental HWP export/save. Disabled by default because HWP editing lifecycle is not yet integrated with VS Code save semantics."
+					"default": true,
+					"description": "Enable rhwp-backed HWP/HWPX export/save from the embedded editor. Disable this only if you want read-only preview behavior."
+				},
+				"vscode-obsdian.hwp.studioUrl": {
+					"type": "string",
+					"default": "https://edwardkim.github.io/rhwp/",
+					"description": "rhwp studio URL used for full HWP/HWPX editing. The default uses the upstream rhwp web app so all editor features remain available."
 				},
 				"vscode-office.pasterImgPath": {
 					"type": "string",

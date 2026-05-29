@@ -59,8 +59,8 @@ export class ReactApp {
                 `font-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net data:`,
                 `style-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
                 `script-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-eval'`,
-                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net`,
-                `frame-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net vscode-webview: about: blob: data:`,
+                `connect-src http://127.0.0.1:5739 ws://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io https://cdn.jsdelivr.net`,
+                `frame-src http://127.0.0.1:5739 ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io vscode-webview: about: blob: data:`,
                 `worker-src http://127.0.0.1:5739 ${webview.cspSource} blob:`,
             ].join('; ')
             : [
@@ -69,8 +69,8 @@ export class ReactApp {
                 `font-src ${webview.cspSource} https://*.vscode-cdn.net data:`,
                 `style-src ${webview.cspSource} https://*.vscode-cdn.net 'unsafe-inline'`,
                 `script-src ${webview.cspSource} https://*.vscode-cdn.net 'wasm-unsafe-eval'`,
-                `connect-src ${webview.cspSource} https://*.vscode-cdn.net`,
-                `frame-src ${webview.cspSource} https://*.vscode-cdn.net vscode-webview: about: blob: data:`,
+                `connect-src ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io https://cdn.jsdelivr.net`,
+                `frame-src ${webview.cspSource} https://*.vscode-cdn.net https://edwardkim.github.io vscode-webview: about: blob: data:`,
                 `worker-src ${webview.cspSource} blob:`,
             ].join('; ');
         return data.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${csp}">`);

@@ -45,12 +45,28 @@ export async function createSecureRhwpEditor(
     iframe.style.width = options.width;
     iframe.style.height = options.height;
     iframe.style.border = '0';
-    iframe.setAttribute('allow', 'clipboard-read; clipboard-write');
+    iframe.setAttribute('allow', 'clipboard-read; clipboard-write; fullscreen');
     if (options.studioHtml) {
-        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-downloads');
+        iframe.setAttribute('sandbox', [
+            'allow-scripts',
+            'allow-same-origin',
+            'allow-forms',
+            'allow-downloads',
+            'allow-modals',
+            'allow-popups',
+            'allow-popups-to-escape-sandbox',
+        ].join(' '));
         iframe.srcdoc = buildSrcdoc(options.studioHtml, options.studioBaseUrl);
     } else if (options.studioUrl) {
-        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-downloads');
+        iframe.setAttribute('sandbox', [
+            'allow-scripts',
+            'allow-same-origin',
+            'allow-forms',
+            'allow-downloads',
+            'allow-modals',
+            'allow-popups',
+            'allow-popups-to-escape-sandbox',
+        ].join(' '));
         iframe.src = options.studioUrl;
     } else {
         throw new Error('Missing rhwp-studio URL or HTML');
@@ -95,11 +111,6 @@ export async function createSecureRhwpEditor(
         if (directMethod) {
             return await withRequestTimeout(Promise.resolve(directMethod(params)), method, timeoutMs);
         }
-        if (method === 'loadFile') {
-            postMessageWithoutResponse(method, params);
-            await new Promise((resolve) => window.setTimeout(resolve, Math.min(1500, timeoutMs)));
-            return undefined;
-        }
         return requestPostMessage(method, params, timeoutMs);
     }
 
@@ -118,11 +129,6 @@ export async function createSecureRhwpEditor(
             pending.set(id, { resolve, reject, timeout });
             iframe.contentWindow?.postMessage({ type: 'rhwp-request', id, token: bridgeToken, method, params }, targetOrigin);
         });
-    }
-
-    function postMessageWithoutResponse(method: string, params: Record<string, unknown>): void {
-        const id = ++requestId;
-        iframe.contentWindow?.postMessage({ type: 'rhwp-request', id, token: bridgeToken, method, params }, targetOrigin);
     }
 
     async function waitReady(): Promise<void> {
@@ -164,6 +170,9 @@ export async function createSecureRhwpEditor(
         },
         async exportHwp(): Promise<ArrayBuffer | Uint8Array | number[]> {
             return await request('exportHwp') as ArrayBuffer | Uint8Array | number[];
+        },
+        async exportHwpx(): Promise<ArrayBuffer | Uint8Array | number[]> {
+            return await request('exportHwpx') as ArrayBuffer | Uint8Array | number[];
         },
         destroy(): void {
             destroyed = true;

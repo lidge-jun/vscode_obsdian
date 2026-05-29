@@ -22,12 +22,14 @@ export interface HwpSavePayload {
     bytes: number[];
     sourceFileName: string;
     isHwpx: boolean;
+    format: 'hwp' | 'hwpx';
 }
 
 export interface HwpSaveResultPayload {
     success: boolean;
     savedPath?: string;
     convertedFromHwpx?: boolean;
+    format?: 'hwp' | 'hwpx';
     error?: string;
 }
 
@@ -89,7 +91,8 @@ function isHwpSavePayload(value: unknown): value is HwpSavePayload {
     return isByteArray(value.bytes)
         && value.bytes.length > 0
         && typeof value.sourceFileName === 'string'
-        && typeof value.isHwpx === 'boolean';
+        && typeof value.isHwpx === 'boolean'
+        && (value.format === 'hwp' || value.format === 'hwpx');
 }
 
 function isHwpSaveResultPayload(value: unknown): value is HwpSaveResultPayload {
@@ -97,6 +100,7 @@ function isHwpSaveResultPayload(value: unknown): value is HwpSaveResultPayload {
     return typeof value.success === 'boolean'
         && (value.savedPath === undefined || typeof value.savedPath === 'string')
         && (value.convertedFromHwpx === undefined || typeof value.convertedFromHwpx === 'boolean')
+        && (value.format === undefined || value.format === 'hwp' || value.format === 'hwpx')
         && (value.error === undefined || typeof value.error === 'string');
 }
 
