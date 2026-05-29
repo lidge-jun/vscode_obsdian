@@ -18,6 +18,7 @@ vscode_obsdian/
 │   ├── provider/
 │   │   ├── markdownEditorProvider.ts
 │   │   ├── officeViewerProvider.ts
+│   │   ├── hwp/
 │   │   ├── compress/
 │   │   └── handlers/
 │   ├── service/
@@ -31,11 +32,13 @@ vscode_obsdian/
 │       │   ├── compress/
 │       │   ├── excel/
 │       │   ├── fontViewer/
+│       │   ├── hwp/
 │       │   ├── image/
 │       │   └── word/
 │       └── util/
 ├── resource/
 │   ├── pdf/
+│   ├── rhwp-studio/
 │   ├── vditor/
 │   └── lib/
 ├── styles/
@@ -57,6 +60,7 @@ Observed activation and registration responsibilities:
 - `ReactApp.init(context)` sets the compiled React WebView path and development mode flag.
 - `MarkdownService` handles Markdown export and image paste helpers.
 - `MarkdownEditorProvider` handles `.md`/`.markdown` as editable custom text editor.
+- `HwpEditorProvider` handles `.hwp`/`.hwpx` as editable custom editor.
 - `OfficeViewerProvider` routes binary/read-only preview formats.
 - HTTP request support is loaded from `src/bundle/extension` through `require`.
 
@@ -70,6 +74,7 @@ Observed activation and registration responsibilities:
 - configuration prefix: `vscode-office.*`
 - command mix: `office.*` and `vscode-office.*`
 - custom view types: `cweijan.officeViewer`, `cweijan.imageViewer`, `cweijan.markdownViewer`, `cweijan.htmlViewer`
+- HWP custom view type: `cweijan.hwpEditor`
 
 Phase 1 changed only public identity metadata and visible editor labels. The runtime command IDs, configuration prefix, and `viewType` IDs are intentionally still legacy identifiers until a compatibility migration plan exists. VS Code recommends unique `viewType` values because `customEditors` connect manifest entries to registered providers, so that migration should be tested as a dedicated phase.
 
@@ -128,6 +133,34 @@ Current file routing:
 | `.html`, `.htm` | raw HTML preview | `Util.buildPath` |
 
 Future PPTX support belongs here because `.pptx` is not a text document and should not be handled by the Markdown provider.
+
+### HWP / HWPX
+
+HWP/HWPX no longer uses the readonly Office viewer path. It has a dedicated
+editable provider:
+
+```text
+package.json customEditors
+  -> cweijan.hwpEditor
+  -> src/extension.ts registerCustomEditorProvider
+  -> src/provider/hwp/HwpEditorProvider.ts
+  -> ReactApp.view(route: hwp)
+  -> src/react/view/hwp/Hwp.tsx
+  -> bundled resource/rhwp-studio direct local mount
+```
+
+The default rhwp runtime is bundled under `resource/rhwp-studio`. The React HWP
+view mounts that bundle inside the host WebView document to preserve the full
+rhwp editor UI and avoid nested `srcdoc` resource resolution failures. The
+bridge keeps remote `vscode-obsdian.hwp.studioUrl` as explicit opt-in and uses
+source/origin-checked iframe messaging only for that remote path.
+
+Implemented VS Code lifecycle:
+
+- `CustomEditorProvider<HwpCustomDocument>`
+- dirty event via `onDidChangeCustomDocument`
+- native `save`, `saveAs`, `revert`, and `backup`
+- format-aware HWP/HWPX export and write guards
 
 ## WebView Resource Boundary
 

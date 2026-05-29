@@ -82,6 +82,7 @@ devlog/
       08.2d_phase_08_hwp_security_implementation_plan.md
       08.2e_phase_08_hwp_security_frontend_verification_plan.md
       08.2f_phase_08_hwp_full_editing_recovery_audit.md
+      08.2g_phase_08_hwp_lifecycle_hardening_completion.md
       90_research_grok_expert.md
       97_baseline_import_snapshot.md
       98_dependency_audit_snapshot.md

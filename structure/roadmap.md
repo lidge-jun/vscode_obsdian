@@ -273,6 +273,9 @@ viewer-only defaults, but that direction was rejected because it disabled the
 actual rhwp editing value. Current default is full upstream rhwp studio editing
 with save enabled. See
 `devlog/_plan/260524_vscode_obsdian_baseline/08.2f_phase_08_hwp_full_editing_recovery_audit.md`.
+Lifecycle and security hardening was then completed without reverting to
+viewer-only behavior. See
+`devlog/_plan/260524_vscode_obsdian_baseline/08.2g_phase_08_hwp_lifecycle_hardening_completion.md`.
 The older security/lifecycle recovery plan remains useful as a hardening
 reference:
 `devlog/_plan/260524_vscode_obsdian_baseline/08.2_phase_08_hwp_security_lifecycle_recovery.md`.
@@ -299,13 +302,13 @@ MOD  src/common/reactApp.ts (CSP + local asset config)
 완료 기준:
 
 - `.hwp`, `.hwpx` 파일을 VS Code에서 열면 rhwp 에디터가 WebView에 표시됨
-- default path loads full rhwp editor features
+- default path loads bundled local rhwp-studio with full editor features
 - HWP/HWPX save is enabled by default and can be disabled by setting
 - HWP saves as HWP, HWPX saves as HWPX
 - 테이블, 이미지, 한글 텍스트가 정상 렌더링됨
 - 기존 파일 타입 (PPTX, DOCX, Excel, PDF) regression 없음
 - VSIX 패키징 성공
-- security/lifecycle debt remains documented before production-hardening claims
+- CustomEditorProvider dirty/save/save-as/revert/backup lifecycle is implemented
 
 > 출처: [edwardkim/rhwp](https://github.com/edwardkim/rhwp)
 > 출처: [golbin/hop](https://github.com/golbin/hop)
@@ -333,20 +336,32 @@ MOD  package.json activation/configuration if needed
 
 현재 완료/미완료 기준:
 
-- default path loads live `https://edwardkim.github.io/rhwp/` to preserve full editor features
-- WebView CSP is explicit and allows the current default rhwp host
+- default path loads bundled local `resource/rhwp-studio` to preserve full editor features without remote default trust
+- local rhwp-studio is direct-mounted in the host WebView; nested `srcdoc` iframe was rejected after resource resolution failures
+- local WASM fetches are rewritten from `/assets/*.wasm` to bundled WebView resource URIs
+- optional remote `hwp.studioUrl` is allowed only through dynamic CSP sources
 - HWP bridge validates source/origin/type/payload
 - viewer-only mode is opt-out only, not the default
 - full editing and toolbar save are default
-- real VS Code dirty/save/backup/revert lifecycle remains follow-up debt
+- real VS Code dirty/save/save-as/backup/revert lifecycle is implemented
 - `.hwpx -> .hwp` conversion never silently overwrites an existing sibling
+- stale `workbench.editorAssociations` entries for `cweijan.officeViewer` are migrated to `cweijan.hwpEditor`
 - the known HWPX fixture opens without a stale timeout banner
-- Backend and Frontend employee audits both PASS before implementation is treated as ready
+- Backend and Frontend employee audits both PASS
 - `08.2a_phase_08_hwp_security_exact_diffs.md` is synchronized with this roadmap
 - `08.2b_phase_08_hwp_security_revalidation_fixes.md` closes revalidation findings
 - `08.2c_phase_08_hwp_frontend_revalidation_fixes.md` closes frontend revalidation findings
 - `08.2f_phase_08_hwp_full_editing_recovery_audit.md` records the final full-editing correction
+- `08.2g_phase_08_hwp_lifecycle_hardening_completion.md` records the lifecycle hardening completion
 - `98_dependency_audit_snapshot.md` is refreshed before release
+
+Remaining known limitation:
+
+```text
+Precise dirty tracking and native undo/redo integration require rhwp to expose
+granular edit events. Current implementation uses conservative content-change
+dirty signals.
+```
 
 ## 전역 검증 묶음
 
