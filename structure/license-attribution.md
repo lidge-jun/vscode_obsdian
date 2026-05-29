@@ -15,7 +15,9 @@ The current README also credits:
 - Vanessa219 / Vditor
 - PDF.js, docxjs, SheetJS, x-spreadsheet, Rest Client, Mermaid
 
-Phase 1 keeps `LICENSE`, adds `NOTICE.md`, and rewrites README/README-CN so the product is not visually branded as a GitHub fork while attribution remains visible.
+The public docs keep `LICENSE`, `NOTICE.md`, and localized READMEs aligned so
+the product is not visually branded as a GitHub fork while attribution remains
+visible.
 
 ## Policy
 
@@ -27,14 +29,18 @@ Phase 1 keeps `LICENSE`, adds `NOTICE.md`, and rewrites README/README-CN so the 
 
 ## Recommended Files
 
-Phase 1 added or updated:
+The active attribution and branding surface is:
 
 ```text
 LICENSE
 NOTICE.md
 README.md
 README-CN.md
+README-KO.md
 package.json
+docs/index.html
+images/logo-new.svg
+images/logo-new.png
 ```
 
 Current `NOTICE.md` outline:
@@ -60,6 +66,32 @@ Additional bundled third-party components include:
 - rhwp / rhwp-studio
 - bundled Korean web fonts used by rhwp-studio
 ```
+
+## Logo Attribution
+
+The current logo was created for this repository on 2026-05-29. Source chain:
+
+```text
+OpenAI image generation concept
+  -> manual vector simplification in images/logo-new.svg
+  -> rendered package icon in images/logo-new.png
+  -> copied GitHub Pages asset in docs/assets/logo-new.png
+```
+
+The design intent is a faceted obsidian document core with layered sheets,
+cyan/jade ribbons, and abstract document-format accents. It must remain
+visually distinct from:
+
+- the Obsidian app logo;
+- the VS Code logo;
+- Microsoft Office icons;
+- Hancom branding;
+- cweijan/vscode-office artwork;
+- rjwang1982/vscode-office artwork;
+- the previous green folder / "E" vscode-office-enhanced logo.
+
+Do not restore the old upstream logo comments or author attribution in
+`images/logo-new.svg`; that asset is no longer the active logo source.
 
 ## HWP Runtime Attribution
 

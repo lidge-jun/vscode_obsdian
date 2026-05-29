@@ -1,106 +1,100 @@
 <!--
-  Office Viewer Enhanced Logo
-  作者: RJ.Wang (wangrenjun@gmail.com)
-  创建时间: 2026-04-17
-  风格：打开的文件夹 + "E" 字母 + 右下文档图标，绿色系
+  vscode_obsdian logo
+  Created for lidge-jun/vscode_obsdian on 2026-05-29.
+  Source concept: OpenAI image generation, then manually simplified as SVG.
+  Not derived from Obsidian, VS Code, Microsoft Office, Hancom, or vscode-office logos.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">vscode_obsdian logo</title>
+  <desc id="desc">A faceted obsidian document core wrapped by cyan and jade ribbons, with layered document sheets behind it.</desc>
   <defs>
-    <!-- 文件夹后面板渐变 -->
-    <linearGradient id="folderBack" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2ea44f"/>
-      <stop offset="100%" style="stop-color:#22863a"/>
+    <linearGradient id="appBg" x1="70" y1="42" x2="442" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1d2430"/>
+      <stop offset="0.48" stop-color="#0f1219"/>
+      <stop offset="1" stop-color="#080a0f"/>
     </linearGradient>
-    <!-- 文件夹前面板渐变 -->
-    <linearGradient id="folderFront" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#2ea44f"/>
-      <stop offset="100%" style="stop-color:#34d058"/>
+    <linearGradient id="paper" x1="82" y1="118" x2="416" y2="364" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dce6f2"/>
     </linearGradient>
-    <!-- 文件夹标签渐变 -->
-    <linearGradient id="folderTab" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#3cdf6a"/>
-      <stop offset="100%" style="stop-color:#2ea44f"/>
+    <linearGradient id="paperDim" x1="82" y1="170" x2="440" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6fbff"/>
+      <stop offset="1" stop-color="#cdd8e7"/>
     </linearGradient>
-    <!-- 文档图标渐变 -->
-    <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#85e89d"/>
-      <stop offset="100%" style="stop-color:#34d058"/>
+    <linearGradient id="obsidian" x1="173" y1="72" x2="345" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#565d6a"/>
+      <stop offset="0.35" stop-color="#1f2630"/>
+      <stop offset="0.78" stop-color="#07090e"/>
+      <stop offset="1" stop-color="#202632"/>
     </linearGradient>
-    <!-- 阴影 -->
-    <filter id="shadow1" x="-8%" y="-8%" width="120%" height="125%">
-      <feDropShadow dx="2" dy="6" stdDeviation="10" flood-color="#0a3d1a" flood-opacity="0.22"/>
+    <linearGradient id="cyanRibbon" x1="127" y1="299" x2="378" y2="185" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1686ff"/>
+      <stop offset="0.48" stop-color="#16d9e3"/>
+      <stop offset="1" stop-color="#7fffea"/>
+    </linearGradient>
+    <linearGradient id="jadeRibbon" x1="268" y1="425" x2="407" y2="218" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00a37a"/>
+      <stop offset="0.52" stop-color="#29df91"/>
+      <stop offset="1" stop-color="#8cffb7"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="66" y1="333" x2="179" y2="411" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="softShadow" x="-16%" y="-16%" width="132%" height="138%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.36"/>
     </filter>
-    <filter id="shadow2" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="1" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
+    <filter id="smallShadow" x="-14%" y="-14%" width="128%" height="128%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.22"/>
     </filter>
   </defs>
 
-  <!-- === 打开的文件夹 === -->
-  <g filter="url(#shadow1)">
-    <!-- 文件夹后面板（竖立的部分） -->
-    <path d="
-      M 55,70
-      L 55,400
-      Q 55,420 75,420
-      L 305,420
-      Q 325,420 325,400
-      L 325,70
-      Q 325,50 305,50
-      L 180,50
-      L 160,30
-      Q 150,20 135,20
-      L 75,20
-      Q 55,20 55,40
-      Z
-    " fill="url(#folderBack)"/>
+  <rect x="18" y="18" width="476" height="476" rx="104" fill="url(#appBg)"/>
 
-    <!-- 文件夹标签（顶部凸起） -->
-    <path d="
-      M 55,40
-      Q 55,20 75,20
-      L 135,20
-      Q 150,20 160,30
-      L 185,55
-      L 55,55
-      Z
-    " fill="url(#folderTab)"/>
-
-    <!-- 文件夹内露出的文件（白色纸张） -->
-    <rect x="85" y="80" width="210" height="300" rx="10" fill="white" opacity="0.35"/>
-    <rect x="95" y="90" width="190" height="280" rx="8" fill="white" opacity="0.55"/>
-
-    <!-- 文件夹前面板（略微打开，有透视感） -->
-    <path d="
-      M 45,180
-      Q 42,165 58,160
-      L 310,110
-      Q 328,106 332,122
-      L 345,400
-      Q 347,418 330,420
-      L 70,420
-      Q 52,420 50,402
-      Z
-    " fill="url(#folderFront)" opacity="0.92"/>
+  <g filter="url(#smallShadow)">
+    <path d="M93 170c-5-24 12-44 36-38l126 32c13 3 22 15 22 29v160c0 20-18 35-37 30L115 351c-13-3-22-15-22-29V170Z" fill="url(#paperDim)" opacity="0.86"/>
+    <path d="M333 132c-24-6-45 12-39 36l39 158c4 16 18 27 34 27h45c20 0 36-16 36-36V178c0-16-11-30-27-34l-88-12Z" fill="url(#paperDim)" opacity="0.9"/>
+    <path d="M78 322c-5-23 18-41 39-31l78 39c13 6 21 19 21 34v29c0 20-18 36-38 31l-78-20c-13-3-22-15-22-29v-53Z" fill="url(#paper)" opacity="0.95"/>
+    <path d="M331 330c0-22 21-38 42-31l50 18c15 5 25 19 25 35v62c0 21-20 37-41 31l-52-16c-14-4-24-18-24-33v-66Z" fill="url(#paper)" opacity="0.95"/>
   </g>
 
-  <!-- 白色 "E" 字母（在文件夹前面板上） -->
-  <text x="190" y="330" font-family="'Segoe UI', 'SF Pro Display', Arial, Helvetica, sans-serif"
-        font-size="200" font-weight="800" fill="white"
-        text-anchor="middle" dominant-baseline="central"
-        opacity="0.95">E</text>
+  <g opacity="0.82">
+    <rect x="117" y="181" width="74" height="14" rx="7" fill="#1fb6ff"/>
+    <rect x="117" y="210" width="103" height="14" rx="7" fill="#1fb6ff"/>
+    <rect x="354" y="173" width="58" height="10" rx="5" fill="#758195"/>
+    <rect x="354" y="201" width="70" height="10" rx="5" fill="#758195"/>
+    <rect x="362" y="365" width="50" height="14" rx="7" fill="#246bfe"/>
+    <rect x="379" y="389" width="33" height="14" rx="7" fill="#246bfe"/>
+    <circle cx="118" cy="355" r="14" fill="url(#amber)"/>
+    <path d="M92 390l34-41 27 28 22-22 33 48H92Z" fill="url(#amber)"/>
+  </g>
 
-  <!-- === 右下角文档图标 === -->
-  <g filter="url(#shadow2)">
-    <!-- 文档背景 -->
-    <rect x="290" y="250" width="185" height="225" rx="22" ry="22" fill="url(#docGrad)"/>
-    <!-- 文档白色内页 -->
-    <rect x="310" y="275" width="145" height="180" rx="10" ry="10" fill="white" opacity="0.88"/>
-    <!-- 折角效果 -->
-    <path d="M 415,275 L 455,275 Q 455,275 455,285 L 455,315 L 425,275 Z" fill="#b5f5c8" opacity="0.6"/>
-    <!-- 文档横线 -->
-    <rect x="325" y="310" width="100" height="10" rx="5" fill="#34d058" opacity="0.45"/>
-    <rect x="325" y="335" width="80" height="10" rx="5" fill="#34d058" opacity="0.45"/>
-    <rect x="325" y="360" width="95" height="10" rx="5" fill="#34d058" opacity="0.45"/>
-    <rect x="325" y="385" width="65" height="10" rx="5" fill="#34d058" opacity="0.4"/>
+  <g filter="url(#softShadow)">
+    <path d="M257 62 371 149l37 217-147 96-143-101 25-214 114-85Z" fill="url(#obsidian)"/>
+    <path d="M257 62 213 209l44 43 50-89Z" fill="#6d7480" opacity="0.62"/>
+    <path d="M143 147 213 209l-69 68Z" fill="#2d3440" opacity="0.95"/>
+    <path d="M213 209 257 252l-87 57Z" fill="#151a22"/>
+    <path d="M307 163 371 149l-10 123-104-20Z" fill="#080a0f" opacity="0.92"/>
+    <path d="M257 252 361 272l-64 82Z" fill="#303744" opacity="0.86"/>
+    <path d="M170 309 257 252l40 102-58 72Z" fill="#0b0e14"/>
+    <path d="M297 354 408 366l-147 96Z" fill="#1e2530"/>
+    <path d="M239 426 118 361l52-52Z" fill="#171c25"/>
+    <path d="M143 147 257 62 213 209Z" fill="#3b424d"/>
+    <path d="M257 62 307 163l64-14Z" fill="#eef5ff" opacity="0.88"/>
+    <path d="M118 361 143 147 257 62 371 149 408 366 261 462Z" fill="none" stroke="#f4fbff" stroke-width="8" stroke-linejoin="round" opacity="0.95"/>
+  </g>
+
+  <path d="M101 292c50-51 146-70 260-69 22 0 34 25 21 42-55 70-165 104-279 91-32-4-43-41-2-64Z" fill="url(#cyanRibbon)" opacity="0.97"/>
+  <path d="M105 293c57 33 149 41 243-24-62 73-166 99-251 83-25-5-27-38 8-59Z" fill="#07b7d4" opacity="0.33"/>
+  <path d="M301 286c29-38 67-56 113-58 11 62 4 111-23 148-22 30-52 54-91 72 15-48 15-105 1-162Z" fill="url(#jadeRibbon)"/>
+  <path d="M319 294h74M315 319h79M313 344h66M315 369h54M315 394h34" stroke="#a9ffd0" stroke-width="10" stroke-linecap="round" opacity="0.3"/>
+  <path d="M300 448c15-48 15-105 1-162 29-38 67-56 113-58-5 17-18 34-39 50-43 34-50 93-75 170Z" fill="#047857" opacity="0.42"/>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M384 197c19-29 49-24 55-2 5 20-12 31-29 42-16 10-28 20-27 39" stroke="#8b5cf6" stroke-width="18"/>
+    <path d="M370 309l29-29 28 29" stroke="#16203a" stroke-width="12"/>
+    <circle cx="370" cy="309" r="10" fill="#16203a" stroke="none"/>
+    <circle cx="399" cy="280" r="10" fill="#16203a" stroke="none"/>
+    <circle cx="427" cy="309" r="10" fill="#16203a" stroke="none"/>
   </g>
 </svg>

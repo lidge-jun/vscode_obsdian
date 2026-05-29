@@ -7,6 +7,18 @@ Each component remains subject to its own license terms.
 This project is not affiliated with or endorsed by Obsidian, Hancom, Microsoft,
 cweijan/vscode-office, rjwang1982/vscode-office, or rhwp.
 
+## Project Logo
+
+The current `vscode_obsdian` logo in `images/logo-new.svg` and
+`images/logo-new.png` was created for this repository on 2026-05-29. The design
+started from an OpenAI image generation concept and was then manually simplified
+into a project-owned SVG app icon.
+
+The logo is not derived from the Obsidian app logo, VS Code logo, Microsoft
+Office logo, Hancom logo, cweijan/vscode-office artwork, or rjwang1982/vscode-office
+artwork. It intentionally replaces the previous green folder / "E" logo used by
+the maintained vscode-office fork.
+
 ## Original Lineage
 
 This repository contains code derived from MIT-licensed `vscode-office`
