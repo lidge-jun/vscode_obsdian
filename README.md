@@ -44,30 +44,47 @@ cweijan/vscode-office, rjwang1982/vscode-office, or rhwp.
 
 ## Product Screenshots
 
-The screenshots below were captured locally in VS Code Insiders after installing
-the packaged VSIX. The DOCX brief was generated with `officecli` for screenshot
-smoke testing; the HWP example is copied from the bundled rhwp sample set into a
-temporary workspace so tracked vendor samples are not modified.
+The screenshots below come from local smoke samples built for this repository.
+Office/PDF/HWP captures were taken in VS Code Insiders after installing the
+packaged VSIX. The HTML capture is the same local review sample rendered
+directly for a clean visual check. Temporary samples are generated outside the
+repo so tracked vendor documents are not modified.
 
 <table>
   <tr>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="Editable Korean HWP document with toolbar controls inside VS Code" width="760">
-    </td>
-    <td width="42%">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="Editable Korean HWP document with toolbar controls inside VS Code" width="720"><br>
       <strong>Local HWP/HWPX editing</strong><br>
-      Review Korean office documents inside VS Code with the bundled
-      rhwp-studio runtime, full toolbar surface, and VS Code save lifecycle.
+      Bundled rhwp-studio runtime, full toolbar surface, and VS Code save lifecycle.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="DOCX review brief previewed inside VS Code" width="720"><br>
+      <strong>DOCX and source-context review</strong><br>
+      Generated briefs and source notes stay together instead of moving through disconnected viewers.
     </td>
   </tr>
   <tr>
-    <td width="42%">
-      <strong>DOCX and source-context review</strong><br>
-      Generated briefs, notes, PDFs, spreadsheets, and source files can stay in
-      one workspace instead of moving through disconnected viewers.
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-xlsx-dashboard.png" alt="XLSX review dashboard previewed inside VS Code" width="720"><br>
+      <strong>XLSX review dashboard</strong><br>
+      Spreadsheet gates, owners, scores, and publish readiness are inspectable inside the workspace.
     </td>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="DOCX review brief previewed inside VS Code" width="760">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pdf-brief.png" alt="PDF source review map previewed inside VS Code" width="720"><br>
+      <strong>PDF evidence map</strong><br>
+      Source packets and provenance maps stay beside drafts and Korean office references.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pptx-preview.png" alt="PPTX text and media preview inside VS Code" width="720"><br>
+      <strong>PPTX text/media preview</strong><br>
+      Narrative decks are available for lightweight inspection while deeper fidelity work remains on the roadmap.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-html-preview.png" alt="HTML review room sample rendered for visual smoke testing" width="720"><br>
+      <strong>HTML export review</strong><br>
+      Web drafts can be checked as part of the same AI-era document review flow.
     </td>
   </tr>
 </table>
@@ -180,7 +197,7 @@ Manual smoke before publishing:
 1. Install the generated VSIX in VS Code or VS Code Insiders.
 2. Open a .hwp file, edit text, save, close, and reopen.
 3. Open a .hwpx file, edit text, select table cells, save, close, and reopen.
-4. Open Markdown, XLSX, DOCX, PDF, PPTX, image, and archive samples.
+4. Open Markdown, HTML, XLSX, DOCX, PDF, PPTX, image, and archive samples.
 5. Confirm no stale HWP loading banner or false Save As prompt remains.
 ```
 

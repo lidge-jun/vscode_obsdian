@@ -104,9 +104,11 @@ Current source chain:
 ```text
 officecli-generated DOCX smoke sample in /tmp
 bundled rhwp sample copied into /tmp
+temporary XLSX/PDF/PPTX/HTML review samples generated in /tmp
   -> VS Code Insiders with code-office VSIX installed
   -> Computer Use state verification
-  -> local macOS screenshot capture
+  -> local macOS screenshot capture for Office/PDF/HWP surfaces
+  -> local browser render capture for the standalone HTML visual check
   -> docs/assets/screenshots/*.png
 ```
 

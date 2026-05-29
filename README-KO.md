@@ -41,30 +41,46 @@ rjwang1982/vscode-office, rhwp와 공식 제휴 관계가 없습니다.
 
 ## 제품 스크린샷
 
-아래 이미지는 packaged VSIX를 VS Code Insiders에 설치한 뒤 로컬에서 캡처했습니다.
-DOCX brief는 screenshot smoke test를 위해 `officecli`로 생성했고, HWP 예시는
-tracked vendor sample을 직접 수정하지 않도록 번들 rhwp sample을 임시 workspace로
-복사해 열었습니다.
+아래 이미지는 이 저장소의 로컬 smoke sample로 만든 화면입니다. Office/PDF/HWP
+캡처는 packaged VSIX를 VS Code Insiders에 설치한 뒤 찍었고, HTML 캡처는 같은
+임시 review sample을 깨끗한 visual check용으로 직접 렌더링했습니다. 임시 샘플은
+repo 밖에서 만들기 때문에 tracked vendor 문서는 수정하지 않습니다.
 
 <table>
   <tr>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 안에서 열린 편집 가능한 Korean HWP 문서와 toolbar" width="760">
-    </td>
-    <td width="42%">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 안에서 열린 편집 가능한 Korean HWP 문서와 toolbar" width="720"><br>
       <strong>로컬 HWP/HWPX 편집</strong><br>
-      번들 rhwp-studio runtime, 전체 toolbar surface, VS Code 저장 lifecycle로
-      Korean office 문서를 VS Code 안에서 검토합니다.
+      번들 rhwp-studio runtime, 전체 toolbar surface, VS Code 저장 lifecycle.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 안에서 미리보기 중인 DOCX review brief" width="720"><br>
+      <strong>DOCX와 source context 검토</strong><br>
+      생성 brief와 source note를 흩어진 viewer 대신 같은 workspace에 둡니다.
     </td>
   </tr>
   <tr>
-    <td width="42%">
-      <strong>DOCX와 source context 검토</strong><br>
-      생성된 brief, notes, PDF, spreadsheet, source file을 별도 viewer로 흩트리지
-      않고 하나의 workspace에 둡니다.
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-xlsx-dashboard.png" alt="VS Code 안에서 열린 XLSX review dashboard" width="720"><br>
+      <strong>XLSX review dashboard</strong><br>
+      Spreadsheet gate, owner, score, publish readiness를 workspace 안에서 확인합니다.
     </td>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 안에서 미리보기 중인 DOCX review brief" width="760">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pdf-brief.png" alt="VS Code 안에서 열린 PDF source review map" width="720"><br>
+      <strong>PDF evidence map</strong><br>
+      Source packet과 provenance map을 초안, Korean office reference 옆에 둡니다.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pptx-preview.png" alt="VS Code 안에서 열린 PPTX text media preview" width="720"><br>
+      <strong>PPTX text/media preview</strong><br>
+      Narrative deck을 가볍게 확인합니다. 더 높은 fidelity는 roadmap에 남겨둡니다.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-html-preview.png" alt="HTML review room visual smoke sample" width="720"><br>
+      <strong>HTML export review</strong><br>
+      Web draft도 AI 시대 문서 검토 흐름 안에서 함께 확인합니다.
     </td>
   </tr>
 </table>
@@ -174,7 +190,7 @@ WASM 자산이 들어 있고, upstream samples, vendor source, docs site, 개발
 | 생성된 VSIX를 VS Code 또는 VS Code Insiders에 설치합니다. | 확장이 활성화되고 HWP/HWPX custom editor를 선택할 수 있습니다. |
 | `.hwp` 파일을 열고 수정한 뒤 저장, 종료, 재오픈합니다. | 문서가 다시 열리고 저장 후에도 HWP입니다. |
 | `.hwpx` 파일을 열고, 텍스트를 수정하고, 표 셀을 선택하고, 저장한 뒤 닫았다가 다시 엽니다. | 문서가 다시 열리고 저장 후에도 HWPX이며 표/셀 상호작용이 유지됩니다. |
-| Markdown, XLSX, DOCX, PDF, PPTX, 이미지, 압축 파일 샘플을 엽니다. | 기존 viewer/editor 경로가 계속 동작합니다. |
+| Markdown, HTML, XLSX, DOCX, PDF, PPTX, 이미지, 압축 파일 샘플을 엽니다. | 기존 viewer/editor 경로가 계속 동작합니다. |
 | HWP 로딩 상태와 저장 UI를 확인합니다. | stale loading banner나 잘못된 Save As 반복 프롬프트가 남지 않습니다. |
 
 Marketplace publish는 별도 gate입니다.

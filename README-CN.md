@@ -39,29 +39,46 @@ rjwang1982/vscode-office 或 rhwp，也不代表这些项目的官方立场。
 
 ## 产品截图
 
-以下截图是在 VS Code Insiders 中安装 packaged VSIX 后本地捕获的。DOCX brief
-由 `officecli` 生成用于 screenshot smoke test；HWP 示例来自 bundled rhwp sample
-复制到临时 workspace，避免修改 tracked vendor samples。
+以下截图来自本仓库的本地 smoke samples。Office/PDF/HWP 截图是在 VS Code
+Insiders 中安装 packaged VSIX 后捕获的；HTML 截图使用同一个临时 review sample
+直接渲染，便于做干净的视觉检查。临时样例生成在仓库外，因此不会修改 tracked
+vendor documents。
 
 <table>
   <tr>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 中打开的可编辑 Korean HWP 文档和工具栏" width="760">
-    </td>
-    <td width="42%">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 中打开的可编辑 Korean HWP 文档和工具栏" width="720"><br>
       <strong>本地 HWP/HWPX 编辑</strong><br>
-      使用 bundled rhwp-studio runtime、完整工具栏和 VS Code 保存 lifecycle
-      审阅韩国 office 文档。
+      bundled rhwp-studio runtime、完整工具栏、VS Code 保存 lifecycle。
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 中预览的 DOCX review brief" width="720"><br>
+      <strong>DOCX 与 source context 审阅</strong><br>
+      生成 brief 与 source notes 保留在同一个 workspace，而不是散落在多个 viewer。
     </td>
   </tr>
   <tr>
-    <td width="42%">
-      <strong>DOCX 与 source context 审阅</strong><br>
-      生成的 brief、notes、PDF、spreadsheet 和 source file 可以留在同一个
-      workspace，而不是散落在多个 viewer。
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-xlsx-dashboard.png" alt="VS Code 中打开的 XLSX review dashboard" width="720"><br>
+      <strong>XLSX review dashboard</strong><br>
+      spreadsheet gates、owners、scores 与 publish readiness 可以在 workspace 内检查。
     </td>
-    <td width="58%">
-      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 中预览的 DOCX review brief" width="760">
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pdf-brief.png" alt="VS Code 中打开的 PDF source review map" width="720"><br>
+      <strong>PDF evidence map</strong><br>
+      source packets 与 provenance maps 可以留在 drafts 和 Korean office references 旁边。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-pptx-preview.png" alt="VS Code 中打开的 PPTX text media preview" width="720"><br>
+      <strong>PPTX text/media preview</strong><br>
+      narrative decks 可用于轻量检查，更高 fidelity 仍在 roadmap 中推进。
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/code-office-html-preview.png" alt="HTML review room visual smoke sample" width="720"><br>
+      <strong>HTML export review</strong><br>
+      web drafts 也可以纳入 AI 时代的文档审阅流程。
     </td>
   </tr>
 </table>
@@ -167,7 +184,7 @@ npm run release:local
 | 安装生成的 VSIX 到 VS Code 或 VS Code Insiders。 | 扩展可激活，HWP/HWPX custom editor 可选。 |
 | 打开 `.hwp`，修改并保存，关闭后重新打开。 | 文档仍可打开，保存后仍是 HWP。 |
 | 打开 `.hwpx`，编辑文字，选择表格单元格，保存，关闭后重新打开。 | 文档仍可打开，保存后仍是 HWPX，表格/单元格交互正常。 |
-| 打开 Markdown、XLSX、DOCX、PDF、PPTX、图片和压缩包样本。 | 既有 viewer/editor 路径仍可用。 |
+| 打开 Markdown、HTML、XLSX、DOCX、PDF、PPTX、图片和压缩包样本。 | 既有 viewer/editor 路径仍可用。 |
 | 检查 HWP 载入状态和保存 UI。 | 不再出现 stale loading banner 或错误的 Save As 提示循环。 |
 
 Marketplace publish 是单独 gate：

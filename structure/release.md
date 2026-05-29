@@ -85,11 +85,14 @@ Smoke matrix:
 
 Visual marketing smoke:
 
-1. Generate or refresh representative DOCX/HWP/HWPX samples in a temporary
-   workspace. Do not modify tracked vendor samples directly.
+1. Generate or refresh representative HWP/HWPX, DOCX, XLSX, PDF, PPTX, and
+   HTML samples in a temporary workspace. Do not modify tracked vendor samples
+   directly.
 2. Install the packaged VSIX in VS Code Insiders.
-3. Capture at least one HWP/HWPX editor screenshot and one Office preview
-   screenshot with Computer Use/state verification before capture.
+3. Capture the HWP/HWPX editor plus DOCX, XLSX, PDF, and PPTX preview surfaces
+   with Computer Use/state verification before capture; capture the HTML visual
+   sample through a local render when VS Code's split preview is not stable
+   enough for a clean marketing image.
 4. Store web-facing screenshots under `docs/assets/screenshots/`; `docs/**`
    remains excluded from the VSIX by `.vscodeignore`.
 5. Render the GitHub Pages site locally and inspect desktop/mobile/narrow

@@ -17,6 +17,7 @@
   <meta name="twitter:description" content="AI-era document review with Office, Markdown, and HWP/HWPX editing inside VS Code.">
   <meta name="twitter:image" content="https://lidge-jun.github.io/code-office/assets/logo-new.png">
   <link rel="stylesheet" href="./site.css?v=20260529-showcase">
+  <link rel="stylesheet" href="./showcase.css?v=20260529-format-wall">
 </head>
 <body>
   <header class="hero">
@@ -62,7 +63,7 @@
   </header>
 
   <main>
-    <section id="showcase" class="section">
+    <section id="showcase" class="section format-section">
       <div class="section-head">
         <p class="eyebrow">Showcase</p>
         <h2>Built for the review work that AI-era document flows actually create.</h2>
@@ -73,38 +74,50 @@
           archives, and source files that need to stay inspectable together.
         </p>
       </div>
-      <article class="showcase">
-        <figure class="shot">
+
+      <div class="showcase-split">
+        <div class="showcase-copy">
+          <p class="eyebrow">Format wall</p>
+          <h3>HWP, DOCX, XLSX, PDF, PPTX, and HTML stay in the same review room.</h3>
+          <p>
+            AI-era document work is rarely a single file. code-office keeps the
+            generated brief, the Korean source form, the spreadsheet gate, the
+            PDF evidence packet, the presentation narrative, and the HTML export
+            visible as one workspace story.
+          </p>
+        </div>
+        <figure class="showcase-main">
+          <img src="./assets/screenshots/code-office-pdf-brief.png" alt="code-office PDF source review map inside VS Code Insiders" width="1800" height="1040">
+          <figcaption>PDF source map preview captured in VS Code Insiders with the packaged VSIX installed.</figcaption>
+        </figure>
+      </div>
+
+      <div class="format-wall" aria-label="code-office multi-format screenshot wall">
+        <figure class="format-card wide">
           <img src="./assets/screenshots/code-office-hwp-editor.png" alt="code-office showing an editable Korean HWP document with toolbar controls in VS Code" width="1800" height="1169">
-          <figcaption>Editable HWP in VS Code Insiders, captured from the bundled local rhwp-studio runtime.</figcaption>
+          <figcaption><strong>HWP/HWPX editor</strong><span>Local rhwp-studio runtime, toolbar editing, and VS Code save lifecycle.</span></figcaption>
         </figure>
-        <div class="showcopy">
-          <p class="eyebrow">Korean office files</p>
-          <h3>HWP/HWPX stays local by default.</h3>
-          <p>Review policy forms, proposals, public-sector templates, and Korean office documents without making a remote runtime the default path.</p>
-          <ul>
-            <li>Full rhwp toolbar surface</li>
-            <li>VS Code dirty/save lifecycle</li>
-            <li>Format-aware HWP and HWPX export checks</li>
-          </ul>
-        </div>
-      </article>
-      <article class="showcase reverse">
-        <figure class="shot">
+        <figure class="format-card">
           <img src="./assets/screenshots/code-office-docx-preview.png" alt="code-office previewing a DOCX review brief inside VS Code" width="1800" height="1169">
-          <figcaption>DOCX preview from a locally generated review brief used for screenshot smoke testing.</figcaption>
+          <figcaption><strong>DOCX brief</strong><span>Generated review reports stay next to source context.</span></figcaption>
         </figure>
-        <div class="showcopy">
-          <p class="eyebrow">Document review</p>
-          <h3>Keep generated drafts next to source context.</h3>
-          <p>When a model produces reports, briefs, and cited material, the useful workflow is not another isolated viewer. It is a workspace where notes, docs, and references remain side by side.</p>
-          <ul>
-            <li>Office previews beside Markdown notes</li>
-            <li>PDF, spreadsheet, archive, and image viewers</li>
-            <li>Clear upstream notices and asset provenance</li>
-          </ul>
-        </div>
-      </article>
+        <figure class="format-card">
+          <img src="./assets/screenshots/code-office-xlsx-dashboard.png" alt="code-office spreadsheet review dashboard previewed in VS Code" width="1800" height="1040">
+          <figcaption><strong>XLSX gate</strong><span>Spreadsheet review checks, owners, scores, and publish readiness.</span></figcaption>
+        </figure>
+        <figure class="format-card tall">
+          <img src="./assets/screenshots/code-office-html-preview.png" alt="HTML review room sample rendered for code-office HTML smoke testing" width="1440" height="1000">
+          <figcaption><strong>HTML export</strong><span>Local browser render used when VS Code WebView capture blocks data-heavy drafts.</span></figcaption>
+        </figure>
+        <figure class="format-card">
+          <img src="./assets/screenshots/code-office-pptx-preview.png" alt="code-office PowerPoint presentation preview inside VS Code" width="1800" height="1040">
+          <figcaption><strong>PPTX preview</strong><span>Current text/media preview for narrative decks.</span></figcaption>
+        </figure>
+        <figure class="format-card wide">
+          <img src="./assets/screenshots/code-office-pdf-brief.png" alt="code-office PDF source review map preview inside VS Code" width="1800" height="1040">
+          <figcaption><strong>PDF evidence map</strong><span>Source packets and provenance maps stay inspectable beside the workspace.</span></figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="hwp" class="section">
@@ -207,7 +220,7 @@
         </article>
         <article>
           <h3>Manual smoke</h3>
-          <p>Install the VSIX, open and save HWP/HWPX, then spot-check Markdown, XLSX, DOCX, PDF, PPTX, image, and archive surfaces.</p>
+          <p>Install the VSIX, open and save HWP/HWPX, then spot-check Markdown, HTML, XLSX, DOCX, PDF, PPTX, image, and archive surfaces.</p>
         </article>
       </div>
     </section>
@@ -247,7 +260,7 @@
       </div>
       <div class="source-notes" aria-label="Asset provenance">
         <p><strong>Logo</strong> OpenAI image-generation concept, manually simplified into <code>images/logo-new.svg</code>.</p>
-        <p><strong>Screenshots</strong> Local VS Code Insiders captures using an officecli DOCX smoke sample and a copied rhwp HWP sample in a temporary workspace.</p>
+        <p><strong>Screenshots</strong> Local smoke captures from temporary HWP, DOCX, XLSX, PDF, PPTX, and HTML samples. Office and PDF captures use VS Code Insiders with the packaged VSIX installed; the HTML export capture uses the rendered local sample for a clean visual check.</p>
       </div>
     </section>
   </main>

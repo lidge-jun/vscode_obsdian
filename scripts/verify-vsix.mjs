@@ -71,7 +71,19 @@ check('NOTICE includes rhwp attribution', notice.includes('edwardkim/rhwp'));
 check('NOTICE includes bundled font notice', notice.includes('Bundled Fonts'));
 check('NOTICE includes generated logo attribution', notice.includes('OpenAI image generation'));
 check('GitHub Pages index exists', docsIndex.includes('code-office') && docsIndex.includes('HWP/HWPX'));
-check('GitHub Pages uses code-office screenshot assets', docsIndex.includes('code-office-hwp-editor.png') && docsIndex.includes('code-office-docx-preview.png'));
+const screenshotAssets = [
+    'code-office-hwp-editor.png',
+    'code-office-docx-preview.png',
+    'code-office-xlsx-dashboard.png',
+    'code-office-pdf-brief.png',
+    'code-office-pptx-preview.png',
+    'code-office-html-preview.png',
+];
+for (const asset of screenshotAssets) {
+    check(`Screenshot asset exists: ${asset}`, existsSync(join(root, 'docs/assets/screenshots', asset)));
+    check(`README references screenshot: ${asset}`, readme.includes(asset));
+    check(`GitHub Pages references screenshot: ${asset}`, docsIndex.includes(asset));
+}
 check('GitHub Pages documents legacy HWP setting fallback', docsIndex.includes('vscode-obsdian.hwp.*'));
 check('GitHub Pages includes favicon metadata', docsIndex.includes('rel="icon"') && docsIndex.includes('og:image'));
 check('VSIX excludes docs directory', vscodeignore.includes('docs/**'));
