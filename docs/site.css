@@ -107,13 +107,19 @@ pre {
 
 .hero-mark {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   right: 0;
   top: 22px;
   width: min(48vw, 520px);
   height: auto;
   opacity: 0.58;
   filter: drop-shadow(0 36px 70px rgba(0, 0, 0, 0.5));
+}
+
+.hero-copy,
+.signal-list {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-copy {
