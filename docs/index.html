@@ -4,68 +4,57 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>vscode_obsdian</title>
-  <meta name="description" content="Office, Markdown, and HWP/HWPX editing inside VS Code.">
+  <meta name="description" content="Independent VS Code extension for Office, Markdown, and editable Korean HWP/HWPX documents with a bundled local rhwp runtime.">
+  <link rel="canonical" href="https://lidge-jun.github.io/vscode_obsdian/">
+  <link rel="icon" href="./assets/logo-new.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="vscode_obsdian">
+  <meta property="og:description" content="Office, Markdown, and editable Korean HWP/HWPX documents inside one VS Code workspace.">
+  <meta property="og:url" content="https://lidge-jun.github.io/vscode_obsdian/">
+  <meta property="og:image" content="https://lidge-jun.github.io/vscode_obsdian/assets/logo-new.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="vscode_obsdian">
+  <meta name="twitter:description" content="Office, Markdown, and HWP/HWPX editing inside VS Code.">
+  <meta name="twitter:image" content="https://lidge-jun.github.io/vscode_obsdian/assets/logo-new.png">
   <link rel="stylesheet" href="./site.css">
 </head>
 <body>
   <header class="hero">
     <nav class="nav" aria-label="Main navigation">
       <a class="brand" href="#top" aria-label="vscode_obsdian home">
-        <img src="./assets/logo-new.png" alt="" width="32" height="32">
+        <img src="./assets/logo-new.png" alt="vscode_obsdian logo" width="36" height="36">
         <span>vscode_obsdian</span>
       </a>
       <div class="nav-links">
         <a href="#hwp">HWP/HWPX</a>
         <a href="#formats">Formats</a>
+        <a href="#install">Install</a>
         <a href="#release">Release</a>
-        <a href="#attribution">Attribution</a>
+        <a href="#sources">Sources</a>
       </div>
     </nav>
 
-    <section id="top" class="hero-grid">
+    <section id="top" class="hero-stage">
+      <img class="hero-mark" src="./assets/logo-new.png" alt="" width="512" height="512">
       <div class="hero-copy">
-        <p class="eyebrow">VS Code extension</p>
-        <h1>Office, Markdown, and HWP/HWPX documents in one workspace.</h1>
+        <p class="eyebrow">Independent VS Code extension</p>
+        <h1>vscode_obsdian</h1>
         <p class="lede">
-          Open Korean HWP/HWPX documents with a bundled local rhwp-studio runtime,
-          then keep Word, Excel, PDF, Markdown, images, and archives close by in
-          the same editor.
+          Open document-heavy workspaces without leaving VS Code: editable Korean
+          HWP/HWPX, Markdown authoring, Office previews, PDFs, archives, images,
+          HTTP request files, and registry files.
         </p>
         <div class="actions">
-          <a class="button primary" href="https://github.com/lidge-jun/vscode_obsdian/releases">Download VSIX</a>
+          <a class="button primary" href="https://github.com/lidge-jun/vscode_obsdian/releases/latest">Download latest VSIX</a>
           <a class="button" href="https://github.com/lidge-jun/vscode_obsdian">GitHub Repository</a>
+          <a class="button subtle" href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README.md">README</a>
         </div>
       </div>
-      <div class="preview" aria-label="Product preview">
-        <div class="preview-toolbar">
-          <span></span><span></span><span></span>
-          <strong>form-002.hwpx</strong>
-        </div>
-        <div class="preview-body">
-          <aside>
-            <b>Explorer</b>
-            <p>meeting.hwpx</p>
-            <p>notes.md</p>
-            <p>report.xlsx</p>
-            <p>slides.pptx</p>
-          </aside>
-          <div class="preview-document">
-            <div class="doc-page">
-              <h2>HWPX document</h2>
-              <p>Editable text, table selection, native save, and local WASM runtime.</p>
-              <table>
-                <thead>
-                  <tr><th>Format</th><th>Save</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>HWP</td><td>HWP</td></tr>
-                  <tr><td>HWPX</td><td>HWPX</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ul class="signal-list" aria-label="Product signals">
+        <li><strong>Editable HWP/HWPX</strong><span>local rhwp-studio runtime</span></li>
+        <li><strong>Format-aware save</strong><span>HWP stays HWP, HWPX stays HWPX</span></li>
+        <li><strong>Visible lineage</strong><span>MIT notices and runtime credits preserved</span></li>
+      </ul>
     </section>
   </header>
 
@@ -73,20 +62,34 @@
     <section id="hwp" class="section">
       <div class="section-head">
         <p class="eyebrow">Bundled local runtime</p>
-        <h2>HWP/HWPX editing without a remote default dependency.</h2>
+        <h2>HWP/HWPX editing is the main product split from upstream office viewers.</h2>
+        <p>
+          The default path loads a packaged rhwp-studio build from the extension,
+          not a remote page. The editor is wired into VS Code's editable
+          CustomEditor lifecycle so dirty state, save, backup, revert, and format
+          checks stay under the host editor.
+        </p>
       </div>
-      <div class="cards three">
+      <div class="flow" aria-label="HWP editing flow">
+        <span>HWP/HWPX file</span>
+        <span>CustomEditorProvider</span>
+        <span>React WebView</span>
+        <span>rhwp WASM</span>
+        <span>exportHwp/exportHwpx</span>
+        <span>VS Code save</span>
+      </div>
+      <div class="tiles three">
         <article>
           <h3>Full rhwp surface</h3>
-          <p>Uses a local rhwp-studio build with toolbar, document editing, table and cell selection, and HWP/HWPX export.</p>
+          <p>Toolbar editing, text changes, table and cell selection, and export paths are exposed through the bundled studio runtime.</p>
         </article>
         <article>
-          <h3>VS Code save lifecycle</h3>
-          <p>Dirty state, native save, Save As, revert, and backup are routed through an editable CustomEditorProvider.</p>
+          <h3>Local by default</h3>
+          <p>The packaged runtime is copied into <code>resource/rhwp-studio</code> during build. Remote studio URLs are an advanced opt-in override.</p>
         </article>
         <article>
-          <h3>Format-aware writes</h3>
-          <p>HWP files save as HWP, HWPX files save as HWPX, and mismatched bytes are rejected before disk writes.</p>
+          <h3>Format guardrails</h3>
+          <p>Save checks preserve the destination format and reject silent mismatches before bytes are written back to disk.</p>
         </article>
       </div>
     </section>
@@ -94,69 +97,112 @@
     <section id="formats" class="section alt">
       <div class="section-head">
         <p class="eyebrow">File coverage</p>
-        <h2>One extension for document-heavy workspaces.</h2>
+        <h2>One extension for the files that usually scatter a workspace.</h2>
       </div>
-      <table class="matrix" aria-label="Supported formats">
-        <thead>
-          <tr><th>Family</th><th>Extensions</th><th>Mode</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>HWP/HWPX</td><td>.hwp, .hwpx</td><td>Editable</td></tr>
-          <tr><td>Word</td><td>.docx, .dotx</td><td>Preview</td></tr>
-          <tr><td>Excel</td><td>.xls, .xlsx, .xlsm, .csv, .ods</td><td>Preview / inherited edit paths</td></tr>
-          <tr><td>PowerPoint</td><td>.pptx</td><td>Read-only preview</td></tr>
-          <tr><td>Legacy PowerPoint</td><td>.ppt</td><td>Optional LibreOffice fallback</td></tr>
-          <tr><td>Markdown</td><td>.md, .markdown</td><td>Editable</td></tr>
-          <tr><td>HTTP requests</td><td>.http, .rest</td><td>Preview</td></tr>
-          <tr><td>Registry files</td><td>.reg</td><td>Preview</td></tr>
-          <tr><td>HTML</td><td>.html, .htm</td><td>Preview</td></tr>
-          <tr><td>PDF, images, fonts, archives</td><td>multiple</td><td>Preview</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="matrix" aria-label="Supported formats">
+          <thead>
+            <tr><th>Family</th><th>Extensions</th><th>Mode</th><th>Implementation note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>HWP / HWPX</td><td>.hwp, .hwpx</td><td>Editable</td><td>Bundled local rhwp-studio WASM runtime.</td></tr>
+            <tr><td>Markdown</td><td>.md, .markdown</td><td>Editable</td><td>Vditor-based authoring with inherited export paths.</td></tr>
+            <tr><td>Word</td><td>.docx, .dotx</td><td>Preview</td><td>docx-preview/docxjs-derived rendering.</td></tr>
+            <tr><td>Excel</td><td>.xls, .xlsx, .xlsm, .csv, .ods</td><td>Preview / inherited edit paths</td><td>Spreadsheet viewer stack from the office lineage.</td></tr>
+            <tr><td>PowerPoint</td><td>.pptx</td><td>Read-only preview</td><td>Text/media preview while deeper fidelity work remains on the roadmap.</td></tr>
+            <tr><td>Legacy PowerPoint</td><td>.ppt</td><td>Optional fallback</td><td>LibreOffice conversion is opt-in and disabled by default.</td></tr>
+            <tr><td>PDF, images, fonts, archives</td><td>Multiple</td><td>Preview</td><td>Viewer surfaces inherited and kept behind release smoke checks.</td></tr>
+            <tr><td>HTTP, Registry, HTML</td><td>.http, .rest, .reg, .html, .htm</td><td>Tooling / preview</td><td>Legacy runtime IDs remain for compatibility.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <section id="release" class="section">
+    <section id="install" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2>Use a release VSIX until Marketplace publishing is intentionally opened.</h2>
+      </div>
+      <div class="command-grid">
+        <div>
+          <p>Stable VS Code</p>
+          <pre><code>code --install-extension ./vscode-obsdian-&lt;version&gt;.vsix</code></pre>
+        </div>
+        <div>
+          <p>VS Code Insiders</p>
+          <pre><code>code-insiders --install-extension ./vscode-obsdian-&lt;version&gt;.vsix --force</code></pre>
+        </div>
+      </div>
+      <p class="narrow">
+        HWP/HWPX files are still registered through the inherited
+        <code>cweijan.hwpEditor</code> custom editor ID for compatibility. Public
+        branding and repository metadata point to this independent project.
+      </p>
+    </section>
+
+    <section id="release" class="section alt">
       <div class="section-head">
         <p class="eyebrow">Release discipline</p>
-        <h2>Packaged with explicit smoke gates.</h2>
+        <h2>Packaging is treated as a smoke test, not a final afterthought.</h2>
       </div>
-      <div class="code-card">
-        <code>npm run release:local</code>
+      <div class="release-grid">
+        <article>
+          <h3>Local gate</h3>
+          <pre><code>npm run release:local</code></pre>
+          <p>Type-checks, builds, verifies HWP hardening, packages the VSIX, and inspects packaged contents.</p>
+        </article>
+        <article>
+          <h3>VSIX inspection</h3>
+          <p>Checks that rhwp WASM, NOTICE, and LICENSE are included while vendor sources, samples, docs, and scripts are excluded.</p>
+        </article>
+        <article>
+          <h3>Manual smoke</h3>
+          <p>Install the VSIX, open and save HWP/HWPX, then spot-check Markdown, XLSX, DOCX, PDF, PPTX, image, and archive surfaces.</p>
+        </article>
       </div>
-      <p class="narrow">
-        The local release gate type-checks the extension and React WebView,
-        builds the bundled rhwp runtime into <code>resource/rhwp-studio</code>,
-        verifies HWP hardening assumptions, packages the VSIX, and checks that
-        the VSIX contains runtime WASM assets while excluding samples and vendor
-        sources.
-      </p>
     </section>
 
-    <section id="attribution" class="section alt">
+    <section id="roadmap" class="section">
       <div class="section-head">
-        <p class="eyebrow">Independent project, visible lineage</p>
-        <h2>Attribution is part of the product surface.</h2>
+        <p class="eyebrow">Roadmap</p>
+        <h2>Next work is deliberately scoped instead of hidden behind fork branding.</h2>
       </div>
-      <p class="narrow">
-        vscode_obsdian contains code derived from MIT-licensed vscode-office
-        projects by Weijan Chen and RJ.Wang. HWP/HWPX editing is powered by a
-        local build of edwardkim/rhwp. Full notices and font/runtime credits are
-        maintained in <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/NOTICE.md">NOTICE.md</a>.
-      </p>
-      <p class="narrow">
-        vscode_obsdian is an independent project and is not affiliated with
-        Obsidian, Hancom, Microsoft, cweijan/vscode-office, rjwang1982/vscode-office,
-        or rhwp.
-      </p>
+      <ol class="roadmap">
+        <li>Obsidian-style <code>[[wikilink]]</code> completion, navigation, and WebView/export integration.</li>
+        <li>PPTX preview stabilization beyond text/media extraction.</li>
+        <li>Markdown CJK inline formatting and strikethrough polish.</li>
+        <li>Excel strikethrough and style preservation.</li>
+        <li>Optional LibreOffice fallback completion for legacy presentations.</li>
+      </ol>
+    </section>
+
+    <section id="sources" class="section alt">
+      <div class="section-head">
+        <p class="eyebrow">Sources and attribution</p>
+        <h2>Independent project, visible open-source lineage.</h2>
+        <p>
+          vscode_obsdian contains code derived from MIT-licensed vscode-office
+          work and packages a local rhwp runtime. It is not affiliated with or
+          endorsed by Obsidian, Hancom, Microsoft, cweijan/vscode-office,
+          rjwang1982/vscode-office, or rhwp.
+        </p>
+      </div>
+      <div class="source-grid">
+        <a href="https://github.com/cweijan/vscode-office">cweijan/vscode-office</a>
+        <a href="https://github.com/rjwang1982/vscode-office">rjwang1982/vscode-office</a>
+        <a href="https://github.com/edwardkim/rhwp">edwardkim/rhwp</a>
+        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/NOTICE.md">NOTICE.md</a>
+        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/LICENSE">LICENSE</a>
+        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/structure/release.md">Release runbook</a>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
     <span>MIT licensed with upstream notices preserved.</span>
     <a href="https://github.com/lidge-jun/vscode_obsdian">GitHub</a>
-    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README.md">README</a>
-    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/NOTICE.md">NOTICE</a>
-    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/LICENSE">LICENSE</a>
+    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README-KO.md">한국어 README</a>
+    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README-CN.md">简体中文 README</a>
   </footer>
 </body>
 </html>

@@ -1,83 +1,107 @@
+<p align="center">
+  <img src="images/logo-new.png" width="128" height="128" alt="vscode_obsdian 로고">
+</p>
+
 # vscode_obsdian
 
 [English](README.md) | [简体中文](README-CN.md) | 한국어
 
-`vscode_obsdian`은 VS Code 안에서 Office 문서, Markdown 노트, PDF, 이미지,
-압축 파일, 그리고 HWP/HWPX 문서를 열기 위한 독립 확장입니다.
+`vscode_obsdian`은 VS Code 안에서 문서 중심 작업을 처리하기 위한 독립
+확장입니다. Korean HWP/HWPX, Markdown 노트, Office 파일, PDF, 압축 파일,
+이미지, HTTP request 파일, registry 파일, HTML을 한 workspace에서 열고 편집할
+수 있게 하는 것이 목표입니다.
 
-가장 큰 차별점은 **내장 HWP/HWPX 편집**입니다. 확장 안에 로컬
-`rhwp-studio` 런타임과 WASM 엔진을 함께 싣기 때문에, 일반적인 `.hwp`와
-`.hwpx` 파일을 한컴오피스, LibreOffice, 외부 서버 없이 열고 편집하고
-저장할 수 있습니다.
+- 프로젝트 홈페이지: <https://lidge-jun.github.io/vscode_obsdian/>
+- 저장소: <https://github.com/lidge-jun/vscode_obsdian>
+- 최신 VSIX: <https://github.com/lidge-jun/vscode_obsdian/releases/latest>
+
+가장 큰 차별점은 **내장 로컬 rhwp-studio 런타임을 통한 HWP/HWPX 편집**입니다.
+일반적인 `.hwp`와 `.hwpx` 파일을 한컴오피스, LibreOffice, 외부 서버 기본 의존성
+없이 열고 편집하고 저장할 수 있습니다.
 
 이 프로젝트는 Obsidian, 한컴, Microsoft, cweijan/vscode-office,
 rjwang1982/vscode-office, rhwp와 공식 제휴 관계가 없습니다.
 
-## 주요 기능
+## 차별점
 
-- **HWP/HWPX 편집**: rhwp 전체 툴바, 텍스트 편집, 표/셀 선택, VS Code
-  저장 lifecycle 연동.
-- **Office preview**: Word, Excel, PDF, PowerPoint, 이미지, 폰트, 압축 파일,
-  HTTP request 파일, registry 파일, HTML preview.
+- **HWP/HWPX 편집기**: rhwp 전체 툴바, 텍스트 편집, 표/셀 선택, 로컬 WASM
+  런타임, VS Code 저장 lifecycle 연동.
+- **포맷 보존 저장**: HWP는 HWP bytes로, HWPX는 HWPX zip/XML package로 저장하며,
+  포맷이 맞지 않는 출력은 디스크 쓰기 전에 거부합니다.
+- **Office와 workspace preview**: Word, Excel, PDF, PowerPoint, 이미지, 폰트,
+  압축 파일, HTTP request, registry, HTML preview.
 - **Markdown 작업**: Vditor 기반 Markdown 편집과 PDF/DOCX/HTML export 경로.
-- **오프라인 HWP 런타임**: 기본값은 외부 사이트가 아니라 내장
-  `resource/rhwp-studio` 번들입니다.
-- **명확한 출처 표기**: MIT 계보와 third-party credit은 `NOTICE.md`와
-  `LICENSE`에 보존합니다.
+- **독립 브랜드 표면**: repository metadata, GitHub Pages, package icon, README,
+  NOTICE를 새 프로젝트 기준으로 정리하되 MIT 계보는 보존합니다.
 
 ## 설치
 
-Marketplace 배포 후에는 publisher `jun6161`의 `vscode_obsdian`으로 설치할
-수 있습니다. Release VSIX를 직접 설치할 수도 있습니다.
+GitHub Releases에서 최신 VSIX를 내려받아 설치합니다.
 
 ```bash
-code --install-extension vscode-obsdian-3.7.5.vsix
+code --install-extension ./vscode-obsdian-<version>.vsix
 ```
 
 VS Code Insiders:
 
 ```bash
-code-insiders --install-extension vscode-obsdian-3.7.5.vsix --force
+code-insiders --install-extension ./vscode-obsdian-<version>.vsix --force
 ```
 
-설치 후 `.hwp` 또는 `.hwpx` 파일을 열면 `vscode_obsdian` custom editor로
-열립니다.
+설치 후 지원 파일을 열면 VS Code가 editor 선택을 요청합니다. HWP/HWPX 파일은
+기존 custom editor association과의 호환 때문에 `cweijan.hwpEditor` ID를 통해
+등록되어 있습니다.
 
 ## 지원 형식
 
 | 형식 | 확장자 | 모드 | 비고 |
 | --- | --- | --- | --- |
 | HWP / HWPX | `.hwp`, `.hwpx` | 편집 | 내장 rhwp-studio WASM 런타임. HWP는 HWP로, HWPX는 HWPX로 저장합니다. |
-| Excel | `.xls`, `.xlsx`, `.xlsm`, `.csv`, `.ods` | Preview / 기존 편집 경로 | 상속된 spreadsheet viewer 사용. |
+| Markdown | `.md`, `.markdown` | 편집 | Vditor 기반. PDF/DOCX/HTML export 지원. |
 | Word | `.docx`, `.dotx` | Preview | docx-preview/docxjs 기반 렌더링. |
+| Excel | `.xls`, `.xlsx`, `.xlsm`, `.csv`, `.ods` | Preview / 기존 편집 경로 | 상속된 spreadsheet viewer 사용. |
 | PowerPoint | `.pptx` | 읽기 전용 preview | 텍스트/이미지 preview 중심. PowerPoint 수준 fidelity는 아직 목표가 아닙니다. |
 | Legacy PowerPoint | `.ppt` | 선택적 fallback | LibreOffice opt-in 경로. 기본 비활성. |
 | PDF | `.pdf` | Preview | 내장 PDF viewer. |
-| Markdown | `.md`, `.markdown` | 편집 | Vditor 기반. PDF/DOCX/HTML export 지원. |
-| 이미지/폰트/압축 | 여러 확장자 | Preview | 기존 vscode-office 계열 viewer surface. |
+| 이미지 | `.jpg`, `.png`, `.gif`, `.webp`, `.tif`, `.ico`, `.svg` | Preview | 이미지와 SVG preview. |
+| 폰트 | `.ttf`, `.otf`, `.woff`, `.woff2` | Preview | Font viewer. |
+| 압축 | `.zip`, `.jar`, `.vsix`, `.rar`, `.apk` | Preview / extract | Zip/RAR package browsing. |
+| HTTP / REST | `.http`, `.rest` | Tooling | 상속된 Rest Client 계열 helper. |
+| Windows Registry | `.reg` | Preview / navigation | Registry syntax와 jump helper. |
+| HTML | `.html`, `.htm` | Preview | WebView HTML preview. |
 
-## HWP/HWPX 저장 정책
+## HWP/HWPX 편집
 
-HWP/HWPX는 VS Code의 editable `CustomEditorProvider` lifecycle에 연결되어
-있습니다.
+HWP 지원은 [edwardkim/rhwp](https://github.com/edwardkim/rhwp)의 pinned local
+build를 사용합니다. 런타임은 `vendor/rhwp-studio-dist`에 보관되고 build 중
+`resource/rhwp-studio`로 복사됩니다.
 
 ```text
-파일 열기
-  -> rhwp-studio 로컬 runtime
-  -> 편집
-  -> Cmd+S 또는 Save HWPX
+HWP/HWPX 파일
+  -> HwpEditorProvider
+  -> React HWP view
+  -> local rhwp-studio bridge
+  -> rhwp WASM document engine
   -> exportHwp/exportHwpx
   -> VS Code saveCustomDocument
-  -> 원래 파일에 format-aware 저장
 ```
 
-정책:
+현재 가능한 작업:
 
-- `.hwp`는 HWP binary로 저장합니다.
-- `.hwpx`는 HWPX zip/XML package로 저장합니다.
-- `.hwpx` 파일에 HWP bytes를 조용히 덮어쓰지 않습니다.
-- 같은 포맷 저장은 Save As/overwrite 모달 없이 원래 파일에 저장합니다.
-- 원격 `hwp.studioUrl`은 고급 opt-in 설정이고, 기본값은 로컬 번들입니다.
+- `.hwp`와 `.hwpx`를 rhwp 전체 툴바로 엽니다.
+- 텍스트 편집과 표/셀 선택을 사용할 수 있습니다.
+- `Cmd+S` / `Ctrl+S` 또는 toolbar 버튼으로 저장합니다.
+- `.hwp`는 HWP로, `.hwpx`는 HWPX로 보존 저장합니다.
+- 기본값은 네트워크가 아니라 내장 로컬 런타임입니다.
+
+알려진 제한:
+
+- rhwp는 한컴오피스 엔진이 아니므로 복잡한 문서에서 layout/round-trip 차이가
+  있을 수 있습니다.
+- 한컴/Microsoft proprietary font는 번들하지 않습니다. 내장 오픈 폰트와 시스템
+  폰트로 fallback합니다.
+- `vscode-obsdian.hwp.studioUrl`은 고급 trusted remote override이며 기본값은
+  로컬 번들입니다.
 
 ## 설정
 
@@ -87,6 +111,7 @@ HWP/HWPX는 VS Code의 editable `CustomEditorProvider` lifecycle에 연결되어
 | `vscode-obsdian.hwp.studioUrl` | `""` | 신뢰하는 remote rhwp studio URL. 비워두면 로컬 번들을 사용합니다. |
 | `vscode-office.editorMode` | 기존값 | Markdown editor mode. |
 | `vscode-office.pptx.libreOfficePath` | `""` | legacy `.ppt` fallback용 LibreOffice 경로. |
+| `vscode-office.pptx.conversionTimeoutMs` | `30000` | optional LibreOffice conversion timeout. |
 
 일부 `vscode-office.*`, `office.*`, `cweijan.*` ID는 기존 설정, 단축키,
 custom editor association 호환을 위해 남겨두었습니다. Runtime ID migration은
@@ -103,27 +128,50 @@ npm run release:local
 이 명령은 TypeScript 검사, production build, HWP hardening 검증, VSIX 패키징,
 VSIX 내용 검사를 순서대로 수행합니다. VSIX 안에 로컬 `rhwp-studio` runtime과
 WASM 자산이 들어 있고, upstream samples, vendor source, docs site, 개발 스크립트가
-빠져 있는지도 확인합니다.
+빠져 있는지도 확인합니다. `npm run smoke`도 같은 full gate를 실행합니다.
 
 배포 전 수동 smoke test:
 
 | 단계 | 기대 결과 |
 | --- | --- |
 | 생성된 VSIX를 VS Code 또는 VS Code Insiders에 설치합니다. | 확장이 활성화되고 HWP/HWPX custom editor를 선택할 수 있습니다. |
-| `.hwp` 파일을 열고 저장합니다. | rhwp 편집기가 보이고 저장 후에도 HWP입니다. |
+| `.hwp` 파일을 열고 수정한 뒤 저장, 종료, 재오픈합니다. | 문서가 다시 열리고 저장 후에도 HWP입니다. |
 | `.hwpx` 파일을 열고, 텍스트를 수정하고, 표 셀을 선택하고, 저장한 뒤 닫았다가 다시 엽니다. | 문서가 다시 열리고 저장 후에도 HWPX이며 표/셀 상호작용이 유지됩니다. |
 | Markdown, XLSX, DOCX, PDF, PPTX, 이미지, 압축 파일 샘플을 엽니다. | 기존 viewer/editor 경로가 계속 동작합니다. |
 | HWP 로딩 상태와 저장 UI를 확인합니다. | stale loading banner나 잘못된 Save As 반복 프롬프트가 남지 않습니다. |
 
-## 알려진 제한
+Marketplace publish는 별도 gate입니다.
 
-- rhwp는 한컴오피스 엔진이 아니므로 복잡한 문서에서 layout/round-trip 차이가
-  있을 수 있습니다.
-- 한컴/Microsoft proprietary font는 번들하지 않습니다. 내장 오픈 폰트와
-  시스템 폰트로 fallback합니다.
-- PPTX는 현재 read-only preview 중심입니다.
-- Obsidian-style wikilink는 제품 방향이지만, 전체 Obsidian 기능 clone은
-  목표가 아닙니다.
+```bash
+npm run publish
+```
+
+이 스크립트는 먼저 `npm run release:local`을 실행한 다음 `vsce publish
+--no-dependencies`를 호출합니다.
+
+## GitHub Pages와 로고
+
+제품 페이지는 `docs/`에서 관리되고
+[.github/workflows/pages.yml](.github/workflows/pages.yml)로 배포됩니다. 이 페이지는
+문서/마케팅 surface일 뿐이며, 확장 런타임은 기본적으로 GitHub Pages를 사용하지
+않습니다.
+
+로고 원본은 `images/logo-new.svg`이고, package icon은 `images/logo-new.png`입니다.
+GitHub Pages preview용으로 `docs/assets/logo-new.png`에도 복사합니다. 현재 로고는
+OpenAI 이미지 생성 concept를 시작점으로 삼아 수동으로 SVG화한 프로젝트 전용
+자산이며, upstream vscode-office 로고나 third-party app 로고에서 파생된 것이
+아닙니다.
+
+## Roadmap
+
+- Obsidian-style `[[wikilink]]` completion, navigation, WebView/export integration.
+- PPTX preview 안정화.
+- Markdown CJK inline formatting과 strikethrough polish.
+- Excel strikethrough/style preservation.
+- 복잡한 legacy presentation을 위한 optional LibreOffice fallback.
+- HWP/HWPX fixture 기반 hardening과 smoke test 확장.
+
+자세한 내부 phase 기록은 [structure/roadmap.md](structure/roadmap.md)에 있습니다.
 
 ## 출처와 라이선스
 
