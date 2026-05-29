@@ -82,6 +82,10 @@ Smoke matrix:
 The public product page lives under `docs/` and is deployed by
 `.github/workflows/pages.yml`.
 
+The first Actions deploy uses `actions/configure-pages` with Pages enablement so
+the repository can create the Pages site before uploading the static `docs/`
+artifact.
+
 Runtime note: GitHub Pages is a marketing/documentation site only. The extension
 does not use GitHub Pages at runtime by default. HWP/HWPX editing uses the
 bundled local `resource/rhwp-studio` runtime unless the user explicitly sets
