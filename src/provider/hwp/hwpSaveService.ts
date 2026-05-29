@@ -52,9 +52,9 @@ export async function resolveToolbarSaveTarget(
     }
 
     const currentFormat = ext === '.hwpx' ? 'hwpx' : 'hwp';
-    const defaultUri = currentFormat === format
-        ? fileUri
-        : Uri.file(join(dirname(fsPath), `${basename(fsPath, ext)}.${format}`));
+    if (currentFormat === format) return fileUri;
+
+    const defaultUri = Uri.file(join(dirname(fsPath), `${basename(fsPath, ext)}.${format}`));
     const choice = await window.showWarningMessage(
         `Overwrite the current ${currentFormat.toUpperCase()} file with rhwp editor output?`,
         { modal: true },

@@ -54,6 +54,39 @@ export default function Hwp() {
         };
     }, []);
 
+    const requestNativeSave = useCallback(() => {
+        if (!editorRef.current || saving || !hwpSaveEnabled) return;
+        setSaving(true);
+        setError(null);
+        handler.emit(HWP_EVENTS.nativeSave);
+    }, [hwpSaveEnabled, saving]);
+
+    useEffect(() => {
+        function handleRhwpDirtyChanged(event: Event): void {
+            const detail = (event as CustomEvent<unknown>).detail;
+            if (!isRhwpDirtyDetail(detail)) return;
+            setDirtyState(detail.isDirty);
+        }
+
+        window.addEventListener('rhwp-dirty-changed', handleRhwpDirtyChanged);
+        return () => window.removeEventListener('rhwp-dirty-changed', handleRhwpDirtyChanged);
+    }, [setDirtyState]);
+
+    useEffect(() => {
+        function handleNativeSaveShortcut(event: KeyboardEvent): void {
+            if (!isSaveShortcut(event)) return;
+            const target = event.target;
+            if (!(target instanceof Node) || !containerRef.current?.contains(target)) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+            requestNativeSave();
+        }
+
+        window.addEventListener('keydown', handleNativeSaveShortcut, true);
+        return () => window.removeEventListener('keydown', handleNativeSaveShortcut, true);
+    }, [requestNativeSave]);
+
     useEffect(() => {
         let destroyed = false;
 
@@ -177,23 +210,6 @@ export default function Hwp() {
         setDirtyState,
     ]);
 
-    const handleSave = useCallback(async () => {
-        if (!editorRef.current || saving || !hwpSaveEnabled) return;
-        setSaving(true);
-        try {
-            const exported = await exportCurrentDocument();
-            handler.emit(HWP_EVENTS.requestSave, exported);
-        } catch (e) {
-            setError(`Export failed: ${e instanceof Error ? e.message : String(e)}`);
-            setSaving(false);
-        }
-    }, [exportCurrentDocument, hwpSaveEnabled, saving]);
-
-    const markPossiblyDirty = useCallback(() => {
-        if (!editorRef.current) return;
-        setDirtyState(true);
-    }, [setDirtyState]);
-
     return (
         <div className="hwp-container">
             {error && <Alert type="error" message={error} closable onClose={() => setError(null)} />}
@@ -213,7 +229,7 @@ export default function Hwp() {
                     <Button
                         type="primary"
                         size="small"
-                        onClick={handleSave}
+                        onClick={requestNativeSave}
                         loading={saving}
                     >
                         {isHwpx ? 'Save HWPX' : 'Save HWP'}
@@ -223,9 +239,6 @@ export default function Hwp() {
             <div
                 ref={containerRef}
                 className="hwp-editor"
-                onPointerDownCapture={markPossiblyDirty}
-                onKeyDownCapture={markPossiblyDirty}
-                onFocusCapture={markPossiblyDirty}
             />
         </div>
     );
@@ -253,4 +266,16 @@ function resolveRhwpStudioUrl(configuredUrl?: string): string | undefined {
     } catch {
         return undefined;
     }
+}
+
+function isRhwpDirtyDetail(value: unknown): value is { isDirty: boolean } {
+    return typeof value === 'object'
+        && value !== null
+        && typeof (value as { isDirty?: unknown }).isDirty === 'boolean';
+}
+
+function isSaveShortcut(event: KeyboardEvent): boolean {
+    return (event.metaKey || event.ctrlKey)
+        && !event.altKey
+        && event.key.toLowerCase() === 's';
 }

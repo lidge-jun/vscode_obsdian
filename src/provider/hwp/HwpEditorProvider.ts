@@ -79,6 +79,7 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
         handleHwp(document.uri, handler, {
             initialBuffer: document.initialBuffer,
             onDirtyChange: (isDirty) => this.setDirty(document, isDirty),
+            onNativeSave: async () => this.saveActiveDocument(document),
             onVscodeSavePayload: (payload) => this.resolvePendingExport(payload),
         });
 
@@ -202,6 +203,18 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
             throw new Error(payload.error || 'HWP export failed.');
         }
         return payload;
+    }
+
+    private async saveActiveDocument(document: HwpCustomDocument): Promise<void> {
+        if (!document.webviewPanel) {
+            throw new Error('HWP editor webview is not active; open the document before saving.');
+        }
+        this.setDirty(document, true);
+        document.webviewPanel.reveal(undefined, false);
+        await vscode.commands.executeCommand('workbench.action.files.save');
+        if (document.isDirty) {
+            throw new Error('VS Code did not run the HWP save lifecycle for the active editor.');
+        }
     }
 
     private async writePayload(

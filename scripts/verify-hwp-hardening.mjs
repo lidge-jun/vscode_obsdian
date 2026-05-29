@@ -61,9 +61,11 @@ check('Legacy officeViewer HWP tabs redirect to hwpEditor', officeProviderSource
 check('Legacy HWP redirect targets cweijan.hwpEditor', officeProviderSource.includes("'cweijan.hwpEditor'"));
 
 const schemaSource = await readText('src/common/hwpMessageSchema.ts');
-for (const event of ['dirtyChanged', 'vscodeSave', 'vscodeSavePayload', 'reloadFile']) {
+for (const event of ['dirtyChanged', 'nativeSave', 'vscodeSave', 'vscodeSavePayload', 'reloadFile']) {
     check(`HWP message schema includes ${event}`, schemaSource.includes(event));
 }
+const handlerSource = await readText('src/common/handler.ts');
+check('HWP nativeSave is allowed as inbound webview message', handlerSource.includes('HWP_EVENTS.nativeSave'));
 
 const reactAppSource = await readText('src/common/reactApp.ts');
 check('React CSP supports dynamic frame sources', reactAppSource.includes('webviewFrameSources'));
@@ -75,6 +77,21 @@ check('React CSP skips local webview URLs in dynamic sources', reactAppSource.in
 check('React CSP escapes meta attribute content', reactAppSource.includes('escapeHtmlAttribute(csp)'));
 const hwpViewSource = await readText('src/react/view/hwp/Hwp.tsx');
 check('VS Code save request controls export format', hwpViewSource.includes('exportCurrentDocument(payload.format)'));
+check('Toolbar save routes through VS Code native save lifecycle', hwpViewSource.includes('HWP_EVENTS.nativeSave'));
+check(
+    'HWP view does not mark dirty on focus or pointer capture',
+    !hwpViewSource.includes('onPointerDownCapture')
+        && !hwpViewSource.includes('onFocusCapture')
+        && !hwpViewSource.includes('onKeyDownCapture'),
+);
+check('HWP view listens to rhwp dirty event bridge', hwpViewSource.includes('rhwp-dirty-changed'));
+const hwpSaveServiceSource = await readText('src/provider/hwp/hwpSaveService.ts');
+check('Toolbar fallback skips same-format save dialog', hwpSaveServiceSource.includes('if (currentFormat === format) return fileUri;'));
+check(
+    'Provider exposes active document native save bridge',
+    providerSource.includes('saveActiveDocument') && providerSource.includes('workbench.action.files.save'),
+);
+check('Provider fails native save when VS Code lifecycle did not run', providerSource.includes('VS Code did not run the HWP save lifecycle'));
 check('Provider reads bundled rhwp-studio index HTML by default', providerSource.includes("readFileSync(indexUri.fsPath, 'utf8')"));
 check('Provider passes bundled rhwp-studio resource base URL', providerSource.includes('rhwpStudioBaseUrl'));
 check('Provider keeps remote rhwp studio opt-in via URL', providerSource.includes('rhwpStudioUrl = new URL(configured).toString()'));
@@ -98,6 +115,8 @@ if (assetMatch) {
     check('Local rhwp bridge exports HWPX', assetSource.includes('exportHwpx'));
     check('Local rhwp bridge echoes request token', assetSource.includes('token:t.token'));
     check('Local rhwp bridge skips upstream unsaved guard for host loads', assetSource.includes('skipUnsavedGuard'));
+    check('Local rhwp dirty state is bridged to React host', assetSource.includes('rhwp-dirty-changed'));
+    check('Local rhwp HWPX status text matches VS Code save behavior', assetSource.includes('VS Code 저장은 HWPX(.hwpx)를 유지합니다'));
 }
 
 const hwpSample = await readBytes('resource/rhwp-studio/samples/biz_plan.hwp');

@@ -19,6 +19,7 @@ interface HwpHandlerOptions {
     studioBaseUrl?: string;
     initialBuffer?: Uint8Array;
     onDirtyChange?: (isDirty: boolean) => void;
+    onNativeSave?: () => Promise<void>;
     onVscodeSavePayload?: (payload: HwpVscodeSaveResponsePayload) => void;
 }
 
@@ -52,6 +53,17 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler, options: Hw
 
     handler.on(HWP_EVENTS.dirtyChanged, (content: HwpDirtyChangedPayload) => {
         options.onDirtyChange?.(content.isDirty);
+    });
+
+    handler.on(HWP_EVENTS.nativeSave, async () => {
+        try {
+            await options.onNativeSave?.();
+        } catch (e) {
+            handler.emit(HWP_EVENTS.saveResult, {
+                success: false,
+                error: e instanceof Error ? e.message : String(e),
+            });
+        }
     });
 
     handler.on(HWP_EVENTS.vscodeSavePayload, (content: HwpVscodeSaveResponsePayload) => {

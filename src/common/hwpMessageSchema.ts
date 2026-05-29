@@ -4,6 +4,7 @@ export const HWP_EVENTS = {
     requestSave: 'hwp:requestSave',
     saveResult: 'hwp:saveResult',
     dirtyChanged: 'hwp:dirtyChanged',
+    nativeSave: 'hwp:nativeSave',
     vscodeSave: 'hwp:vscodeSave',
     vscodeSavePayload: 'hwp:vscodeSavePayload',
     reloadFile: 'hwp:reloadFile',
@@ -78,6 +79,8 @@ export function validateHwpPayload(type: HwpEventName, payload: unknown): boolea
             return isHwpSaveResultPayload(payload);
         case HWP_EVENTS.dirtyChanged:
             return isHwpDirtyChangedPayload(payload);
+        case HWP_EVENTS.nativeSave:
+            return payload === undefined || isEmptyObject(payload);
         case HWP_EVENTS.vscodeSave:
             return isHwpVscodeSaveRequestPayload(payload);
         case HWP_EVENTS.vscodeSavePayload:
