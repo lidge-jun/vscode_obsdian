@@ -52,18 +52,23 @@ const vscodeignore = readText('.vscodeignore');
 
 check('Package homepage points to GitHub Pages', packageJson.homepage === 'https://lidge-jun.github.io/vscode_obsdian/');
 check('Package description highlights HWP/HWPX', packageJson.description.includes('HWP/HWPX'));
+check('Package icon points to generated project logo', packageJson.icon === 'images/logo-new.png');
 for (const keyword of ['hwp', 'hwpx', 'korean', 'rhwp', 'document']) {
     check(`Package keyword includes ${keyword}`, packageJson.keywords.includes(keyword));
 }
 for (const script of ['typecheck', 'verify:hwp', 'verify:vsix', 'verify:release', 'release:local']) {
     check(`Package script exists: ${script}`, typeof packageJson.scripts[script] === 'string');
 }
+check('Smoke script runs full local release gate', packageJson.scripts.smoke === 'npm run release:local');
+check('Publish script requires full local release gate', packageJson.scripts.publish?.startsWith('npm run release:local &&'));
 
 check('README documents HWP/HWPX editing', readme.includes('HWP/HWPX Editing'));
 check('README documents release checks', readme.includes('npm run release:local'));
 check('NOTICE includes rhwp attribution', notice.includes('edwardkim/rhwp'));
 check('NOTICE includes bundled font notice', notice.includes('Bundled Fonts'));
+check('NOTICE includes generated logo attribution', notice.includes('OpenAI image generation'));
 check('GitHub Pages index exists', docsIndex.includes('vscode_obsdian') && docsIndex.includes('HWP/HWPX'));
+check('GitHub Pages includes favicon metadata', docsIndex.includes('rel="icon"') && docsIndex.includes('og:image'));
 check('VSIX excludes docs directory', vscodeignore.includes('docs/**'));
 check('VSIX excludes development scripts', vscodeignore.includes('scripts/**'));
 check('VSIX excludes upstream development log', vscodeignore.includes('DEVELOPMENT_LOG.md'));

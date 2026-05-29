@@ -46,6 +46,11 @@ package
 verify-vsix package checks
 ```
 
+`npm run smoke` is intentionally an alias for `npm run release:local`; a smoke
+run must include package creation and VSIX content inspection. `npm run publish`
+also starts with `npm run release:local` before `vsce publish --no-dependencies`
+so Marketplace publish cannot skip the local package gate.
+
 The VSIX verification must confirm:
 
 - `extension/resource/rhwp-studio/index.html` exists
@@ -94,6 +99,11 @@ does not use GitHub Pages at runtime by default. HWP/HWPX editing uses the
 bundled local `resource/rhwp-studio` runtime unless the user explicitly sets
 `vscode-obsdian.hwp.studioUrl`.
 
+Brand asset note: `images/logo-new.svg` is the source logo. `images/logo-new.png`
+is the package icon and is copied to `docs/assets/logo-new.png` for local preview
+and Pages deploy. The Pages workflow also syncs the package icon into the docs
+asset directory before upload.
+
 ## GitHub Release
 
 After `npm run release:local` and manual smoke tests:
@@ -116,6 +126,7 @@ Marketplace publish is intentionally separate:
 npm run publish
 ```
 
+This script runs `npm run release:local` first, then invokes `vsce publish`.
 Before running it:
 
 - Confirm Marketplace version has not already been published.

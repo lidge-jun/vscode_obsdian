@@ -6,8 +6,12 @@ on:
     paths:
       - docs/**
       - images/logo-new.png
+      - images/logo-new.svg
       - README.md
+      - README-KO.md
+      - README-CN.md
       - NOTICE.md
+      - package.json
       - .github/workflows/pages.yml
   workflow_dispatch:
 
