@@ -98,10 +98,10 @@ Plan documents use numeric prefixes. Do not create bare `PLAN.md`, `plan.md`, `D
 
 Current import state:
 
-- local working tree may still sit in a historical directory name during the rename
+- local path: `/Users/jun/Developer/new/700_projects/code-office`
 - cloned source: `https://github.com/rjwang1982/vscode-office`
 - original upstream lineage: `https://github.com/cweijan/vscode-office`
-- target `origin`: `https://github.com/lidge-jun/code-office.git`
+- current `origin`: `https://github.com/lidge-jun/code-office.git`
 - current `upstream`: `https://github.com/rjwang1982/vscode-office`
 - package metadata points homepage/bugs/repository at the new repo, not upstream
 
