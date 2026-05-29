@@ -3,30 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>vscode_obsdian</title>
-  <meta name="description" content="Independent VS Code extension for Office, Markdown, and editable Korean HWP/HWPX documents with a bundled local rhwp runtime.">
-  <link rel="canonical" href="https://lidge-jun.github.io/vscode_obsdian/">
+  <title>code-office</title>
+  <meta name="description" content="Independent VS Code extension for AI-era document review: editable Korean HWP/HWPX, Markdown authoring, Office previews, PDFs, and workspace files.">
+  <link rel="canonical" href="https://lidge-jun.github.io/code-office/">
   <link rel="icon" href="./assets/logo-new.png">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="vscode_obsdian">
-  <meta property="og:description" content="Office, Markdown, and editable Korean HWP/HWPX documents inside one VS Code workspace.">
-  <meta property="og:url" content="https://lidge-jun.github.io/vscode_obsdian/">
-  <meta property="og:image" content="https://lidge-jun.github.io/vscode_obsdian/assets/logo-new.png">
+  <meta property="og:title" content="code-office">
+  <meta property="og:description" content="AI-era document review for Office, Markdown, and editable Korean HWP/HWPX documents inside one VS Code workspace.">
+  <meta property="og:url" content="https://lidge-jun.github.io/code-office/">
+  <meta property="og:image" content="https://lidge-jun.github.io/code-office/assets/logo-new.png">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="vscode_obsdian">
-  <meta name="twitter:description" content="Office, Markdown, and HWP/HWPX editing inside VS Code.">
-  <meta name="twitter:image" content="https://lidge-jun.github.io/vscode_obsdian/assets/logo-new.png">
-  <link rel="stylesheet" href="./site.css?v=20260529-hero-logo">
+  <meta name="twitter:title" content="code-office">
+  <meta name="twitter:description" content="AI-era document review with Office, Markdown, and HWP/HWPX editing inside VS Code.">
+  <meta name="twitter:image" content="https://lidge-jun.github.io/code-office/assets/logo-new.png">
+  <link rel="stylesheet" href="./site.css?v=20260529-showcase">
 </head>
 <body>
   <header class="hero">
     <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="#top" aria-label="vscode_obsdian home">
-        <img src="./assets/logo-new.png" alt="vscode_obsdian logo" width="36" height="36">
-        <span>vscode_obsdian</span>
+      <a class="brand" href="#top" aria-label="code-office home">
+        <img src="./assets/logo-new.png" alt="code-office logo" width="36" height="36">
+        <span>code-office</span>
       </a>
       <div class="nav-links">
         <a href="#hwp">HWP/HWPX</a>
+        <a href="#showcase">Showcase</a>
         <a href="#formats">Formats</a>
         <a href="#install">Install</a>
         <a href="#release">Release</a>
@@ -38,20 +39,22 @@
       <img class="hero-mark" src="./assets/logo-new.png" alt="" width="512" height="512">
       <div class="hero-copy">
         <p class="eyebrow">Independent VS Code extension</p>
-        <h1>vscode_obsdian</h1>
+        <h1>code-office</h1>
         <p class="lede">
-          Open document-heavy workspaces without leaving VS Code: editable Korean
-          HWP/HWPX, Markdown authoring, Office previews, PDFs, archives, images,
-          HTTP request files, and registry files.
+          AI tools create more drafts, citations, Korean office files, and
+          review artifacts. code-office keeps those document-heavy workflows
+          inside VS Code: editable HWP/HWPX, Markdown authoring, Office previews,
+          PDFs, archives, images, HTTP request files, and registry files.
         </p>
         <div class="actions">
-          <a class="button primary" href="https://github.com/lidge-jun/vscode_obsdian/releases/latest">Download latest VSIX</a>
-          <a class="button" href="https://github.com/lidge-jun/vscode_obsdian">GitHub Repository</a>
-          <a class="button subtle" href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README.md">README</a>
+          <a class="button primary" href="https://github.com/lidge-jun/code-office/releases/latest">Download latest VSIX</a>
+          <a class="button" href="https://github.com/lidge-jun/code-office">GitHub Repository</a>
+          <a class="button subtle" href="https://github.com/lidge-jun/code-office/blob/main/README.md">README</a>
         </div>
       </div>
       <ul class="signal-list" aria-label="Product signals">
         <li><strong>Editable HWP/HWPX</strong><span>local rhwp-studio runtime</span></li>
+        <li><strong>AI-era review loop</strong><span>drafts, source files, and notes in one editor</span></li>
         <li><strong>Format-aware save</strong><span>HWP stays HWP, HWPX stays HWPX</span></li>
         <li><strong>Visible lineage</strong><span>MIT notices and runtime credits preserved</span></li>
       </ul>
@@ -59,6 +62,51 @@
   </header>
 
   <main>
+    <section id="showcase" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Showcase</p>
+        <h2>Built for the review work that AI-era document flows actually create.</h2>
+        <p>
+          The extension is not an AI generator. It is the VS Code surface for the
+          document formats that show up around AI-assisted work: generated DOCX
+          drafts, Korean HWP/HWPX references, Markdown notes, PDFs, spreadsheets,
+          archives, and source files that need to stay inspectable together.
+        </p>
+      </div>
+      <article class="showcase">
+        <figure class="shot">
+          <img src="./assets/screenshots/code-office-hwp-editor.png" alt="code-office showing an editable Korean HWP document with toolbar controls in VS Code" width="1800" height="1169">
+          <figcaption>Editable HWP in VS Code Insiders, captured from the bundled local rhwp-studio runtime.</figcaption>
+        </figure>
+        <div class="showcopy">
+          <p class="eyebrow">Korean office files</p>
+          <h3>HWP/HWPX stays local by default.</h3>
+          <p>Review policy forms, proposals, public-sector templates, and Korean office documents without making a remote runtime the default path.</p>
+          <ul>
+            <li>Full rhwp toolbar surface</li>
+            <li>VS Code dirty/save lifecycle</li>
+            <li>Format-aware HWP and HWPX export checks</li>
+          </ul>
+        </div>
+      </article>
+      <article class="showcase reverse">
+        <figure class="shot">
+          <img src="./assets/screenshots/code-office-docx-preview.png" alt="code-office previewing a DOCX review brief inside VS Code" width="1800" height="1169">
+          <figcaption>DOCX preview from a locally generated review brief used for screenshot smoke testing.</figcaption>
+        </figure>
+        <div class="showcopy">
+          <p class="eyebrow">Document review</p>
+          <h3>Keep generated drafts next to source context.</h3>
+          <p>When a model produces reports, briefs, and cited material, the useful workflow is not another isolated viewer. It is a workspace where notes, docs, and references remain side by side.</p>
+          <ul>
+            <li>Office previews beside Markdown notes</li>
+            <li>PDF, spreadsheet, archive, and image viewers</li>
+            <li>Clear upstream notices and asset provenance</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
     <section id="hwp" class="section">
       <div class="section-head">
         <p class="eyebrow">Bundled local runtime</p>
@@ -126,17 +174,19 @@
       <div class="command-grid">
         <div>
           <p>Stable VS Code</p>
-          <pre><code>code --install-extension ./vscode-obsdian-&lt;version&gt;.vsix</code></pre>
+          <pre><code>code --install-extension ./code-office-&lt;version&gt;.vsix</code></pre>
         </div>
         <div>
           <p>VS Code Insiders</p>
-          <pre><code>code-insiders --install-extension ./vscode-obsdian-&lt;version&gt;.vsix --force</code></pre>
+          <pre><code>code-insiders --install-extension ./code-office-&lt;version&gt;.vsix --force</code></pre>
         </div>
       </div>
       <p class="narrow">
         HWP/HWPX files are still registered through the inherited
         <code>cweijan.hwpEditor</code> custom editor ID for compatibility. Public
         branding and repository metadata point to this independent project.
+        Older <code>vscode-obsdian.hwp.*</code> settings are read as a fallback;
+        new HWP settings use <code>code-office.hwp.*</code>.
       </p>
     </section>
 
@@ -181,7 +231,7 @@
         <p class="eyebrow">Sources and attribution</p>
         <h2>Independent project, visible open-source lineage.</h2>
         <p>
-          vscode_obsdian contains code derived from MIT-licensed vscode-office
+          code-office contains code derived from MIT-licensed vscode-office
           work and packages a local rhwp runtime. It is not affiliated with or
           endorsed by Obsidian, Hancom, Microsoft, cweijan/vscode-office,
           rjwang1982/vscode-office, or rhwp.
@@ -191,18 +241,22 @@
         <a href="https://github.com/cweijan/vscode-office">cweijan/vscode-office</a>
         <a href="https://github.com/rjwang1982/vscode-office">rjwang1982/vscode-office</a>
         <a href="https://github.com/edwardkim/rhwp">edwardkim/rhwp</a>
-        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/NOTICE.md">NOTICE.md</a>
-        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/LICENSE">LICENSE</a>
-        <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/structure/release.md">Release runbook</a>
+        <a href="https://github.com/lidge-jun/code-office/blob/main/NOTICE.md">NOTICE.md</a>
+        <a href="https://github.com/lidge-jun/code-office/blob/main/LICENSE">LICENSE</a>
+        <a href="https://github.com/lidge-jun/code-office/blob/main/structure/release.md">Release runbook</a>
+      </div>
+      <div class="source-notes" aria-label="Asset provenance">
+        <p><strong>Logo</strong> OpenAI image-generation concept, manually simplified into <code>images/logo-new.svg</code>.</p>
+        <p><strong>Screenshots</strong> Local VS Code Insiders captures using an officecli DOCX smoke sample and a copied rhwp HWP sample in a temporary workspace.</p>
       </div>
     </section>
   </main>
 
   <footer class="footer">
     <span>MIT licensed with upstream notices preserved.</span>
-    <a href="https://github.com/lidge-jun/vscode_obsdian">GitHub</a>
-    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README-KO.md">한국어 README</a>
-    <a href="https://github.com/lidge-jun/vscode_obsdian/blob/main/README-CN.md">简体中文 README</a>
+    <a href="https://github.com/lidge-jun/code-office">GitHub</a>
+    <a href="https://github.com/lidge-jun/code-office/blob/main/README-KO.md">한국어 README</a>
+    <a href="https://github.com/lidge-jun/code-office/blob/main/README-CN.md">简体中文 README</a>
   </footer>
 </body>
 </html>

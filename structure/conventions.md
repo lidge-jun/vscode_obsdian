@@ -2,7 +2,7 @@
 
 ## Current Observed Conventions
 
-이 프로젝트는 기존 `vscode-office-enhanced` 코드베이스를 가져온 뒤 public identity를 `vscode_obsdian`으로 바꿔 가는 상태입니다. 현재 컨벤션은 “VS Code extension host 쪽 TypeScript + React WebView + Vditor resource bundle” 조합입니다.
+이 프로젝트는 기존 `vscode-office-enhanced` 코드베이스를 가져온 뒤 public identity를 `code-office`으로 바꿔 가는 상태입니다. 현재 컨벤션은 “VS Code extension host 쪽 TypeScript + React WebView + Vditor resource bundle” 조합입니다.
 
 ## Language And Module Shape
 
@@ -30,24 +30,26 @@ Original upstream identity:
 
 Current public identity:
 
-- package name: `vscode-obsdian`
-- display name: `vscode_obsdian`
+- package name: `code-office`
+- display name: `code-office`
 - publisher: `jun6161`
 
-Legacy runtime identity still present:
+Runtime identity split:
 
-- `vscode-office.*` settings
-- `office.*` commands
+- public package, repository, Pages URL, HWP settings, and new owned commands use `code-office`
+- most inherited `vscode-office.*` settings remain for Markdown, HTTP, and preview compatibility
+- old `vscode-obsdian.hwp.*` values are read only as a legacy fallback
 - `vscode-office.*` HTTP commands
+- inherited `office.*` commands
 - `cweijan.*` view types
 
-Future migration proposal:
+Remaining migration proposal:
 
-- settings prefix: `vscode-obsdian.*`
-- command prefix: `vscode-obsdian.*`
-- view type prefix: `vscode-obsdian.*`
+- migrate remaining settings to `code-office.*`
+- migrate remaining commands to `code-office.*`
+- migrate custom editor view types to `code-office.*`
 
-The repository/folder spelling currently remains `vscode_obsdian`. Runtime prefix migration should be done separately because settings, command IDs, and custom editor associations are observable integration points.
+The public repository spelling is `code-office`. Runtime prefix migration should stay separate because settings, command IDs, and custom editor associations are observable integration points.
 
 ## Documentation
 
@@ -96,10 +98,10 @@ Plan documents use numeric prefixes. Do not create bare `PLAN.md`, `plan.md`, `D
 
 Current import state:
 
-- local path: `/Users/jun/Developer/new/700_projects/vscode_obsdian`
+- local working tree may still sit in a historical directory name during the rename
 - cloned source: `https://github.com/rjwang1982/vscode-office`
 - original upstream lineage: `https://github.com/cweijan/vscode-office`
-- current `origin`: `https://github.com/lidge-jun/vscode_obsdian.git`
+- target `origin`: `https://github.com/lidge-jun/code-office.git`
 - current `upstream`: `https://github.com/rjwang1982/vscode-office`
 - package metadata points homepage/bugs/repository at the new repo, not upstream
 

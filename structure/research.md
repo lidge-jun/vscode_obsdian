@@ -33,7 +33,7 @@ VS Code WebView는 보안상 로컬 파일에 직접 접근하지 못하고, 로
 
 ## Obsidian Wiki Links
 
-Obsidian은 internal link 형식으로 `[[Three laws of motion]]`, `[[Three laws of motion.md]]` 같은 Wikilink 형식을 지원합니다. 표시 텍스트는 `[[Example|Custom name]]`처럼 파이프 문자로 바꿀 수 있고, heading anchor는 `[[Note#Heading]]` 형태를 씁니다. File/link 설정에는 shortest unique path, current file relative path, vault absolute path 전략도 있으므로, `vscode_obsdian` Phase 2는 현재 문서 기준 가장 가까운 note와 workspace shortest unique path를 조합하는 resolver로 잡습니다.
+Obsidian은 internal link 형식으로 `[[Three laws of motion]]`, `[[Three laws of motion.md]]` 같은 Wikilink 형식을 지원합니다. 표시 텍스트는 `[[Example|Custom name]]`처럼 파이프 문자로 바꿀 수 있고, heading anchor는 `[[Note#Heading]]` 형태를 씁니다. File/link 설정에는 shortest unique path, current file relative path, vault absolute path 전략도 있으므로, `code-office` Phase 2는 현재 문서 기준 가장 가까운 note와 workspace shortest unique path를 조합하는 resolver로 잡습니다.
 
 > 출처: [Obsidian Internal Links](https://help.obsidian.md/Linking%20notes%20and%20files/Internal%20links)
 > 출처: [Obsidian Settings - Files and links](https://help.obsidian.md/settings)

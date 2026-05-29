@@ -1,8 +1,8 @@
-# vscode_obsdian Roadmap
+# code-office Roadmap
 
 ## 목적
 
-이 문서는 `vscode_obsdian`을 어떤 순서로 실제 구현할지 고정합니다. 방향성은 [direction.md](direction.md)에 있고, 이 문서는 phase별 진입 조건, 수정 파일, 완료 기준을 정리합니다.
+이 문서는 `code-office`을 어떤 순서로 실제 구현할지 고정합니다. 방향성은 [direction.md](direction.md)에 있고, 이 문서는 phase별 진입 조건, 수정 파일, 완료 기준을 정리합니다.
 
 ## Phase 0. Documentation Baseline
 
@@ -43,15 +43,17 @@ images/logo-new.png
 현재 진행 원칙:
 
 - public package metadata, README, NOTICE부터 바꿈
-- 내부 command ID, config key, custom editor viewType은 호환성 계획 전까지 유지
-- 새 repo URL 확정 후 `repository`, `homepage`, `bugs` metadata는 `https://github.com/lidge-jun/vscode_obsdian`로 연결
+- inherited command ID, inherited config key, custom editor viewType은 호환성 계획 전까지 유지
+- HWP settings와 새 owned command ID는 `code-office.*`로 전환
+- 새 repo URL 확정 후 `repository`, `homepage`, `bugs` metadata는 `https://github.com/lidge-jun/code-office`로 연결
 
 현재 release 결정:
 
-- 최종 이름: display name은 `vscode_obsdian`, package name은 `vscode-obsdian`
+- 최종 이름: display name은 `code-office`, package name은 `code-office`
 - Marketplace publisher: `jun6161`
 - `README-CN.md`는 유지
-- old `vscode-office.*` config와 `cweijan.*` viewType은 별도 migration plan 전까지 legacy compatibility surface로 유지
+- old `vscode-office.*` inherited config와 `cweijan.*` viewType은 별도 migration plan 전까지 legacy compatibility surface로 유지
+- old `vscode-obsdian.hwp.*` HWP settings는 fallback으로만 읽음
 
 완료 기준:
 

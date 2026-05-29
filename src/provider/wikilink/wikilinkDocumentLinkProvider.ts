@@ -12,7 +12,7 @@ export class WikilinkDocumentLinkProvider implements vscode.DocumentLinkProvider
             }]));
             const documentLink = new vscode.DocumentLink(
                 new vscode.Range(start, end),
-                vscode.Uri.parse(`command:vscode-obsdian.openWikilink?${args}`)
+                vscode.Uri.parse(`command:code-office.openWikilink?${args}`)
             );
             documentLink.tooltip = `Open [[${link.raw}]]`;
             return documentLink;

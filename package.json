@@ -1,17 +1,17 @@
 {
-	"name": "vscode-obsdian",
-	"displayName": "vscode_obsdian",
-	"description": "Office, Markdown, and HWP/HWPX editing for VS Code with a bundled local rhwp runtime.",
+	"name": "code-office",
+	"displayName": "code-office",
+	"description": "AI-era document review for Office, Markdown, and editable HWP/HWPX in VS Code.",
 	"version": "3.7.5",
 	"publisher": "jun6161",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lidge-jun/vscode_obsdian.git"
+		"url": "https://github.com/lidge-jun/code-office.git"
 	},
-	"homepage": "https://lidge-jun.github.io/vscode_obsdian/",
+	"homepage": "https://lidge-jun.github.io/code-office/",
 	"bugs": {
-		"url": "https://github.com/lidge-jun/vscode_obsdian/issues"
+		"url": "https://github.com/lidge-jun/code-office/issues"
 	},
 	"icon": "images/logo-new.png",
 	"engines": {
@@ -30,7 +30,8 @@
 		"xlsx",
 		"excel",
 		"rhwp",
-		"document"
+		"document",
+		"review"
 	],
 	"categories": [
 		"Visualization",
@@ -147,7 +148,7 @@
 				"title": "Preview HTML"
 			},
 			{
-				"command": "vscode-obsdian.previewLegacyPresentation",
+				"command": "code-office.previewLegacyPresentation",
 				"title": "Preview Legacy PowerPoint with LibreOffice"
 			}
 		],
@@ -218,7 +219,7 @@
 			],
 			"explorer/context": [
 				{
-					"command": "vscode-obsdian.previewLegacyPresentation",
+					"command": "code-office.previewLegacyPresentation",
 					"group": "navigation",
 					"when": "resourceExtname == '.ppt'"
 				}
@@ -227,7 +228,7 @@
 		"customEditors": [
 			{
 				"viewType": "cweijan.officeViewer",
-				"displayName": "vscode_obsdian Office Viewer",
+				"displayName": "code-office Office Viewer",
 				"selector": [
 					{
 						"filenamePattern": "*.xlsx"
@@ -290,7 +291,7 @@
 			},
 				{
 					"viewType": "cweijan.hwpEditor",
-					"displayName": "HWP/HWPX Editor (vscode_obsdian)",
+					"displayName": "HWP/HWPX Editor (code-office)",
 					"priority": "default",
 					"selector": [
 					{
@@ -303,7 +304,7 @@
 			},
 			{
 				"viewType": "cweijan.imageViewer",
-				"displayName": "Image Preview (vscode_obsdian)",
+				"displayName": "Image Preview (code-office)",
 				"priority": "option",
 				"selector": [
 					{
@@ -385,7 +386,7 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "vscode_obsdian",
+			"title": "code-office",
 			"properties": {
 				"vscode-office.quickOpen": {
 					"title": "Quick open",
@@ -530,12 +531,12 @@
 					"minimum": 1000,
 					"description": "LibreOffice legacy .ppt conversion timeout in milliseconds."
 				},
-				"vscode-obsdian.hwp.experimentalSave": {
+				"code-office.hwp.experimentalSave": {
 					"type": "boolean",
 					"default": true,
 					"description": "Show the HWP/HWPX toolbar save button. VS Code native save remains available for dirty custom editor documents."
 				},
-				"vscode-obsdian.hwp.studioUrl": {
+				"code-office.hwp.studioUrl": {
 					"type": "string",
 					"default": "",
 					"description": "Optional trusted remote rhwp studio URL. Leave empty to use the bundled local rhwp-studio with full HWP/HWPX editing."

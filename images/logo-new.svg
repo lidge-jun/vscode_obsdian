@@ -1,11 +1,11 @@
 <!--
-  vscode_obsdian logo
-  Created for lidge-jun/vscode_obsdian on 2026-05-29.
+  code-office logo
+  Created for lidge-jun/code-office on 2026-05-29.
   Source concept: OpenAI image generation, then manually simplified as SVG.
   Not derived from Obsidian, VS Code, Microsoft Office, Hancom, or vscode-office logos.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">vscode_obsdian logo</title>
+  <title id="title">code-office logo</title>
   <desc id="desc">A faceted obsidian document core wrapped by cyan and jade ribbons, with layered document sheets behind it.</desc>
   <defs>
     <linearGradient id="appBg" x1="70" y1="42" x2="442" y2="470" gradientUnits="userSpaceOnUse">

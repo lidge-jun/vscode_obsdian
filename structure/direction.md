@@ -1,8 +1,8 @@
-# vscode_obsdian Direction
+# code-office Direction
 
 ## 한 문장 결론
 
-`vscode_obsdian`은 `vscode-office` 계열의 MIT 라이선스 코드를 새 repo 방식으로 가져와, Office 문서 preview에 Obsidian식 Markdown workflow를 얹는 VS Code extension으로 간다. GitHub fork UI는 쓰지 않지만, 실제 코드 계보와 MIT 고지는 숨기지 않는다.
+`code-office`은 `vscode-office` 계열의 MIT 라이선스 코드를 새 repo 방식으로 가져와, Office 문서 preview에 Obsidian식 Markdown workflow를 얹는 VS Code extension으로 간다. GitHub fork UI는 쓰지 않지만, 실제 코드 계보와 MIT 고지는 숨기지 않는다.
 
 > 출처: [rjwang1982/vscode-office](https://github.com/rjwang1982/vscode-office)
 > 출처: [cweijan/vscode-office](https://github.com/cweijan/vscode-office)
@@ -21,7 +21,7 @@ VS Code 안에서 Office 문서와 Markdown 노트를 빠르게 보고,
 Markdown에는 Obsidian식 [[wikilink]] 경험을 추가하는 확장.
 ```
 
-이 방향이면 기존 Office preview 기반을 버리지 않고, `vscode_obsdian`이라는 이름의 이유도 생깁니다. 핵심은 “Office viewer + Obsidian-style notes workflow”입니다.
+이 방향이면 기존 Office preview 기반을 버리지 않고, `code-office`이라는 이름의 이유도 생깁니다. 핵심은 “Office viewer + Obsidian-style notes workflow”입니다.
 
 ## 라이선스와 attribution 방향
 
@@ -43,7 +43,7 @@ Original lineage:
 README/NOTICE 권장 문구는 아래로 고정한다.
 
 ```text
-vscode_obsdian is based on MIT-licensed vscode-office code.
+code-office is based on MIT-licensed vscode-office code.
 
 Original lineage:
 - cweijan/vscode-office, original project by Weijan Chen.
@@ -66,7 +66,7 @@ Original copyright and license notices are preserved.
 5. Markdown CJK inline formatting / strikethrough 렌더링 개선
 6. Excel strikethrough style 보존
 7. LibreOffice fallback / .ppt legacy support (optional, deferred)
-8. HWP/HWPX native support via local rhwp-studio WASM bundle, viewer-first until secure lifecycle is complete
+8. HWP/HWPX native support via local rhwp-studio WASM bundle with full editing and secure save lifecycle
 ```
 
 이 순서가 맞는 이유는 identity와 license 문서가 먼저 정리되어야 README, package metadata, marketplace 문구가 흔들리지 않기 때문입니다. 그 다음 핵심 차별점인 위키링크를 extension host와 WebView/export 양쪽에 붙이고, Office viewer 확장성인 PPTX를 붙입니다.
@@ -131,7 +131,7 @@ save, dirty bridge, VSIX smoke gate까지 hardening했다.
 ```text
 1. HWP/HWPX는 full rhwp editing을 default로 제공한다.
 2. bundled local `resource/rhwp-studio`는 default runtime이다.
-3. live remote rhwp studio는 `vscode-obsdian.hwp.studioUrl` opt-in으로만 둔다.
+3. live remote rhwp studio는 `code-office.hwp.studioUrl` opt-in으로만 둔다.
 4. HWP는 HWP로, HWPX는 HWPX로 저장한다.
 5. HWPX 원본은 절대 HWP bytes로 조용히 덮어쓰지 않는다.
 6. 저장은 VS Code native custom editor save lifecycle을 따른다.
@@ -182,9 +182,9 @@ Excel 취소선은 그 다음 개선 대상입니다. 현재 reader가 SheetJS w
 
 ## 이름과 브랜딩
 
-현재 구현의 공개 package name은 `package.json` 기준 `vscode-obsdian`으로 고정합니다. Display name은 사용자 요청의 로컬 프로젝트명에 맞춰 `vscode_obsdian`을 유지하고, Marketplace publisher는 기존 publisher 계정에 맞춰 `jun6161`입니다. GitHub repository는 `lidge-jun/vscode_obsdian`을 유지합니다. 향후 `obsdian`/`obsidian` 철자를 바꾸는 일은 별도 rename 작업으로 다룹니다.
+현재 구현의 공개 package name은 `package.json` 기준 `code-office`으로 고정합니다. Display name도 `code-office`을 유지하고, Marketplace publisher는 기존 publisher 계정에 맞춰 `jun6161`입니다. GitHub repository와 Pages URL은 `lidge-jun/code-office` 기준으로 정리합니다. 이전 `vscode_obsdian`/`vscode-obsdian` 표기는 historical devlog와 legacy HWP setting fallback에서만 남깁니다.
 
-> 로컬 근거: `/Users/jun/Developer/new/700_projects/vscode_obsdian`
+> 로컬 근거: `package.json`
 
 ## 판단 기준
 

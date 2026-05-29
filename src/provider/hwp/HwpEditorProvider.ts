@@ -257,10 +257,7 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
     }
 
     private getRhwpStudioConfig(webview: vscode.Webview, rhwpStudioRoot: vscode.Uri): RhwpStudioConfig {
-        const configured = vscode.workspace
-            .getConfiguration('vscode-obsdian')
-            .get<string>('hwp.studioUrl', DEFAULT_RHWP_STUDIO_URL)
-            ?.trim();
+        const configured = getCodeOfficeSetting<string>('hwp.studioUrl', DEFAULT_RHWP_STUDIO_URL)?.trim();
         if (!configured) {
             return this.getBundledRhwpStudioConfig(webview, rhwpStudioRoot);
         }
@@ -272,7 +269,7 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
                 webviewConnectSources: [rhwpStudioUrl],
             };
         } catch {
-            void vscode.window.showWarningMessage('Invalid vscode-obsdian.hwp.studioUrl. Falling back to bundled rhwp-studio.');
+            void vscode.window.showWarningMessage('Invalid code-office.hwp.studioUrl. Falling back to bundled rhwp-studio.');
             return this.getBundledRhwpStudioConfig(webview, rhwpStudioRoot);
         }
     }
@@ -289,9 +286,7 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
     }
 
     private isExperimentalSaveEnabled(): boolean {
-        return vscode.workspace
-            .getConfiguration('vscode-obsdian')
-            .get<boolean>('hwp.experimentalSave', true);
+        return getCodeOfficeSetting<boolean>('hwp.experimentalSave', true);
     }
 
     private getExplicitHwpFormat(uri: vscode.Uri): 'hwp' | 'hwpx' | undefined {
@@ -300,4 +295,22 @@ export class HwpEditorProvider implements vscode.CustomEditorProvider<HwpCustomD
         if (ext === '.hwpx') return 'hwpx';
         return undefined;
     }
+}
+
+function getCodeOfficeSetting<T>(key: string, defaultValue: T): T {
+    const current = getUserSetting<T>('code-office', key);
+    if (current !== undefined) return current;
+    const legacy = getUserSetting<T>('vscode-obsdian', key);
+    if (legacy !== undefined) return legacy;
+    return vscode.workspace.getConfiguration('code-office').get<T>(key, defaultValue);
+}
+
+function getUserSetting<T>(section: string, key: string): T | undefined {
+    const inspected = vscode.workspace.getConfiguration(section).inspect<T>(key);
+    return inspected?.workspaceFolderLanguageValue
+        ?? inspected?.workspaceFolderValue
+        ?? inspected?.workspaceLanguageValue
+        ?? inspected?.workspaceValue
+        ?? inspected?.globalLanguageValue
+        ?? inspected?.globalValue;
 }

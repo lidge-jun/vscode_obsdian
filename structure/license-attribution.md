@@ -46,7 +46,7 @@ images/logo-new.png
 Current `NOTICE.md` outline:
 
 ```text
-vscode_obsdian
+code-office
 
 This project contains code derived from:
 - cweijan/vscode-office
@@ -93,6 +93,28 @@ visually distinct from:
 Do not restore the old upstream logo comments or author attribution in
 `images/logo-new.svg`; that asset is no longer the active logo source.
 
+## Screenshot Attribution
+
+The public screenshot assets under `docs/assets/screenshots/` were captured on
+2026-05-29 from a local VS Code Insiders session after installing the packaged
+VSIX.
+
+Current source chain:
+
+```text
+officecli-generated DOCX smoke sample in /tmp
+bundled rhwp sample copied into /tmp
+  -> VS Code Insiders with code-office VSIX installed
+  -> Computer Use state verification
+  -> local macOS screenshot capture
+  -> docs/assets/screenshots/*.png
+```
+
+The screenshot images are project-owned marketing/documentation captures. They
+must not imply affiliation with Microsoft, Hancom, Obsidian, cweijan,
+rjwang1982, or rhwp. Do not capture private user documents or modify tracked
+vendor samples for marketing screenshots.
+
 ## HWP Runtime Attribution
 
 HWP/HWPX editing uses a local build of `edwardkim/rhwp`.
@@ -128,7 +150,7 @@ Pretendard, Gowun, D2 Coding, Spoqa Han Sans, Cafe24 fonts, and Happiness Sans.
 Allowed:
 
 ```text
-vscode_obsdian is based on MIT-licensed vscode-office code. Original copyright and license notices are preserved.
+code-office is based on MIT-licensed vscode-office code. Original copyright and license notices are preserved.
 
 Original lineage:
 - cweijan/vscode-office
@@ -153,9 +175,9 @@ Current release metadata has been updated:
 - `displayName`
 - `description`
 - `publisher`
-- `repository` points to `https://github.com/lidge-jun/vscode_obsdian.git`
-- `homepage` points to `https://lidge-jun.github.io/vscode_obsdian/`
-- `bugs` points to `https://github.com/lidge-jun/vscode_obsdian/issues`
+- `repository` points to `https://github.com/lidge-jun/code-office.git`
+- `homepage` points to `https://lidge-jun.github.io/code-office/`
+- `bugs` points to `https://github.com/lidge-jun/code-office/issues`
 - `keywords`
 - configuration title
 
@@ -169,7 +191,8 @@ Do not use placeholder repository URLs. The current metadata uses the real new r
 
 ## Current Release Decisions
 
-1. Public package name is `vscode-obsdian`; display name remains `vscode_obsdian`.
+1. Public package name is `code-office`; display name remains `code-office`.
 2. Publisher ID is `jun6161` in `package.json`.
-3. Runtime `vscode-office.*` settings and `cweijan.*` viewTypes are intentionally retained as legacy compatibility surfaces until a separate migration/alias decision exists.
-4. `README-CN.md` is retained and rewritten for now.
+3. HWP settings use `code-office.hwp.*`; old `vscode-obsdian.hwp.*` values are read only as a legacy fallback.
+4. Inherited runtime `vscode-office.*` settings and `cweijan.*` viewTypes are intentionally retained as legacy compatibility surfaces until a separate migration/alias decision exists.
+5. `README-CN.md` is retained and rewritten for now.

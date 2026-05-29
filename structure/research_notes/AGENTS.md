@@ -1,6 +1,6 @@
 # structure/research_notes Agent Rules
 
-This directory stores split research notes for `vscode_obsdian`.
+This directory stores split research notes for `code-office`.
 
 Rules:
 - Keep implementation recommendations evidence-backed and cite external sources.

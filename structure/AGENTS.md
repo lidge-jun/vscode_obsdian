@@ -1,6 +1,6 @@
 # structure/ Agent Rules
 
-This directory is the source-of-truth area for the current architecture, research, risk register, and documentation conventions of `vscode_obsdian`.
+This directory is the source-of-truth area for the current architecture, research, risk register, and documentation conventions of `code-office`.
 
 Rules:
 - Keep documents factual and evidence-backed.

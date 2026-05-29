@@ -1,6 +1,6 @@
-# vscode_obsdian Deep Research Notes
+# code-office Deep Research Notes
 
-이 폴더는 `vscode-office` 기반 새 repo를 `vscode_obsdian` 방향으로 바꾸기 전, 조사 결과를 기능별로 쪼개서 고정하는 공간입니다. 지금 단계의 산출물은 코드가 아니라 “나중에 구현자가 바로 파일을 열고 시작할 수 있는 지도”입니다.
+이 폴더는 `vscode-office` 기반 새 repo를 `code-office` 방향으로 바꾸기 전, 조사 결과를 기능별로 쪼개서 고정하는 공간입니다. 지금 단계의 산출물은 코드가 아니라 “나중에 구현자가 바로 파일을 열고 시작할 수 있는 지도”입니다.
 
 > 출처: [rjwang1982/vscode-office](https://github.com/rjwang1982/vscode-office)
 > 출처: [cweijan/vscode-office](https://github.com/cweijan/vscode-office)

@@ -1,6 +1,6 @@
-# vscode_obsdian Notice
+# code-office Notice
 
-`vscode_obsdian` is an independent VS Code extension. It contains source code,
+`code-office` is an independent VS Code extension. It contains source code,
 runtime assets, and design patterns derived from several open source projects.
 Each component remains subject to its own license terms.
 
@@ -9,7 +9,7 @@ cweijan/vscode-office, rjwang1982/vscode-office, or rhwp.
 
 ## Project Logo
 
-The current `vscode_obsdian` logo in `images/logo-new.svg` and
+The current `code-office` logo in `images/logo-new.svg` and
 `images/logo-new.png` was created for this repository on 2026-05-29. The design
 started from an OpenAI image generation concept and was then manually simplified
 into a project-owned SVG app icon.

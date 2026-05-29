@@ -37,7 +37,7 @@ check('Office viewer no longer owns HWP files', !officePatterns.has('*.hwp') && 
 check('Dedicated HWP editor owns HWP/HWPX files', hwpPatterns.has('*.hwp') && hwpPatterns.has('*.hwpx'));
 check(
     'Bundled local rhwp-studio is the default',
-    packageJson.contributes.configuration.properties['vscode-obsdian.hwp.studioUrl'].default === '',
+    packageJson.contributes.configuration.properties['code-office.hwp.studioUrl'].default === '',
 );
 
 const providerSource = await readText('src/provider/hwp/HwpEditorProvider.ts');
@@ -95,6 +95,9 @@ check('Provider fails native save when VS Code lifecycle did not run', providerS
 check('Provider reads bundled rhwp-studio index HTML by default', providerSource.includes("readFileSync(indexUri.fsPath, 'utf8')"));
 check('Provider passes bundled rhwp-studio resource base URL', providerSource.includes('rhwpStudioBaseUrl'));
 check('Provider keeps remote rhwp studio opt-in via URL', providerSource.includes('rhwpStudioUrl = new URL(configured).toString()'));
+check('Provider falls back to legacy vscode-obsdian settings', providerSource.includes("getUserSetting<T>('vscode-obsdian'"));
+const hwpHandlerSource = await readText('src/provider/handlers/hwpHandler.ts');
+check('HWP toolbar save reads renamed setting with legacy fallback', hwpHandlerSource.includes("getUserSetting<T>('vscode-obsdian'"));
 const rhwpBridgeSource = await readText('src/react/view/hwp/rhwpBridge/createSecureRhwpEditor.ts');
 check('Local rhwp studio mounts inside the host webview document', rhwpBridgeSource.includes('createLocalRhwpEditor') && rhwpBridgeSource.includes('mountLocalStudio'));
 check('Local rhwp studio loads assets through rewritten webview URIs', rhwpBridgeSource.includes('resolveStudioResourceUrl') && rhwpBridgeSource.includes('appendScript'));

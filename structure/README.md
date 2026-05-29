@@ -1,6 +1,6 @@
-# vscode_obsdian Structure Index
+# code-office Structure Index
 
-이 디렉터리는 현재 `vscode_obsdian`의 제품 방향, 구조, release gate, 라이선스
+이 디렉터리는 현재 `code-office`의 제품 방향, 구조, release gate, 라이선스
 고지 전략을 고정하는 기준 문서입니다. 프로젝트는 `rjwang1982/vscode-office`를
 MIT 라이선스 기반의 새 로컬 프로젝트로 가져온 뒤, HWP/HWPX 편집과 Markdown
 workflow를 얹는 방향으로 진행되었습니다. 단, `rjwang1982/vscode-office`는

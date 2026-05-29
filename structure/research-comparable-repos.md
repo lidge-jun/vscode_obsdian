@@ -2,12 +2,12 @@
 
 ## Summary
 
-이번 추가 조사는 “비슷한 repo를 그대로 베끼기”가 아니라, `vscode_obsdian`의 현재 구조에 맞게 어떤 구현 패턴만 가져올 수 있는지 보는 데 집중했습니다.
+이번 추가 조사는 “비슷한 repo를 그대로 베끼기”가 아니라, `code-office`의 현재 구조에 맞게 어떤 구현 패턴만 가져올 수 있는지 보는 데 집중했습니다.
 
 결론은 분명합니다.
 
 - Wiki link는 Foam처럼 VS Code provider 생태계를 참고하되, 우리 쪽 구현은 Vditor WebView + extension host resolver로 작게 시작하는 것이 맞습니다.
-- Markdown preview 전용 plugin 방식은 빠르지만, `vscode_obsdian`은 custom editor라 preview-only 한계를 그대로 가져오면 안 됩니다.
+- Markdown preview 전용 plugin 방식은 빠르지만, `code-office`은 custom editor라 preview-only 한계를 그대로 가져오면 안 됩니다.
 - PPTX는 pure JS OOXML-to-HTML 방식과 LibreOffice-to-PDF 방식이 갈립니다. 첫 구현은 pure JS outline/text/media preview가 더 맞고, LibreOffice는 옵션형 fallback로만 검토해야 합니다.
 - Graph/backlinks/hover preview/rename sync는 나중 phase입니다.
 
@@ -39,7 +39,7 @@ URL: https://grok.com/c/7ae0f4d9-a265-4efe-9cb2-d1b853291a54?rid=6cae98fd-ed30-4
 - 70: powerful but risky/heavy
 - 80: ideal
 
-Here “grade” means implementation fit for `vscode_obsdian`, not project quality.
+Here “grade” means implementation fit for `code-office`, not project quality.
 
 | Candidate | Domain | License Signal | Fit Grade | Learn | Do Not Copy |
 | --- | --- | --- | ---: | --- | --- |
@@ -64,7 +64,7 @@ Foam also declares VS Code integration points such as `markdown.markdownItPlugin
 
 > 출처: [foambubble/foam package.json](https://github.com/foambubble/foam/blob/main/packages/foam-vscode/package.json)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Use Foam as behavior reference.
 - Keep phase 1 smaller than Foam.
@@ -99,7 +99,7 @@ Its manifest is useful because it shows the simplest VS Code route:
 
 > 출처: [vscode-markdown-preview-wikilinks package.json](https://github.com/thomaskoppelaar/vscode-markdown-preview-wikilinks/blob/master/package.json)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Borrow the parser option vocabulary.
 - Do not settle for preview-only navigation.
@@ -146,7 +146,7 @@ AS Notes is useful as a product-scope warning. Its README describes nested wikil
 
 > 출처: [appsoftwareltd/as-notes README](https://github.com/appsoftwareltd/as-notes)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Keep “plain Markdown, local workspace, Git-friendly” as UX principle.
 - Do not import AS Notes code; README indicates Elastic-2.0 licensing, not MIT.
@@ -164,7 +164,7 @@ Its implementation uses browser-era pieces such as `jszip.min.js`, `tXml`, `work
 
 > 출처: [g21589/PPTX2HTML js directory](https://github.com/g21589/PPTX2HTML/tree/master/js)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Strong proof that pure browser-side PPTX parsing is feasible.
 - Worker pattern is useful for not blocking WebView.
@@ -181,7 +181,7 @@ Its `package.json` is ESM-only and depends on `jszip`.
 
 > 출처: [javier-mora/pptx-to-html package.json](https://github.com/javier-mora/pptx-to-html/blob/main/package.json)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Good candidate for later dependency evaluation.
 - ESM may fit React WebView better than extension host CommonJS.
@@ -203,7 +203,7 @@ Its manifest exposes:
 
 > 출처: [mutyai/pptviewer package.json](https://github.com/mutyai/pptviewer/blob/main/package.json)
 
-Applicable to `vscode_obsdian`:
+Applicable to `code-office`:
 
 - Good reference for custom editor wiring.
 - Good fallback design if pure JS fidelity is unacceptable.

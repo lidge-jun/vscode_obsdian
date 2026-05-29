@@ -3,7 +3,7 @@
 ## Purpose
 
 This document is the source of truth for packaging and publishing
-`vscode_obsdian`. It covers GitHub Releases, GitHub Pages, VSIX inspection, and
+`code-office`. It covers GitHub Releases, GitHub Pages, VSIX inspection, and
 Marketplace publishing gates.
 
 ## Prerequisites
@@ -66,7 +66,7 @@ The VSIX verification must confirm:
 After packaging:
 
 ```bash
-code-insiders --install-extension ./vscode-obsdian-3.7.5.vsix --force
+code-insiders --install-extension ./code-office-3.7.5.vsix --force
 ```
 
 Smoke matrix:
@@ -83,6 +83,18 @@ Smoke matrix:
 | PPTX | Open `.pptx` as read-only preview |
 | Archive | Open `.zip` |
 
+Visual marketing smoke:
+
+1. Generate or refresh representative DOCX/HWP/HWPX samples in a temporary
+   workspace. Do not modify tracked vendor samples directly.
+2. Install the packaged VSIX in VS Code Insiders.
+3. Capture at least one HWP/HWPX editor screenshot and one Office preview
+   screenshot with Computer Use/state verification before capture.
+4. Store web-facing screenshots under `docs/assets/screenshots/`; `docs/**`
+   remains excluded from the VSIX by `.vscodeignore`.
+5. Render the GitHub Pages site locally and inspect desktop/mobile/narrow
+   layouts before pushing.
+
 ## GitHub Pages
 
 The public product page lives under `docs/` and is deployed by
@@ -98,7 +110,7 @@ once with an owner token and `build_type=workflow`, then rerun the workflow.
 Runtime note: GitHub Pages is a marketing/documentation site only. The extension
 does not use GitHub Pages at runtime by default. HWP/HWPX editing uses the
 bundled local `resource/rhwp-studio` runtime unless the user explicitly sets
-`vscode-obsdian.hwp.studioUrl`.
+`code-office.hwp.studioUrl`.
 
 Brand asset note: `images/logo-new.svg` is the source logo. `images/logo-new.png`
 is the package icon and is copied to `docs/assets/logo-new.png` for local preview
@@ -111,7 +123,7 @@ After `npm run release:local` and manual smoke tests:
 
 ```bash
 VERSION=$(node -p "require('./package.json').version")
-gh release create "v${VERSION}" "vscode-obsdian-${VERSION}.vsix" \
+gh release create "v${VERSION}" "code-office-${VERSION}.vsix" \
   --title "v${VERSION}" \
   --notes-file CHANGELOG.md
 ```

@@ -1,23 +1,28 @@
 <p align="center">
-  <img src="images/logo-new.png" width="128" height="128" alt="vscode_obsdian 로고">
+  <img src="images/logo-new.png" width="128" height="128" alt="code-office 로고">
 </p>
 
-# vscode_obsdian
+# code-office
 
 [English](README.md) | [简体中文](README-CN.md) | 한국어
 
-`vscode_obsdian`은 VS Code 안에서 문서 중심 작업을 처리하기 위한 독립
+`code-office`은 VS Code 안에서 문서 중심 작업을 검토하고 편집하기 위한 독립
 확장입니다. Korean HWP/HWPX, Markdown 노트, Office 파일, PDF, 압축 파일,
-이미지, HTTP request 파일, registry 파일, HTML을 한 workspace에서 열고 편집할
+이미지, HTTP request 파일, registry 파일, HTML을 한 workspace에서 열고 다룰
 수 있게 하는 것이 목표입니다.
 
-- 프로젝트 홈페이지: <https://lidge-jun.github.io/vscode_obsdian/>
-- 저장소: <https://github.com/lidge-jun/vscode_obsdian>
-- 최신 VSIX: <https://github.com/lidge-jun/vscode_obsdian/releases/latest>
+- 프로젝트 홈페이지: <https://lidge-jun.github.io/code-office/>
+- 저장소: <https://github.com/lidge-jun/code-office>
+- 최신 VSIX: <https://github.com/lidge-jun/code-office/releases/latest>
 
 가장 큰 차별점은 **내장 로컬 rhwp-studio 런타임을 통한 HWP/HWPX 편집**입니다.
 일반적인 `.hwp`와 `.hwpx` 파일을 한컴오피스, LibreOffice, 외부 서버 기본 의존성
 없이 열고 편집하고 저장할 수 있습니다.
+
+AI 도구가 만드는 초안, 인용 자료, 회의록, 소스 문서가 많아질수록 검토 surface가
+여러 viewer로 흩어집니다. 이 확장은 AI 생성 기능을 주장하지 않습니다. 대신 생성된
+DOCX 보고서, Markdown 노트, Korean HWP/HWPX 참고 문서, provenance 확인이 필요한
+파일을 VS Code workspace 안에서 같이 검토할 수 있게 합니다.
 
 이 프로젝트는 Obsidian, 한컴, Microsoft, cweijan/vscode-office,
 rjwang1982/vscode-office, rhwp와 공식 제휴 관계가 없습니다.
@@ -34,18 +39,48 @@ rjwang1982/vscode-office, rhwp와 공식 제휴 관계가 없습니다.
 - **독립 브랜드 표면**: repository metadata, GitHub Pages, package icon, README,
   NOTICE를 새 프로젝트 기준으로 정리하되 MIT 계보는 보존합니다.
 
+## 제품 스크린샷
+
+아래 이미지는 packaged VSIX를 VS Code Insiders에 설치한 뒤 로컬에서 캡처했습니다.
+DOCX brief는 screenshot smoke test를 위해 `officecli`로 생성했고, HWP 예시는
+tracked vendor sample을 직접 수정하지 않도록 번들 rhwp sample을 임시 workspace로
+복사해 열었습니다.
+
+<table>
+  <tr>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 안에서 열린 편집 가능한 Korean HWP 문서와 toolbar" width="760">
+    </td>
+    <td width="42%">
+      <strong>로컬 HWP/HWPX 편집</strong><br>
+      번들 rhwp-studio runtime, 전체 toolbar surface, VS Code 저장 lifecycle로
+      Korean office 문서를 VS Code 안에서 검토합니다.
+    </td>
+  </tr>
+  <tr>
+    <td width="42%">
+      <strong>DOCX와 source context 검토</strong><br>
+      생성된 brief, notes, PDF, spreadsheet, source file을 별도 viewer로 흩트리지
+      않고 하나의 workspace에 둡니다.
+    </td>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 안에서 미리보기 중인 DOCX review brief" width="760">
+    </td>
+  </tr>
+</table>
+
 ## 설치
 
 GitHub Releases에서 최신 VSIX를 내려받아 설치합니다.
 
 ```bash
-code --install-extension ./vscode-obsdian-<version>.vsix
+code --install-extension ./code-office-<version>.vsix
 ```
 
 VS Code Insiders:
 
 ```bash
-code-insiders --install-extension ./vscode-obsdian-<version>.vsix --force
+code-insiders --install-extension ./code-office-<version>.vsix --force
 ```
 
 설치 후 지원 파일을 열면 VS Code가 editor 선택을 요청합니다. HWP/HWPX 파일은
@@ -100,15 +135,15 @@ HWP/HWPX 파일
   있을 수 있습니다.
 - 한컴/Microsoft proprietary font는 번들하지 않습니다. 내장 오픈 폰트와 시스템
   폰트로 fallback합니다.
-- `vscode-obsdian.hwp.studioUrl`은 고급 trusted remote override이며 기본값은
+- `code-office.hwp.studioUrl`은 고급 trusted remote override이며 기본값은
   로컬 번들입니다.
 
 ## 설정
 
 | 설정 | 기본값 | 설명 |
 | --- | --- | --- |
-| `vscode-obsdian.hwp.experimentalSave` | `true` | HWP/HWPX 상단 저장 버튼 표시. VS Code 기본 저장도 계속 동작합니다. |
-| `vscode-obsdian.hwp.studioUrl` | `""` | 신뢰하는 remote rhwp studio URL. 비워두면 로컬 번들을 사용합니다. |
+| `code-office.hwp.experimentalSave` | `true` | HWP/HWPX 상단 저장 버튼 표시. VS Code 기본 저장도 계속 동작합니다. |
+| `code-office.hwp.studioUrl` | `""` | 신뢰하는 remote rhwp studio URL. 비워두면 로컬 번들을 사용합니다. |
 | `vscode-office.editorMode` | 기존값 | Markdown editor mode. |
 | `vscode-office.pptx.libreOfficePath` | `""` | legacy `.ppt` fallback용 LibreOffice 경로. |
 | `vscode-office.pptx.conversionTimeoutMs` | `30000` | optional LibreOffice conversion timeout. |
@@ -116,6 +151,8 @@ HWP/HWPX 파일
 일부 `vscode-office.*`, `office.*`, `cweijan.*` ID는 기존 설정, 단축키,
 custom editor association 호환을 위해 남겨두었습니다. Runtime ID migration은
 별도 작업으로 다룹니다.
+예전 `vscode-obsdian.hwp.*` 값은 legacy fallback으로 읽지만, 새 문서와 package
+setting은 `code-office.hwp.*`를 기준으로 합니다.
 
 ## 릴리즈 검증
 

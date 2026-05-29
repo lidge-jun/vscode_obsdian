@@ -50,7 +50,7 @@ const notice = readText('NOTICE.md');
 const docsIndex = readText('docs/index.html');
 const vscodeignore = readText('.vscodeignore');
 
-check('Package homepage points to GitHub Pages', packageJson.homepage === 'https://lidge-jun.github.io/vscode_obsdian/');
+check('Package homepage points to GitHub Pages', packageJson.homepage === 'https://lidge-jun.github.io/code-office/');
 check('Package description highlights HWP/HWPX', packageJson.description.includes('HWP/HWPX'));
 check('Package icon points to generated project logo', packageJson.icon === 'images/logo-new.png');
 check('Package declares local @vscode/vsce CLI', typeof packageJson.devDependencies?.['@vscode/vsce'] === 'string');
@@ -65,10 +65,14 @@ check('Publish script requires full local release gate', packageJson.scripts.pub
 
 check('README documents HWP/HWPX editing', readme.includes('HWP/HWPX Editing'));
 check('README documents release checks', readme.includes('npm run release:local'));
+check('README documents renamed HWP settings', readme.includes('code-office.hwp.studioUrl'));
+check('README documents legacy HWP setting fallback', readme.includes('vscode-obsdian.hwp.*'));
 check('NOTICE includes rhwp attribution', notice.includes('edwardkim/rhwp'));
 check('NOTICE includes bundled font notice', notice.includes('Bundled Fonts'));
 check('NOTICE includes generated logo attribution', notice.includes('OpenAI image generation'));
-check('GitHub Pages index exists', docsIndex.includes('vscode_obsdian') && docsIndex.includes('HWP/HWPX'));
+check('GitHub Pages index exists', docsIndex.includes('code-office') && docsIndex.includes('HWP/HWPX'));
+check('GitHub Pages uses code-office screenshot assets', docsIndex.includes('code-office-hwp-editor.png') && docsIndex.includes('code-office-docx-preview.png'));
+check('GitHub Pages documents legacy HWP setting fallback', docsIndex.includes('vscode-obsdian.hwp.*'));
 check('GitHub Pages includes favicon metadata', docsIndex.includes('rel="icon"') && docsIndex.includes('og:image'));
 check('VSIX excludes docs directory', vscodeignore.includes('docs/**'));
 check('VSIX excludes development scripts', vscodeignore.includes('scripts/**'));
@@ -85,7 +89,7 @@ if (requireVsix) {
     check('VSIX artifact exists', Boolean(latestVsix));
     if (latestVsix) {
         const listing = readVsixListing(latestVsix);
-        const expectedName = `vscode-obsdian-${packageJson.version}.vsix`;
+        const expectedName = `code-office-${packageJson.version}.vsix`;
         const sizeBytes = statSync(join(root, latestVsix)).size;
         check('VSIX name matches package version', basename(latestVsix) === expectedName, latestVsix);
         check('VSIX listing readable', !listing.startsWith('UNZIP_FAILED'));

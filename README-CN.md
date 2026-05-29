@@ -1,21 +1,26 @@
 <p align="center">
-  <img src="images/logo-new.png" width="128" height="128" alt="vscode_obsdian logo">
+  <img src="images/logo-new.png" width="128" height="128" alt="code-office logo">
 </p>
 
-# vscode_obsdian
+# code-office
 
 [English](README.md) | 简体中文 | [한국어](README-KO.md)
 
-`vscode_obsdian` 是一个独立的 VS Code 扩展，面向文档密集型工作区：韩国
-HWP/HWPX、Markdown 笔记、Office 文件、PDF、压缩包、图片、HTTP request 文件、
-Registry 文件和 HTML。
+`code-office` 是一个独立的 VS Code 扩展，面向文档密集型工作区的打开、
+审阅和编辑：韩国 HWP/HWPX、Markdown 笔记、Office 文件、PDF、压缩包、图片、
+HTTP request 文件、Registry 文件和 HTML。
 
-- 项目主页：<https://lidge-jun.github.io/vscode_obsdian/>
-- 仓库：<https://github.com/lidge-jun/vscode_obsdian>
-- 最新 VSIX：<https://github.com/lidge-jun/vscode_obsdian/releases/latest>
+- 项目主页：<https://lidge-jun.github.io/code-office/>
+- 仓库：<https://github.com/lidge-jun/code-office>
+- 最新 VSIX：<https://github.com/lidge-jun/code-office/releases/latest>
 
 核心差异是 **内置本地 rhwp-studio 运行时的 HWP/HWPX 编辑**。常见 `.hwp` /
 `.hwpx` 文件默认无需 Hancom Office、LibreOffice 或远程服务即可打开、编辑和保存。
+
+AI 工具会带来更多草稿、引用材料、会议记录和来源文档。这个扩展不声明提供 AI
+生成能力；它提供的是 VS Code 内的文档审阅 surface，让生成的 DOCX 报告、
+Markdown 笔记、韩国 HWP/HWPX 参考文件和需要确认 provenance 的资料留在同一个
+workspace。
 
 本项目不隶属于 Obsidian、Hancom、Microsoft、cweijan/vscode-office、
 rjwang1982/vscode-office 或 rhwp，也不代表这些项目的官方立场。
@@ -32,21 +37,50 @@ rjwang1982/vscode-office 或 rhwp，也不代表这些项目的官方立场。
 - **独立品牌表面**：repository metadata、GitHub Pages、package icon、README 和
   NOTICE 指向本项目，同时保留必要的 MIT 来源说明。
 
+## 产品截图
+
+以下截图是在 VS Code Insiders 中安装 packaged VSIX 后本地捕获的。DOCX brief
+由 `officecli` 生成用于 screenshot smoke test；HWP 示例来自 bundled rhwp sample
+复制到临时 workspace，避免修改 tracked vendor samples。
+
+<table>
+  <tr>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="VS Code 中打开的可编辑 Korean HWP 文档和工具栏" width="760">
+    </td>
+    <td width="42%">
+      <strong>本地 HWP/HWPX 编辑</strong><br>
+      使用 bundled rhwp-studio runtime、完整工具栏和 VS Code 保存 lifecycle
+      审阅韩国 office 文档。
+    </td>
+  </tr>
+  <tr>
+    <td width="42%">
+      <strong>DOCX 与 source context 审阅</strong><br>
+      生成的 brief、notes、PDF、spreadsheet 和 source file 可以留在同一个
+      workspace，而不是散落在多个 viewer。
+    </td>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="VS Code 中预览的 DOCX review brief" width="760">
+    </td>
+  </tr>
+</table>
+
 ## 安装
 
 从 GitHub Releases 下载最新 VSIX：
 
 ```bash
-code --install-extension ./vscode-obsdian-<version>.vsix
+code --install-extension ./code-office-<version>.vsix
 ```
 
 VS Code Insiders：
 
 ```bash
-code-insiders --install-extension ./vscode-obsdian-<version>.vsix --force
+code-insiders --install-extension ./code-office-<version>.vsix --force
 ```
 
-安装后打开支持的文件，并在 VS Code 询问编辑器时选择 `vscode_obsdian`。
+安装后打开支持的文件，并在 VS Code 询问编辑器时选择 `code-office`。
 HWP/HWPX 文件仍通过继承的 `cweijan.hwpEditor` custom editor ID 注册，以保持
 与既有 VS Code custom editor association 的兼容。
 
@@ -96,20 +130,22 @@ HWP/HWPX file
 
 - rhwp 不是 Hancom Office 引擎，复杂文档可能存在 layout 或 round-trip 差异。
 - 不内置 Hancom/Microsoft 专有字体，只使用开源字体和系统字体 fallback。
-- `vscode-obsdian.hwp.studioUrl` 是高级可信远程运行时 override，默认仍是本地 bundle。
+- `code-office.hwp.studioUrl` 是高级可信远程运行时 override，默认仍是本地 bundle。
 
 ## 设置
 
 | 设置 | 默认值 | 用途 |
 | --- | --- | --- |
-| `vscode-obsdian.hwp.experimentalSave` | `true` | 显示 HWP/HWPX 工具栏保存按钮。VS Code 原生保存仍可用。 |
-| `vscode-obsdian.hwp.studioUrl` | `""` | 可选可信远程 rhwp studio URL。留空则使用本地 bundle。 |
+| `code-office.hwp.experimentalSave` | `true` | 显示 HWP/HWPX 工具栏保存按钮。VS Code 原生保存仍可用。 |
+| `code-office.hwp.studioUrl` | `""` | 可选可信远程 rhwp studio URL。留空则使用本地 bundle。 |
 | `vscode-office.editorMode` | 继承值 | Markdown editor mode。 |
 | `vscode-office.pptx.libreOfficePath` | `""` | legacy `.ppt` LibreOffice fallback 路径。 |
 | `vscode-office.pptx.conversionTimeoutMs` | `30000` | optional LibreOffice conversion timeout。 |
 
 部分 `vscode-office.*`、`office.*`、`cweijan.*` ID 为兼容已有设置、快捷键和
 custom editor association 而保留。runtime ID migration 会作为单独阶段处理。
+旧的 `vscode-obsdian.hwp.*` 值会作为 legacy fallback 读取；新的文档和 package
+setting 以 `code-office.hwp.*` 为准。
 
 ## 发布检查
 

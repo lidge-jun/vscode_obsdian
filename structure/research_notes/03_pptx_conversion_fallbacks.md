@@ -1,6 +1,6 @@
 # PPTX Conversion Fallback Research
 
-PPTX preview에는 두 길이 있습니다. 첫 번째는 WebView 안에서 PPTX를 직접 파싱해 HTML/SVG로 그리는 방식이고, 두 번째는 extension host에서 LibreOffice 같은 외부 프로그램으로 PDF/PNG로 변환한 뒤 PDF.js 또는 이미지 viewer로 보여주는 방식입니다. `vscode_obsdian`의 기본값은 pure JS가 맞고, 변환형은 fallback 또는 optional feature로 보는 것이 안전합니다.
+PPTX preview에는 두 길이 있습니다. 첫 번째는 WebView 안에서 PPTX를 직접 파싱해 HTML/SVG로 그리는 방식이고, 두 번째는 extension host에서 LibreOffice 같은 외부 프로그램으로 PDF/PNG로 변환한 뒤 PDF.js 또는 이미지 viewer로 보여주는 방식입니다. `code-office`의 기본값은 pure JS가 맞고, 변환형은 fallback 또는 optional feature로 보는 것이 안전합니다.
 
 > 출처: [VS Code Webview API](https://code.visualstudio.com/api/extension-guides/webview)
 > 출처: [mutyai/pptviewer](https://github.com/mutyai/pptviewer)

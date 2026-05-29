@@ -13,7 +13,7 @@ export class WikilinkCompletionProvider implements vscode.CompletionItemProvider
             const item = new vscode.CompletionItem(target, vscode.CompletionItemKind.File);
             item.range = context.range;
             item.insertText = context.needsClosingBrackets ? `${target}]]` : target;
-            item.detail = 'vscode_obsdian wikilink';
+            item.detail = 'code-office wikilink';
             return item;
         });
     }

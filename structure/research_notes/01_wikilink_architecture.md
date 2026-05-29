@@ -1,6 +1,6 @@
 # Obsidian-Style Wikilink Architecture
 
-`vscode_obsdian`의 위키링크 지원은 단순히 `[[...]]`를 `<a>`로 바꾸는 문제가 아닙니다. 사용자가 기대하는 경험은 입력 중 자동완성, preview 클릭 이동, 없는 노트 생성, `#heading`/`^block` 이동, alias 표시, embed 표시까지 포함됩니다. 그래서 구현을 parser, index, editor provider, webview bridge, export renderer로 나눠야 합니다.
+`code-office`의 위키링크 지원은 단순히 `[[...]]`를 `<a>`로 바꾸는 문제가 아닙니다. 사용자가 기대하는 경험은 입력 중 자동완성, preview 클릭 이동, 없는 노트 생성, `#heading`/`^block` 이동, alias 표시, embed 표시까지 포함됩니다. 그래서 구현을 parser, index, editor provider, webview bridge, export renderer로 나눠야 합니다.
 
 > 출처: [Foam markdown-link parser](https://github.com/foambubble/foam/blob/main/packages/foam-core/src/services/markdown-link.ts)
 > 출처: [Foam link completion provider](https://github.com/foambubble/foam/blob/main/packages/foam-vscode/src/vscode/features/navigation/link-completion.ts)

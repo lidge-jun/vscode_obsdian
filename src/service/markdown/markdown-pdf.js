@@ -136,7 +136,7 @@ function convertMarkdownToHtml(filename, type, text, config) {
 }
 
 function markdownItWikilink(md) {
-  md.inline.ruler.before('emphasis', 'vscode_obsdian_wikilink', (state, silent) => {
+  md.inline.ruler.before('emphasis', 'code-office_wikilink', (state, silent) => {
     const start = state.pos;
     if (state.src.charCodeAt(start) !== 0x5B || state.src.charCodeAt(start + 1) !== 0x5B) {
       return false;
@@ -148,7 +148,7 @@ function markdownItWikilink(md) {
       const parsed = parseWikilinkExportBody(body);
       if (!parsed) return false;
       const tokenOpen = state.push('link_open', 'a', 1);
-      tokenOpen.attrs = [['href', parsed.href], ['class', 'vscode-obsdian-wikilink']];
+      tokenOpen.attrs = [['href', parsed.href], ['class', 'code-office-wikilink']];
       const tokenText = state.push('text', '', 0);
       tokenText.content = parsed.label;
       state.push('link_close', 'a', -1);

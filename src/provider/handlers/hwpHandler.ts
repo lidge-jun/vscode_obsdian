@@ -70,9 +70,7 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler, options: Hw
         options.onVscodeSavePayload?.(content);
     });
 
-    const experimentalSave = workspace
-        .getConfiguration('vscode-obsdian')
-        .get<boolean>('hwp.experimentalSave', true);
+    const experimentalSave = getCodeOfficeSetting<boolean>('hwp.experimentalSave', true);
     if (experimentalSave) {
         handler.on(HWP_EVENTS.requestSave, async (content: HwpSavePayload) => {
             try {
@@ -103,4 +101,22 @@ export function handleHwp(uri: { fsPath: string }, handler: Handler, options: Hw
             }
         });
     }
+}
+
+function getCodeOfficeSetting<T>(key: string, defaultValue: T): T {
+    const current = getUserSetting<T>('code-office', key);
+    if (current !== undefined) return current;
+    const legacy = getUserSetting<T>('vscode-obsdian', key);
+    if (legacy !== undefined) return legacy;
+    return workspace.getConfiguration('code-office').get<T>(key, defaultValue);
+}
+
+function getUserSetting<T>(section: string, key: string): T | undefined {
+    const inspected = workspace.getConfiguration(section).inspect<T>(key);
+    return inspected?.workspaceFolderLanguageValue
+        ?? inspected?.workspaceFolderValue
+        ?? inspected?.workspaceLanguageValue
+        ?? inspected?.workspaceValue
+        ?? inspected?.globalLanguageValue
+        ?? inspected?.globalValue;
 }

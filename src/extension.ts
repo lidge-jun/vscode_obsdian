@@ -34,11 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('office.markdown.switch', (uri) => { markdownService.switchEditor(uri) }),
 		vscode.commands.registerCommand('office.markdown.paste', () => { markdownService.loadClipboardImage() }),
 		vscode.commands.registerCommand('office.html.preview', uri => HtmlService.previewHtml(uri, context)),
-		vscode.commands.registerCommand('vscode-obsdian.previewLegacyPresentation', uri => previewLegacyPresentation(uri, context)),
-		vscode.commands.registerCommand('vscode-obsdian.openWikilink', async ({ sourceUri, link }: { sourceUri: string; link: ParsedWikilink }) => {
+		vscode.commands.registerCommand('code-office.previewLegacyPresentation', uri => previewLegacyPresentation(uri, context)),
+		vscode.commands.registerCommand('code-office.openWikilink', async ({ sourceUri, link }: { sourceUri: string; link: ParsedWikilink }) => {
 			await wikilinkResolver.open(vscode.Uri.parse(sourceUri), link);
 		}),
-		vscode.commands.registerCommand('vscode-obsdian.openWikilinkBody', async ({ sourceUri, body }: { sourceUri: string; body: string }) => {
+		vscode.commands.registerCommand('code-office.openWikilinkBody', async ({ sourceUri, body }: { sourceUri: string; body: string }) => {
 			const link = parseWikilinkBody(body);
 			if (link) await wikilinkResolver.open(vscode.Uri.parse(sourceUri), link);
 		}),
@@ -99,7 +99,7 @@ async function resolveLegacyPresentationUri(uri?: vscode.Uri): Promise<vscode.Ur
 
 function showLegacyPresentationPdf(pdfUri: vscode.Uri, sourceUri: vscode.Uri, context: vscode.ExtensionContext): void {
 	const panel = vscode.window.createWebviewPanel(
-		'vscodeObsdianLegacyPresentation',
+		'codeOfficeLegacyPresentation',
 		`Preview ${basename(sourceUri.fsPath)}`,
 		vscode.ViewColumn.Active,
 		{

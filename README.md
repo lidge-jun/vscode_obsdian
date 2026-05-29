@@ -1,23 +1,29 @@
 <p align="center">
-  <img src="images/logo-new.png" width="128" height="128" alt="vscode_obsdian logo">
+  <img src="images/logo-new.png" width="128" height="128" alt="code-office logo">
 </p>
 
-# vscode_obsdian
+# code-office
 
 English | [简体中文](README-CN.md) | [한국어](README-KO.md)
 
-`vscode_obsdian` is an independent VS Code extension for opening and editing
-document-heavy workspaces: Korean HWP/HWPX, Markdown notes, Office files, PDFs,
-archives, images, HTTP request files, registry files, and HTML.
+`code-office` is an independent VS Code extension for opening, reviewing,
+and editing document-heavy workspaces: Korean HWP/HWPX, Markdown notes, Office
+files, PDFs, archives, images, HTTP request files, registry files, and HTML.
 
-- Project homepage: <https://lidge-jun.github.io/vscode_obsdian/>
-- Repository: <https://github.com/lidge-jun/vscode_obsdian>
-- Latest VSIX: <https://github.com/lidge-jun/vscode_obsdian/releases/latest>
+- Project homepage: <https://lidge-jun.github.io/code-office/>
+- Repository: <https://github.com/lidge-jun/code-office>
+- Latest VSIX: <https://github.com/lidge-jun/code-office/releases/latest>
 
 The main product split from upstream office viewers is **editable HWP/HWPX with
 a bundled local rhwp-studio runtime**. Common `.hwp` and `.hwpx` files can be
 opened, edited, and saved without Hancom Office, LibreOffice, or a remote
 service as the default path.
+
+AI tools now create more drafts, citations, meeting notes, and source documents
+than teams can comfortably inspect in isolated viewers. This extension does not
+claim AI generation. It provides the VS Code document surface for that review
+loop: generated DOCX reports beside Markdown notes, Korean HWP/HWPX references
+beside source files, and provenance-sensitive formats kept in one workspace.
 
 This project is not affiliated with or endorsed by Obsidian, Hancom, Microsoft,
 cweijan/vscode-office, rjwang1982/vscode-office, or rhwp.
@@ -36,21 +42,51 @@ cweijan/vscode-office, rjwang1982/vscode-office, or rhwp.
   icon, README, and notices now point at this project while preserving required
   MIT lineage.
 
+## Product Screenshots
+
+The screenshots below were captured locally in VS Code Insiders after installing
+the packaged VSIX. The DOCX brief was generated with `officecli` for screenshot
+smoke testing; the HWP example is copied from the bundled rhwp sample set into a
+temporary workspace so tracked vendor samples are not modified.
+
+<table>
+  <tr>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-hwp-editor.png" alt="Editable Korean HWP document with toolbar controls inside VS Code" width="760">
+    </td>
+    <td width="42%">
+      <strong>Local HWP/HWPX editing</strong><br>
+      Review Korean office documents inside VS Code with the bundled
+      rhwp-studio runtime, full toolbar surface, and VS Code save lifecycle.
+    </td>
+  </tr>
+  <tr>
+    <td width="42%">
+      <strong>DOCX and source-context review</strong><br>
+      Generated briefs, notes, PDFs, spreadsheets, and source files can stay in
+      one workspace instead of moving through disconnected viewers.
+    </td>
+    <td width="58%">
+      <img src="docs/assets/screenshots/code-office-docx-preview.png" alt="DOCX review brief previewed inside VS Code" width="760">
+    </td>
+  </tr>
+</table>
+
 ## Install
 
 Install the latest release VSIX from GitHub Releases:
 
 ```bash
-code --install-extension ./vscode-obsdian-<version>.vsix
+code --install-extension ./code-office-<version>.vsix
 ```
 
 For VS Code Insiders:
 
 ```bash
-code-insiders --install-extension ./vscode-obsdian-<version>.vsix --force
+code-insiders --install-extension ./code-office-<version>.vsix --force
 ```
 
-After installation, open a supported file and choose `vscode_obsdian` when VS
+After installation, open a supported file and choose `code-office` when VS
 Code asks for an editor. HWP/HWPX files are registered through the inherited
 `cweijan.hwpEditor` custom editor ID for compatibility with existing VS Code
 custom editor associations.
@@ -106,15 +142,15 @@ Known limits:
   layout or round-trip differences.
 - Bundled open fonts are used as fallbacks. Proprietary Hancom or Microsoft
   fonts are not bundled.
-- Optional `vscode-obsdian.hwp.studioUrl` is an advanced trusted remote runtime
+- Optional `code-office.hwp.studioUrl` is an advanced trusted remote runtime
   override; the default remains local.
 
 ## Settings
 
 | Setting | Default | Purpose |
 | --- | --- | --- |
-| `vscode-obsdian.hwp.experimentalSave` | `true` | Shows the HWP/HWPX toolbar save button. VS Code native save still works for dirty custom editor documents. |
-| `vscode-obsdian.hwp.studioUrl` | `""` | Optional trusted remote rhwp studio URL. Leave empty for the bundled local runtime. |
+| `code-office.hwp.experimentalSave` | `true` | Shows the HWP/HWPX toolbar save button. VS Code native save still works for dirty custom editor documents. |
+| `code-office.hwp.studioUrl` | `""` | Optional trusted remote rhwp studio URL. Leave empty for the bundled local runtime. |
 | `vscode-office.editorMode` | inherited | Markdown editor mode from the upstream runtime surface. |
 | `vscode-office.pptx.libreOfficePath` | `""` | Optional LibreOffice executable path for legacy `.ppt` fallback. |
 | `vscode-office.pptx.conversionTimeoutMs` | `30000` | Timeout for optional LibreOffice conversion. |
@@ -122,6 +158,8 @@ Known limits:
 Some `vscode-office.*`, `office.*`, and `cweijan.*` identifiers intentionally
 remain for compatibility with existing settings, commands, and custom editor
 associations. Runtime ID migration is tracked as a separate compatibility task.
+Previous `vscode-obsdian.hwp.*` values are read as a legacy fallback, but new
+documentation and package settings use `code-office.hwp.*`.
 
 ## Release Checks
 
@@ -182,7 +220,7 @@ See [structure/roadmap.md](structure/roadmap.md) for the internal phase record.
 
 ## Attribution
 
-`vscode_obsdian` contains code derived from MIT-licensed `vscode-office` work:
+`code-office` contains code derived from MIT-licensed `vscode-office` work:
 
 - [cweijan/vscode-office](https://github.com/cweijan/vscode-office), original
   project by Weijan Chen
