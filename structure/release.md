@@ -10,7 +10,8 @@ Marketplace publishing gates.
 
 - Node.js 20.x
 - npm dependencies installed with `npm install`
-- `vsce` available on PATH for packaging and Marketplace publish
+- `@vscode/vsce` installed from devDependencies; npm scripts use the local
+  `vsce` binary for packaging and Marketplace publish
 - `gh` authenticated for GitHub Release creation
 - VS Code or VS Code Insiders for manual smoke tests
 

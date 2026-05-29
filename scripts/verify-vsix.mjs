@@ -53,6 +53,7 @@ const vscodeignore = readText('.vscodeignore');
 check('Package homepage points to GitHub Pages', packageJson.homepage === 'https://lidge-jun.github.io/vscode_obsdian/');
 check('Package description highlights HWP/HWPX', packageJson.description.includes('HWP/HWPX'));
 check('Package icon points to generated project logo', packageJson.icon === 'images/logo-new.png');
+check('Package declares local @vscode/vsce CLI', typeof packageJson.devDependencies?.['@vscode/vsce'] === 'string');
 for (const keyword of ['hwp', 'hwpx', 'korean', 'rhwp', 'document']) {
     check(`Package keyword includes ${keyword}`, packageJson.keywords.includes(keyword));
 }
